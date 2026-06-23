@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Gabungan QRIS — AKT & GCU</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231B2B4B'/%3E%3Cpolyline points='3,22 8,14 13,18 18,9 23,15 29,10' fill='none' stroke='%232563EB' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#1B2B4B;--blue:#2563EB;--green:#10B981;--red:#EF4444;--amber:#F59E0B;--bg:#F1F5F9;--surface:#fff;--surface2:#F8FAFC;--border:#E2E8F0;--text:#0F172A;--text2:#475569;--text3:#94A3B8;--r:10px;--r2:6px}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);font-size:13px;min-height:100vh}
+.hdr{background:linear-gradient(135deg,#EFF6FF 0%,#DBEAFE 100%);border-bottom:1px solid #BFDBFE;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(59,130,246,0.1)}
+.hdr-row1{display:flex;align-items:center;padding:8px 20px;gap:12px;border-bottom:1px solid #DBEAFE;min-height:52px}
+.hdr-logo{height:36px;object-fit:contain;flex-shrink:0}
+.hdr-title{font-size:15px;font-weight:700;color:#1B2B4B;letter-spacing:-0.01em;flex:1;text-align:center}
+.hdr-date-sub{font-size:10px;color:#64748B;font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.hdr-row2{display:flex;align-items:center;padding:6px 20px;gap:8px;min-height:44px;justify-content:flex-end}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:var(--r2);font-size:11px;cursor:pointer;border:none;font-weight:500;transition:background 0.15s}
+.btn-ghost{background:#fff;color:#1B2B4B;border:1px solid #BFDBFE}.btn-ghost:hover{background:#EFF6FF}
+.btn-primary{background:#2563EB;color:#fff}.btn-primary:hover{background:#1d4ed8}
+.mode-toggle{display:flex;background:rgba(27,43,75,0.08);border-radius:20px;padding:2px;border:1px solid #BFDBFE}
+.tog-btn{padding:3px 11px;font-size:11px;border-radius:18px;border:none;cursor:pointer;font-weight:500;transition:all 0.15s}
+.tog-active{background:#1B2B4B;color:#fff}.tog-inactive{background:transparent;color:#1B2B4B}.tog-inactive:hover{background:rgba(27,43,75,0.08)}
+#calPopup{position:absolute;right:0;top:calc(100% + 6px);background:#fff;border:1px solid #BFDBFE;border-radius:10px;box-shadow:0 4px 20px rgba(27,43,75,0.15);z-index:999;width:260px;padding:12px}
+.cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.cal-title{font-size:12px;font-weight:600;color:#1B2B4B}
+.cal-nav{background:none;border:none;cursor:pointer;font-size:14px;color:#1B2B4B;padding:2px 6px;border-radius:4px}.cal-nav:hover{background:#EFF6FF}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-day-hdr{font-size:9px;color:#94A3B8;text-align:center;padding:2px 0;font-weight:500}
+.cal-day{font-size:11px;text-align:center;padding:5px 2px;border-radius:6px;cursor:pointer;color:#1B2B4B;border:none;background:none;width:100%}
+.cal-day:hover:not(:disabled){background:#EFF6FF}.cal-day.has-data{font-weight:600}.cal-day.selected{background:#1B2B4B!important;color:#fff!important}.cal-day.today{border:1px solid #BFDBFE;color:#2563EB}.cal-day:disabled{color:#CBD5E1;cursor:default}.cal-day.other-month{color:#CBD5E1}
+.month-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.month-btn{font-size:11px;padding:8px 4px;border-radius:6px;border:none;cursor:pointer;background:none;color:#1B2B4B;font-weight:500;text-align:center}.month-btn:hover:not(:disabled){background:#EFF6FF}.month-btn.has-data{font-weight:600}.month-btn.selected{background:#1B2B4B!important;color:#fff!important}.month-btn:disabled{color:#CBD5E1;cursor:default}
+.sk-wrap{padding:16px 20px}
+.sk{background:#E2E8F0;border-radius:6px;animation:skpulse 1.5s ease-in-out infinite}
+@keyframes skpulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.sk-g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px}
+.sk-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:12px 14px}
+.err-pg{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 96px);gap:12px;text-align:center;padding:2rem}
+.err-pg .icon{font-size:48px}.err-pg h2{font-size:18px;color:var(--navy)}.err-pg p{font-size:13px;color:var(--text2);max-width:400px}
+.main{display:none;padding:16px 20px}
+.dash-header{margin-bottom:14px}.dash-header h1{font-size:18px;font-weight:700;color:var(--navy);margin-bottom:2px}.dash-header p{font-size:11px;color:var(--text2)}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px}
+.g2e{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.kpi{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:12px 14px}
+.kpi .lbl{font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:5px}
+.kpi .val{font-size:21px;font-weight:700;letter-spacing:-0.02em;line-height:1;margin-bottom:3px}.kpi .sub{font-size:10px;color:var(--text3)}
+.kpi .val.navy{color:var(--navy)}.kpi .val.green{color:var(--green)}.kpi .val.blue{color:var(--blue)}.kpi .val.red{color:var(--red)}.kpi .val.amber{color:var(--amber)}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:12px 14px}
+.card-hd{font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px}
+.tbl{width:100%;border-collapse:collapse;font-size:11px}
+.tbl th{font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;padding:5px 8px;border-bottom:1px solid var(--border);white-space:nowrap}.tbl th.r{text-align:right}
+.tbl td{padding:5px 8px;border-bottom:0.5px solid #F1F5F9;color:var(--text)}.tbl td.r{text-align:right;font-family:'JetBrains Mono',monospace;font-size:10px}
+.tbl tr:last-child td{border-bottom:none}.tbl tr.ttl td{font-weight:600;background:var(--surface2)}.tbl tr.hl2 td{background:#D1FAE5;font-weight:600}
+.tbl thead.navy th{background:var(--navy);color:#fff;border-bottom:none;padding:6px 8px}.tbl thead.navy th.r{text-align:right}
+.badge{display:inline-block;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:500}
+.bg{background:#D1FAE5;color:#065F46}.br{background:#FEE2E2;color:#991B1B}
+.sec-div{display:flex;align-items:center;gap:10px;margin:16px 0 12px}
+.sec-div-line{flex:1;height:1px;background:var(--border)}
+.sec-div-title{font-size:11px;font-weight:700;white-space:nowrap;padding:4px 14px;border-radius:20px}
+.sec-div-title.akt{color:var(--navy);background:#EFF6FF;border:1px solid #BFDBFE}
+.sec-div-title.gcu{color:#065F46;background:#D1FAE5;border:1px solid #6EE7B7}
+.sec-div-title.total{color:#92400E;background:#FFFBEB;border:1px solid #FDE68A}
+.kpi.amber-card{background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border:1px solid #FDE68A}
+.sum-tbl{width:100%;border-collapse:collapse;font-size:11px}
+.sum-tbl th{background:#1B2B4B;color:#fff;padding:7px 10px;font-size:10px;font-weight:600}.sum-tbl th:not(:first-child){text-align:right}
+.sum-tbl td{padding:6px 10px;border-bottom:0.5px solid var(--border)}.sum-tbl td:not(:first-child){text-align:right;font-family:'JetBrains Mono',monospace;font-size:10px}
+.sum-tbl tr.total-row td{background:#FEF3C7;font-weight:700;color:#92400E;border-top:2px solid #F59E0B}.sum-tbl tr:last-child td{border-bottom:none}
+.footer{text-align:center;padding:14px;font-size:10px;color:var(--text3);border-top:1px solid var(--border);margin-top:8px}
+@media(max-width:900px){.g4{grid-template-columns:1fr 1fr}.g2e{grid-template-columns:1fr}}
+@media(max-width:600px){.hdr-row1{padding:6px 12px}.hdr-title{font-size:12px}.hdr-date-sub{display:none}.hdr-row2{padding:5px 12px;gap:5px}.btn{padding:4px 8px;font-size:10px}.main{padding:10px 12px}.g4{grid-template-columns:1fr 1fr}.g2e{grid-template-columns:1fr}.kpi .val{font-size:17px}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-row1">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAAAoCAYAAAAIeF9DAAAABmJLR0QA/wD/AP+gvaeTAAAAjklEQVRoge3BMQEAAADCoPVP7WsIoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAeAMBuAABHgAAAABJRU5ErkJggg==" class="hdr-logo" alt="Paycloud">
+    <span class="hdr-title">Dashboard Gabungan QRIS — AKT & GCU</span>
+    <span class="hdr-date-sub" id="hdrDateSub">Memuat data...</span>
+  </div>
+  <div class="hdr-row2">
+    <div class="mode-toggle">
+      <button class="tog-btn tog-active" id="togDaily" onclick="setMode('daily')">Daily</button>
+      <button class="tog-btn tog-inactive" id="togMonthly" onclick="setMode('monthly')">Monthly</button>
+    </div>
+    <div style="position:relative" id="calWrap">
+      <button class="btn btn-ghost" id="calTrigger" onclick="toggleCal(event)">
+        <span id="calLabel">📅 Pilih Tanggal</span><span style="margin-left:4px;font-size:10px">▾</span>
+      </button>
+      <div id="calPopup" style="display:none" onclick="event.stopPropagation()"></div>
+    </div>
+    <button class="btn btn-ghost" id="btnXls" onclick="dlExcel()" style="display:none">↓ Excel</button>
+    <button class="btn btn-primary" id="btnPdf" onclick="dlPDF()" style="display:none">↓ PDF</button>
+  </div>
+</header>
+
+<div class="sk-wrap" id="loadingPg">
+  <div class="sk-g4">
+    <div class="sk-card"><div class="sk" style="width:60%;height:9px;margin-bottom:8px"></div><div class="sk" style="width:50%;height:22px"></div></div>
+    <div class="sk-card"><div class="sk" style="width:60%;height:9px;margin-bottom:8px"></div><div class="sk" style="width:50%;height:22px"></div></div>
+    <div class="sk-card"><div class="sk" style="width:60%;height:9px;margin-bottom:8px"></div><div class="sk" style="width:50%;height:22px"></div></div>
+    <div class="sk-card"><div class="sk" style="width:60%;height:9px;margin-bottom:8px"></div><div class="sk" style="width:50%;height:22px"></div></div>
+  </div>
+  <div class="sk-g4">
+    <div class="sk-card"><div class="sk" style="width:60%;height:9px;margin-bottom:8px"></div><div class="sk" style="width:50%;height:22px"></div></div>
+    <div class="sk-card"><div class="sk" style="width:60%;height:9px;margin-bottom:8px"></div><div class="sk" style="width:50%;height:22px"></div></div>
+    <div class="sk-card"><div class="sk" style="width:60%;height:9px;margin-bottom:8px"></div><div class="sk" style="width:50%;height:22px"></div></div>
+    <div class="sk-card"><div class="sk" style="width:60%;height:9px;margin-bottom:8px"></div><div class="sk" style="width:50%;height:22px"></div></div>
+  </div>
+  <div style="text-align:center;font-size:11px;color:var(--text3);margin-top:12px">Memuat data AKT & GCU secara paralel...</div>
+</div>
+
+<div class="err-pg" id="errorPg">
+  <div class="icon">⚠️</div><h2>Gagal Memuat Data</h2><p id="errorMsg">Tidak dapat terhubung ke database.</p>
+</div>
+
+<div class="main" id="mainDash">
+  <div class="dash-header">
+    <h1>Dashboard Gabungan — <span style="color:var(--blue)">AKT</span> & <span style="color:var(--green)">GCU</span></h1>
+    <p id="subtitle">—</p>
+  </div>
+
+  <div class="sec-div"><div class="sec-div-line"></div><div class="sec-div-title akt">🔵 AKT — Agro Karsa Terpadu</div><div class="sec-div-line"></div></div>
+  <div class="g4" id="kpiAKT"></div>
+  <div class="g2e">
+    <div class="card"><div class="card-hd">🟢 Transaction Status — AKT</div><table class="tbl" id="statusAKT"></table></div>
+    <div class="card"><div class="card-hd">💰 Revenue Detail — AKT</div><table class="tbl"><thead class="navy"><tr><th>Acquirer</th><th class="r">GMV</th><th class="r">Settled</th><th class="r">Revenue</th></tr></thead><tbody id="revAKT"></tbody><tfoot id="revFootAKT"></tfoot></table></div>
+  </div>
+
+  <div class="sec-div"><div class="sec-div-line"></div><div class="sec-div-title gcu">🟢 GCU — Gemilang Cipta Utama</div><div class="sec-div-line"></div></div>
+  <div class="g4" id="kpiGCU"></div>
+  <div class="g2e">
+    <div class="card"><div class="card-hd">🟢 Transaction Status — GCU</div><table class="tbl" id="statusGCU"></table></div>
+    <div class="card"><div class="card-hd">💰 Revenue Detail — GCU</div><table class="tbl"><thead class="navy"><tr><th>Acquirer</th><th class="r">GMV</th><th class="r">Settled</th><th class="r">Revenue</th></tr></thead><tbody id="revGCU"></tbody><tfoot id="revFootGCU"></tfoot></table></div>
+  </div>
+
+  <div class="sec-div"><div class="sec-div-line"></div><div class="sec-div-title total">⭐ Total Gabungan — AKT + GCU</div><div class="sec-div-line"></div></div>
+  <div class="g4" id="kpiTotal" style="margin-bottom:10px"></div>
+  <div class="card" style="margin-bottom:10px">
+    <div class="card-hd">📊 Ringkasan Perbandingan AKT vs GCU</div>
+    <table class="sum-tbl"><thead><tr><th>Metrik</th><th>AKT</th><th>GCU</th><th>Total</th></tr></thead><tbody id="summaryBody"></tbody></table>
+  </div>
+  <div class="footer" id="footer"></div>
+</div>
+
+<script>
+const SB={AKT:{url:'https://cjwxonoeszokjepkttnd.supabase.co',key:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqd3hvbm9lc3pva2plcGt0dG5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NTUyOTEsImV4cCI6MjA5NjAzMTI5MX0.jqkIoCl9g2nPWiNWyBrwMAcASEosb-lIKXc1hVVdgdg'},GCU:{url:'https://addeholdyefqzxpzrmwa.supabase.co',key:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkZGVob2xkeWVmcXp4cHpybXdhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMjA5MTMsImV4cCI6MjA5NzY5NjkxM30.ErARC0ABjv7KnRhT93EpN4ko-ot5Fj5z4H01n87SOfs'}};
+let currentMode='daily',availDates=[],availMonths=[],calYear=new Date().getFullYear(),calMonth=new Date().getMonth(),selectedDate='',selectedMonth='',cAKT=null,cGCU=null;
+const MO=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MOS=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
+const p2=s=>String(s).padStart(2,'0');
+const rpF=n=>{if(n==null||isNaN(n))return '—';const v=Math.round(n);return(v<0?'-':'')+'Rp '+Math.abs(v).toLocaleString('id-ID');};
+const rpS=n=>{if(n==null||isNaN(n))return '—';const v=Math.round(n),a=Math.abs(v),s=v<0?'-':'';if(a>=1e9)return s+'Rp '+(a/1e9).toFixed(2)+'M';if(a>=1e6)return s+'Rp '+(a/1e6).toFixed(1)+'jt';return s+'Rp '+a.toLocaleString('id-ID');};
+const nF=n=>(n==null||isNaN(n))?'—':Math.round(n).toLocaleString('id-ID');
+const pct=(a,b)=>b>0?(a/b*100).toFixed(2)+'%':'0.00%';
+const fmtD=iso=>{if(!iso)return'📅 Pilih Tanggal';const[y,m,d]=iso.split('-');return`📅 ${parseInt(d)} ${MOS[parseInt(m)-1]} ${y}`;};
+const fmtM=ym=>{if(!ym)return'📅 Pilih Bulan';const[y,m]=ym.split('-');return`📅 ${MO[parseInt(m)-1]} ${y}`;};
+
+async function sbFetch(table,params,pt){
+  const c=SB[pt];
+  try{const r=await fetch(`${c.url}/rest/v1/${table}?${params}`,{headers:{'apikey':c.key,'Authorization':'Bearer '+c.key,'Content-Type':'application/json'}});if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}
+  catch(e){console.warn(`sbFetch ${pt}/${table}:`,e.message);return[];}
+}
+
+function showSec(id){['loadingPg','errorPg','mainDash'].forEach(i=>{const el=document.getElementById(i);if(!el)return;el.style.display=i===id?'block':'none';});}
+
+function setMode(m){
+  currentMode=m;
+  document.getElementById('togDaily').className='tog-btn '+(m==='daily'?'tog-active':'tog-inactive');
+  document.getElementById('togMonthly').className='tog-btn '+(m==='monthly'?'tog-active':'tog-inactive');
+  document.getElementById('calLabel').textContent=m==='daily'?(selectedDate?fmtD(selectedDate):'📅 Pilih Tanggal'):(selectedMonth?fmtM(selectedMonth):'📅 Pilih Bulan');
+  renderCal();
+}
+
+function toggleCal(e){if(e)e.stopPropagation();const pop=document.getElementById('calPopup');if(pop.style.display==='none'){pop.style.display='block';renderCal();setTimeout(()=>document.addEventListener('click',closeCal),50);}else{pop.style.display='none';document.removeEventListener('click',closeCal);}}
+function closeCal(e){const pop=document.getElementById('calPopup'),tr=document.getElementById('calTrigger');if(!pop.contains(e.target)&&!tr.contains(e.target)){pop.style.display='none';document.removeEventListener('click',closeCal);}}
+function renderCal(){currentMode==='daily'?renderDailyCal():renderMonthlyCal();}
+
+function renderDailyCal(){
+  const pop=document.getElementById('calPopup');const DAYS=['Su','Mo','Tu','We','Th','Fr','Sa'],today=new Date();
+  const firstDay=new Date(calYear,calMonth,1).getDay(),dIM=new Date(calYear,calMonth+1,0).getDate(),dPrev=new Date(calYear,calMonth,0).getDate();
+  let h=`<div class="cal-hdr"><button class="cal-nav" onclick="calNav(-1,event)">&#8249;</button><span class="cal-title">${MO[calMonth]} ${calYear}</span><button class="cal-nav" onclick="calNav(1,event)">&#8250;</button></div><div class="cal-grid">${DAYS.map(d=>`<div class="cal-day-hdr">${d}</div>`).join('')}`;
+  for(let i=firstDay-1;i>=0;i--)h+=`<button class="cal-day other-month" disabled>${dPrev-i}</button>`;
+  for(let d=1;d<=dIM;d++){const iso=`${calYear}-${p2(calMonth+1)}-${p2(d)}`;const hd=availDates.includes(iso),isT=today.getFullYear()===calYear&&today.getMonth()===calMonth&&today.getDate()===d,isSel=iso===selectedDate;const cls=['cal-day',hd?'has-data':'',isT?'today':'',isSel?'selected':''].filter(Boolean).join(' ');h+=`<button class="${cls}" ${hd?`onclick="pickDate('${iso}')"`:'disabled'}>${d}</button>`;}
+  const rem=42-firstDay-dIM;for(let d=1;d<=rem&&rem<7;d++)h+=`<button class="cal-day other-month" disabled>${d}</button>`;
+  h+='</div>';pop.innerHTML=h;
+}
+function renderMonthlyCal(){
+  const pop=document.getElementById('calPopup');const MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const years=[...new Set(availMonths.map(m=>m.split('-')[0]))].sort().reverse();
+  let yOpts=years.map(y=>`<option value="${y}" ${y==calYear?'selected':''}>${y}</option>`).join('');
+  let h=`<div class="cal-hdr"><span class="cal-title">Pilih Bulan</span><select style="font-size:11px;padding:2px 6px;border:1px solid #BFDBFE;border-radius:5px;color:#1B2B4B" onchange="event.stopPropagation();calYear=parseInt(this.value);renderMonthlyCal()">${yOpts}</select></div><div class="month-grid">`;
+  for(let m=0;m<12;m++){const ym=`${calYear}-${p2(m+1)}`;const hd=availMonths.includes(ym),isSel=ym===selectedMonth;const cls=['month-btn',hd?'has-data':'',isSel?'selected':''].filter(Boolean).join(' ');h+=`<button class="${cls}" ${hd?`onclick="pickMonth('${ym}')"`:'disabled'}>${MS[m]}</button>`;}
+  h+='</div>';pop.innerHTML=h;
+}
+function calNav(dir,e){if(e)e.stopPropagation();calMonth+=dir;if(calMonth<0){calMonth=11;calYear--;}if(calMonth>11){calMonth=0;calYear++;}renderDailyCal();}
+function pickDate(iso){selectedDate=iso;document.getElementById('calLabel').textContent=fmtD(iso);document.getElementById('calPopup').style.display='none';document.removeEventListener('click',closeCal);loadDate(iso);}
+function pickMonth(ym){selectedMonth=ym;document.getElementById('calLabel').textContent=fmtM(ym);document.getElementById('calPopup').style.display='none';document.removeEventListener('click',closeCal);alert('Monthly report — coming soon!');}
+
+async function init(){
+  try{
+    const[dAKT,dGCU]=await Promise.all([sbFetch('daily_summary','select=report_date&order=report_date.desc&limit=365','AKT'),sbFetch('daily_summary','select=report_date&order=report_date.desc&limit=365','GCU')]);
+    availDates=[...new Set([...dAKT.map(r=>r.report_date),...dGCU.map(r=>r.report_date)])].sort().reverse();
+    availMonths=[...new Set(availDates.map(d=>d.slice(0,7)))];
+    if(!availDates.length){showSec('errorPg');document.getElementById('errorMsg').textContent='Tidak ada data di kedua database.';return;}
+    const lat=availDates[0];const[ly,lm]=lat.split('-');calYear=parseInt(ly);calMonth=parseInt(lm)-1;selectedDate=lat;
+    document.getElementById('calLabel').textContent=fmtD(lat);
+    await loadDate(lat);
+  }catch(e){document.getElementById('errorMsg').textContent=`Gagal init: ${e.message}`;showSec('errorPg');}
+}
+
+async function loadDate(dateISO){
+  showSec('loadingPg');
+  try{
+    const[sAKT,sGCU]=await Promise.all([sbFetch('daily_summary',`report_date=eq.${dateISO}&limit=1`,'AKT'),sbFetch('daily_summary',`report_date=eq.${dateISO}&limit=1`,'GCU')]);
+    cAKT=sAKT[0]||null;cGCU=sGCU[0]||null;selectedDate=dateISO;render(cAKT,cGCU,dateISO);
+  }catch(e){document.getElementById('errorMsg').textContent=`Gagal: ${e.message}`;showSec('errorPg');}
+}
+
+function render(akt,gcu,dateISO){
+  const[y,mo,d]=dateISO.split('-');const dateStr=`${parseInt(d)} ${MO[parseInt(mo)-1]} ${y}`;
+  document.getElementById('hdrDateSub').textContent=dateStr;
+  document.getElementById('subtitle').textContent=`Data: ${dateStr} | AKT${akt?'':' (tidak ada data)'} & GCU${gcu?'':' (tidak ada data)'}`;
+  document.getElementById('footer').textContent=`Auto-generated — Paycloud × AKT & GCU — ${dateStr}`;
+  renderKPI('kpiAKT',akt);renderKPI('kpiGCU',gcu);renderStatus('statusAKT',akt);renderStatus('statusGCU',gcu);
+  renderRev('revAKT','revFootAKT',akt);renderRev('revGCU','revFootGCU',gcu);renderTotal(akt,gcu);renderSummary(akt,gcu);
+  document.getElementById('btnPdf').style.display='inline-flex';document.getElementById('btnXls').style.display='inline-flex';
+  showSec('mainDash');
+}
+
+function renderKPI(id,s){
+  const el=document.getElementById(id);
+  if(!s){el.innerHTML=[...Array(8)].map(()=>`<div class="kpi"><div class="lbl">—</div><div class="val navy">—</div><div class="sub">Tidak ada data</div></div>`).join('');return;}
+  const sr=parseFloat(s.success_rate)||0,failRate=s.total_trx>0?((s.total_trx_fail/s.total_trx)*100).toFixed(2):'0.00';
+  el.innerHTML=[{lbl:'Active Merchant',val:nF(s.total_merchant),sub:'Merchant aktif',cls:'navy'},{lbl:'Successful Trx',val:nF(s.total_trx_success),sub:'Transaksi sukses',cls:'green'},{lbl:'Success Rate',val:sr+'%',sub:`${nF(s.total_trx_success)}/${nF(s.total_trx)}`,cls:sr>=80?'green':'red'},{lbl:'Total GMV',val:rpS(s.gmv),sub:'Success only',cls:'blue'},{lbl:'Settled Amount',val:rpS(s.settled_amount),sub:'Setelah MDR',cls:'navy'},{lbl:'Total Revenue',val:rpS(s.total_revenue),sub:'Settled × 0.1575%',cls:'green'},{lbl:'Avg Transaction',val:rpS(s.avg_trx_value),sub:'Per trx sukses',cls:'blue'},{lbl:'Fail Rate',val:failRate+'%',sub:`${nF(s.total_trx_fail)} gagal`,cls:parseFloat(failRate)>20?'red':'amber'}].map(k=>`<div class="kpi"><div class="lbl">${k.lbl}</div><div class="val ${k.cls}">${k.val}</div><div class="sub">${k.sub}</div></div>`).join('');
+}
+
+function renderStatus(id,s){
+  const el=document.getElementById(id);
+  if(!s){el.innerHTML='<thead><tr><th>Status</th><th class="r">Count</th><th class="r">%</th></tr></thead><tbody><tr><td colspan="3" style="text-align:center;color:var(--text3)">—</td></tr></tbody>';return;}
+  const tot=s.total_trx;
+  el.innerHTML=`<thead><tr><th>Status</th><th class="r">Count</th><th class="r">%</th></tr></thead><tbody><tr><td><span class="badge bg">SUCCESS</span></td><td class="r">${nF(s.total_trx_success)}</td><td class="r">${pct(s.total_trx_success,tot)}</td></tr><tr><td><span class="badge br">FAIL</span></td><td class="r">${nF(s.total_trx_fail)}</td><td class="r">${pct(s.total_trx_fail,tot)}</td></tr><tr class="ttl"><td>TOTAL</td><td class="r">${nF(tot)}</td><td class="r">100.00%</td></tr></tbody>`;
+}
+
+function renderRev(bodyId,footId,s){
+  const body=document.getElementById(bodyId),foot=document.getElementById(footId);
+  if(!s){body.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--text3)">—</td></tr>';foot.innerHTML='';return;}
+  const rev=s.revenue_detail||{};let rows='',tG=0,tS=0,tR=0;
+  const ent=Object.entries(rev).length?Object.entries(rev):[['Qoin',{gmv:s.gmv,settled:s.settled_amount,revenue:s.total_revenue}]];
+  ent.forEach(([a,d])=>{tG+=d.gmv||0;tS+=d.settled||0;tR+=d.revenue||0;rows+=`<tr><td>${a}</td><td class="r">${rpF(d.gmv)}</td><td class="r">${rpF(d.settled)}</td><td class="r" style="color:var(--green)">${rpF(d.revenue)}</td></tr>`;});
+  body.innerHTML=rows;foot.innerHTML=`<tr class="hl2"><td><strong>TOTAL</strong></td><td class="r">${rpF(tG)}</td><td class="r">${rpF(tS)}</td><td class="r" style="color:var(--green)">${rpF(tR)}</td></tr>`;
+}
+
+function renderTotal(akt,gcu){
+  const tM=(akt?.total_merchant||0)+(gcu?.total_merchant||0),tTrx=(akt?.total_trx||0)+(gcu?.total_trx||0),tSuc=(akt?.total_trx_success||0)+(gcu?.total_trx_success||0),tGMV=(akt?.gmv||0)+(gcu?.gmv||0),tSet=(akt?.settled_amount||0)+(gcu?.settled_amount||0),tRev=(akt?.total_revenue||0)+(gcu?.total_revenue||0),tSR=tTrx>0?(tSuc/tTrx*100).toFixed(2):0;
+  document.getElementById('kpiTotal').innerHTML=[{lbl:'Total Merchant',val:nF(tM),sub:'AKT + GCU',cls:'navy'},{lbl:'Total Transaksi',val:nF(tTrx),sub:'AKT + GCU',cls:'navy'},{lbl:'Total GMV',val:rpS(tGMV),sub:'AKT + GCU',cls:'blue'},{lbl:'Total Settled',val:rpS(tSet),sub:'AKT + GCU',cls:'navy'},{lbl:'Total Revenue',val:rpS(tRev),sub:'AKT + GCU',cls:'green'},{lbl:'Success Rate Gab.',val:tSR+'%',sub:`${nF(tSuc)} sukses`,cls:parseFloat(tSR)>=80?'green':'amber'}].map(k=>`<div class="kpi amber-card"><div class="lbl">${k.lbl}</div><div class="val ${k.cls}">${k.val}</div><div class="sub">${k.sub}</div></div>`).join('');
+}
+
+function renderSummary(akt,gcu){
+  const tM=(akt?.total_merchant||0)+(gcu?.total_merchant||0),tTrx=(akt?.total_trx||0)+(gcu?.total_trx||0),tSuc=(akt?.total_trx_success||0)+(gcu?.total_trx_success||0),tGMV=(akt?.gmv||0)+(gcu?.gmv||0),tSet=(akt?.settled_amount||0)+(gcu?.settled_amount||0),tRev=(akt?.total_revenue||0)+(gcu?.total_revenue||0);
+  const aktSR=(parseFloat(akt?.success_rate||0)).toFixed(2)+'%',gcuSR=(parseFloat(gcu?.success_rate||0)).toFixed(2)+'%',totSR=tTrx>0?(tSuc/tTrx*100).toFixed(2)+'%':'0%';
+  const aktFR=akt&&akt.total_trx>0?((akt.total_trx_fail/akt.total_trx)*100).toFixed(2)+'%':'—',gcuFR=gcu&&gcu.total_trx>0?((gcu.total_trx_fail/gcu.total_trx)*100).toFixed(2)+'%':'—',totFR=tTrx>0?(((akt?.total_trx_fail||0)+(gcu?.total_trx_fail||0))/tTrx*100).toFixed(2)+'%':'—';
+  const rows=[['Merchant',nF(akt?.total_merchant||0),nF(gcu?.total_merchant||0),nF(tM)],['Total Trx',nF(akt?.total_trx||0),nF(gcu?.total_trx||0),nF(tTrx)],['GMV',rpF(akt?.gmv||0),rpF(gcu?.gmv||0),rpF(tGMV)],['Settled',rpF(akt?.settled_amount||0),rpF(gcu?.settled_amount||0),rpF(tSet)],['Revenue',rpF(akt?.total_revenue||0),rpF(gcu?.total_revenue||0),rpF(tRev)],['Success Rate',aktSR,gcuSR,totSR],['Fail Rate',aktFR,gcuFR,totFR]];
+  document.getElementById('summaryBody').innerHTML=rows.map((r,i)=>`<tr ${i===rows.length-1?'class="total-row"':''}><td><strong>${r[0]}</strong></td><td>${r[1]}</td><td>${r[2]}</td><td><strong>${r[3]}</strong></td></tr>`).join('');
+}
+
+function dlExcel(){
+  if(!cAKT&&!cGCU)return;const wb=XLSX.utils.book_new(),dt=selectedDate||'—';
+  const ak=[['KPI Summary — AKT'],[`Tanggal: ${dt}`],[],['KPI','Nilai']];if(cAKT)ak.push(['Active Merchant',cAKT.total_merchant],['Total Trx',cAKT.total_trx],['Successful Trx',cAKT.total_trx_success],['GMV (Rp)',cAKT.gmv],['Settled (Rp)',Math.round(cAKT.settled_amount)],['Revenue (Rp)',cAKT.total_revenue]);else ak.push(['(Tidak ada data)','—']);
+  const ws1=XLSX.utils.aoa_to_sheet(ak);ws1['!cols']=[{wch:30},{wch:20}];XLSX.utils.book_append_sheet(wb,ws1,'KPI Summary AKT');
+  const gc=[['KPI Summary — GCU'],[`Tanggal: ${dt}`],[],['KPI','Nilai']];if(cGCU)gc.push(['Active Merchant',cGCU.total_merchant],['Total Trx',cGCU.total_trx],['Successful Trx',cGCU.total_trx_success],['GMV (Rp)',cGCU.gmv],['Settled (Rp)',Math.round(cGCU.settled_amount)],['Revenue (Rp)',cGCU.total_revenue]);else gc.push(['(Tidak ada data)','—']);
+  const ws2=XLSX.utils.aoa_to_sheet(gc);ws2['!cols']=[{wch:30},{wch:20}];XLSX.utils.book_append_sheet(wb,ws2,'KPI Summary GCU');
+  const tM=(cAKT?.total_merchant||0)+(cGCU?.total_merchant||0),tTrx=(cAKT?.total_trx||0)+(cGCU?.total_trx||0),tGMV=(cAKT?.gmv||0)+(cGCU?.gmv||0),tSet=(cAKT?.settled_amount||0)+(cGCU?.settled_amount||0),tRev=(cAKT?.total_revenue||0)+(cGCU?.total_revenue||0);
+  const tg=[['Total Gabungan — AKT + GCU'],[`Tanggal: ${dt}`],[],['Metrik','AKT','GCU','Total'],['Merchant',cAKT?.total_merchant||0,cGCU?.total_merchant||0,tM],['Total Trx',cAKT?.total_trx||0,cGCU?.total_trx||0,tTrx],['GMV (Rp)',cAKT?.gmv||0,cGCU?.gmv||0,tGMV],['Settled (Rp)',Math.round(cAKT?.settled_amount||0),Math.round(cGCU?.settled_amount||0),Math.round(tSet)],['Revenue (Rp)',Math.round(cAKT?.total_revenue||0),Math.round(cGCU?.total_revenue||0),Math.round(tRev)]];
+  const ws3=XLSX.utils.aoa_to_sheet(tg);ws3['!cols']=[{wch:20},{wch:20},{wch:20},{wch:20}];XLSX.utils.book_append_sheet(wb,ws3,'Total Gabungan');
+  const ra=[['Revenue Detail — AKT'],['Acquirer','GMV','Settled','Revenue']];if(cAKT){const rv=cAKT.revenue_detail||{};(Object.entries(rv).length?Object.entries(rv):[['Qoin',{gmv:cAKT.gmv,settled:cAKT.settled_amount,revenue:cAKT.total_revenue}]]).forEach(([a,d])=>ra.push([a,d.gmv||0,d.settled||0,d.revenue||0]));}
+  const ws4=XLSX.utils.aoa_to_sheet(ra);ws4['!cols']=[{wch:15},{wch:20},{wch:20},{wch:20}];XLSX.utils.book_append_sheet(wb,ws4,'Revenue Detail AKT');
+  const rg=[['Revenue Detail — GCU'],['Acquirer','GMV','Settled','Revenue']];if(cGCU){const rv=cGCU.revenue_detail||{};(Object.entries(rv).length?Object.entries(rv):[['Qoin',{gmv:cGCU.gmv,settled:cGCU.settled_amount,revenue:cGCU.total_revenue}]]).forEach(([a,d])=>rg.push([a,d.gmv||0,d.settled||0,d.revenue||0]));}
+  const ws5=XLSX.utils.aoa_to_sheet(rg);ws5['!cols']=[{wch:15},{wch:20},{wch:20},{wch:20}];XLSX.utils.book_append_sheet(wb,ws5,'Revenue Detail GCU');
+  XLSX.writeFile(wb,`Dashboard_Combined_${(selectedDate||'').replace(/-/g,'')}.xlsx`);
+}
+
+function dlPDF(){
+  if(!cAKT&&!cGCU)return;
+  const{jsPDF}=window.jspdf,doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'}),W=210,M=14;
+  const[y,mo,d]=selectedDate?selectedDate.split('-'):['','',''];
+  const dateStr=selectedDate?`${parseInt(d)} ${MO[parseInt(mo)-1]} ${y}`:'—';
+
+  function addPTPage(s,ptName,isFirst){
+    if(!isFirst)doc.addPage();let yy=0;
+    doc.setFillColor(27,43,75);doc.rect(0,0,W,24,'F');doc.setTextColor(255,255,255);doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text(`Daily QRIS Dashboard — ${ptName}`,W/2,12,{align:'center'});doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text(`Data: ${dateStr}`,W/2,20,{align:'center'});yy=30;
+    if(!s){doc.setFontSize(12);doc.setTextColor(100,116,139);doc.text(`Data ${ptName} tidak tersedia`,W/2,yy+20,{align:'center'});return;}
+    const sr=parseFloat(s.success_rate)||0,fr=s.total_trx>0?((s.total_trx_fail/s.total_trx)*100).toFixed(2):'0.00';
+    const kpis=[['Active Merchant',nF(s.total_merchant)],['Successful Trx',nF(s.total_trx_success)],['Success Rate',sr+'%'],['Total GMV',rpS(s.gmv)],['Settled Amount',rpS(s.settled_amount)],['Total Revenue',rpS(s.total_revenue)],['Avg Transaction',rpS(s.avg_trx_value)],['Fail Rate',fr+'%']];
+    const bw=(W-M*2-15)/4;
+    for(let row=0;row<2;row++){for(let col=0;col<4;col++){const k=kpis[row*4+col];if(!k)continue;const x=M+col*(bw+5);doc.setFillColor(241,245,249);doc.roundedRect(x,yy,bw,14,2,2,'F');doc.setTextColor(100,116,139);doc.setFontSize(6);doc.setFont('helvetica','normal');doc.text(k[0],x+3,yy+5);doc.setTextColor(27,43,75);doc.setFontSize(9);doc.setFont('helvetica','bold');doc.text(k[1],x+3,yy+12);}yy+=18;}yy+=4;
+    doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(15,23,42);doc.text('Transaction Status',M,yy);yy+=5;
+    [['Status','Count','%'],['SUCCESS',nF(s.total_trx_success),pct(s.total_trx_success,s.total_trx)],['FAIL',nF(s.total_trx_fail),pct(s.total_trx_fail,s.total_trx)],['TOTAL',nF(s.total_trx),'100.00%']].forEach((r,ri)=>{doc.setFillColor(ri===0?27:ri===3?241:255,ri===0?43:ri===3?245:255,ri===0?75:ri===3?249:255);doc.rect(M,yy-3,90,6,'F');doc.setTextColor(ri===0?255:15,ri===0?255:23,ri===0?255:42);doc.setFont('helvetica',ri===0||ri===3?'bold':'normal');doc.setFontSize(7);doc.text(r[0],M+2,yy+1);doc.text(r[1],M+55,yy+1,{align:'right'});doc.text(r[2],M+72,yy+1,{align:'right'});yy+=6;});yy+=6;
+    const rev=s.revenue_detail||{};doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(15,23,42);doc.text('Revenue Detail per Acquirer',M,yy);yy+=5;
+    doc.setFillColor(27,43,75);doc.rect(M,yy-3,W-M*2,6,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','bold');doc.text('Acquirer',M+2,yy+1);doc.text('GMV',M+90,yy+1,{align:'right'});doc.text('Settled',M+130,yy+1,{align:'right'});doc.text('Revenue',M+178,yy+1,{align:'right'});yy+=6;
+    let tG=0,tS=0,tR=0;const ent=Object.entries(rev).length?Object.entries(rev):[['Qoin',{gmv:s.gmv,settled:s.settled_amount,revenue:s.total_revenue}]];
+    ent.forEach(([acq,rd],i)=>{tG+=rd.gmv||0;tS+=rd.settled||0;tR+=rd.revenue||0;doc.setFillColor(i%2===0?248:255,i%2===0?250:255,i%2===0?252:255);doc.rect(M,yy-3,W-M*2,6,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(7);doc.text(acq,M+2,yy+1);doc.text(rpF(rd.gmv),M+90,yy+1,{align:'right'});doc.text(rpF(rd.settled),M+130,yy+1,{align:'right'});doc.text(rpF(rd.revenue),M+178,yy+1,{align:'right'});yy+=6;});
+    doc.setFillColor(209,250,229);doc.rect(M,yy-3,W-M*2,6,'F');doc.setTextColor(6,95,70);doc.setFont('helvetica','bold');doc.setFontSize(7);doc.text('TOTAL',M+2,yy+1);doc.text(rpF(tG),M+90,yy+1,{align:'right'});doc.text(rpF(tS),M+130,yy+1,{align:'right'});doc.text(rpF(tR),M+178,yy+1,{align:'right'});
+    doc.setFillColor(27,43,75);doc.rect(0,284,W,13,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','normal');doc.text(`Auto-generated — Paycloud × ${ptName} — ${dateStr}`,W/2,291,{align:'center'});
+  }
+
+  addPTPage(cAKT,'AKT',true);addPTPage(cGCU,'GCU',false);
+
+  // Total Gabungan page
+  doc.addPage();let yy=0;
+  doc.setFillColor(245,158,11);doc.rect(0,0,W,24,'F');doc.setTextColor(255,255,255);doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text('Total Gabungan — AKT + GCU',W/2,12,{align:'center'});doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text(`Data: ${dateStr}`,W/2,20,{align:'center'});yy=32;
+  const tM=(cAKT?.total_merchant||0)+(cGCU?.total_merchant||0),tTrx=(cAKT?.total_trx||0)+(cGCU?.total_trx||0),tSuc=(cAKT?.total_trx_success||0)+(cGCU?.total_trx_success||0),tGMV=(cAKT?.gmv||0)+(cGCU?.gmv||0),tSet=(cAKT?.settled_amount||0)+(cGCU?.settled_amount||0),tRev=(cAKT?.total_revenue||0)+(cGCU?.total_revenue||0),tSR=tTrx>0?(tSuc/tTrx*100).toFixed(2):0,tFR=tTrx>0?(((tTrx-tSuc)/tTrx)*100).toFixed(2):0;
+  doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(15,23,42);doc.text('Ringkasan Perbandingan',M,yy);yy+=5;
+  doc.setFillColor(27,43,75);doc.rect(M,yy-3,W-M*2,6,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','bold');doc.text('Metrik',M+2,yy+1);doc.text('AKT',M+70,yy+1,{align:'right'});doc.text('GCU',M+120,yy+1,{align:'right'});doc.text('TOTAL',M+178,yy+1,{align:'right'});yy+=6;
+  [['Merchant',nF(cAKT?.total_merchant||0),nF(cGCU?.total_merchant||0),nF(tM)],['Total Trx',nF(cAKT?.total_trx||0),nF(cGCU?.total_trx||0),nF(tTrx)],['GMV',rpF(cAKT?.gmv||0),rpF(cGCU?.gmv||0),rpF(tGMV)],['Settled',rpF(cAKT?.settled_amount||0),rpF(cGCU?.settled_amount||0),rpF(tSet)],['Revenue',rpF(cAKT?.total_revenue||0),rpF(cGCU?.total_revenue||0),rpF(tRev)],['Success Rate',(parseFloat(cAKT?.success_rate||0)).toFixed(2)+'%',(parseFloat(cGCU?.success_rate||0)).toFixed(2)+'%',tSR+'%'],['Fail Rate',cAKT&&cAKT.total_trx>0?((cAKT.total_trx_fail/cAKT.total_trx)*100).toFixed(2)+'%':'—',cGCU&&cGCU.total_trx>0?((cGCU.total_trx_fail/cGCU.total_trx)*100).toFixed(2)+'%':'—',tFR+'%']].forEach((r,i)=>{doc.setFillColor(i%2===0?248:255,i%2===0?250:255,i%2===0?252:255);doc.rect(M,yy-3,W-M*2,6,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(7);doc.text(r[0],M+2,yy+1);doc.text(r[1],M+70,yy+1,{align:'right'});doc.text(r[2],M+120,yy+1,{align:'right'});doc.text(r[3],M+178,yy+1,{align:'right'});yy+=6;});
+  doc.setFillColor(27,43,75);doc.rect(0,284,W,13,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','normal');doc.text(`Auto-generated — Paycloud × AKT & GCU — ${dateStr}`,W/2,291,{align:'center'});
+  doc.save(`Dashboard_Combined_${(selectedDate||'').replace(/-/g,'')}.pdf`);
+}
+
+init();
+</script>
+</body>
+</html>
