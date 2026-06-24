@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Gabungan QRIS — AKT & GCU</title>
+<title>Dashboard QRIS — AKT & GCU</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231B2B4B'/%3E%3Cpolyline points='3,22 8,14 13,18 18,9 23,15 29,10' fill='none' stroke='%232563EB' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -47,7 +47,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .g2e{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 .kpi{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:12px 14px}
 .kpi .lbl{font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:5px}
-.kpi .val{font-size:21px;font-weight:700;letter-spacing:-0.02em;line-height:1;margin-bottom:3px}.kpi .sub{font-size:10px;color:var(--text3)}
+.kpi .val{font-size:17px;font-weight:700;letter-spacing:-0.02em;line-height:1;margin-bottom:2px}.kpi .sub{font-size:9px;color:var(--text3)}.kpi{padding:10px 12px}.kpi.sm .val{font-size:13px}.kpi.sm .lbl{font-size:8px}.kpi.sm{padding:7px 9px}
 .kpi .val.navy{color:var(--navy)}.kpi .val.green{color:var(--green)}.kpi .val.blue{color:var(--blue)}.kpi .val.red{color:var(--red)}.kpi .val.amber{color:var(--amber)}
 .card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:12px 14px}
 .card-hd{font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px}
@@ -58,12 +58,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .tbl thead.navy th{background:var(--navy);color:#fff;border-bottom:none;padding:6px 8px}.tbl thead.navy th.r{text-align:right}
 .badge{display:inline-block;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:500}
 .bg{background:#D1FAE5;color:#065F46}.br{background:#FEE2E2;color:#991B1B}
-.sec-div{display:flex;align-items:center;gap:10px;margin:16px 0 12px}
-.sec-div-line{flex:1;height:1px;background:var(--border)}
-.sec-div-title{font-size:11px;font-weight:700;white-space:nowrap;padding:4px 14px;border-radius:20px}
-.sec-div-title.akt{color:var(--navy);background:#EFF6FF;border:1px solid #BFDBFE}
-.sec-div-title.gcu{color:#065F46;background:#D1FAE5;border:1px solid #6EE7B7}
-.sec-div-title.total{color:#92400E;background:#FFFBEB;border:1px solid #FDE68A}
+.sec-div{margin:16px 0 12px}
+.sec-div-line{display:none}
+.sec-div-title{display:block;width:100%;font-size:11px;font-weight:700;padding:7px 14px;border-radius:var(--r2)}
+.sec-div-title.akt{background:var(--navy);color:#fff}
+.sec-div-title.gcu{background:var(--navy);color:#fff}
+.sec-div-title.total{background:var(--navy);color:#fff}
 .kpi.amber-card{background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border:1px solid #FDE68A}
 .sum-tbl{width:100%;border-collapse:collapse;font-size:11px}
 .sum-tbl th{background:#1B2B4B;color:#fff;padding:7px 10px;font-size:10px;font-weight:600}.sum-tbl th:not(:first-child){text-align:right}
@@ -79,7 +79,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <header class="hdr">
   <div class="hdr-row1">
     <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAAAoCAYAAAAIeF9DAAAABmJLR0QA/wD/AP+gvaeTAAAAjklEQVRoge3BMQEAAADCoPVP7WsIoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAeAMBuAABHgAAAABJRU5ErkJggg==" class="hdr-logo" alt="Paycloud">
-    <span class="hdr-title">Dashboard Gabungan QRIS — AKT & GCU</span>
+    <span class="hdr-title">Dashboard QRIS — AKT & GCU</span>
     <span class="hdr-date-sub" id="hdrDateSub">Memuat data...</span>
   </div>
   <div class="hdr-row2">
@@ -120,30 +120,61 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 <div class="main" id="mainDash">
   <div class="dash-header">
-    <h1>Dashboard Gabungan — <span style="color:var(--blue)">AKT</span> & <span style="color:var(--green)">GCU</span></h1>
+    <h1>Dashboard QRIS — <span style="color:var(--blue)">AKT</span> & <span style="color:var(--green)">GCU</span></h1>
     <p id="subtitle">—</p>
   </div>
 
-  <div class="sec-div"><div class="sec-div-line"></div><div class="sec-div-title akt">🔵 AKT — Agro Karsa Terpadu</div><div class="sec-div-line"></div></div>
+  <div class="sec-div"><div class="sec-div-title akt">AKT — Agro Karsa Terpadu</div></div>
   <div class="g4" id="kpiAKT"></div>
   <div class="g2e">
     <div class="card"><div class="card-hd">🟢 Transaction Status — AKT</div><table class="tbl" id="statusAKT"></table></div>
     <div class="card"><div class="card-hd">💰 Revenue Detail — AKT</div><table class="tbl"><thead class="navy"><tr><th>Acquirer</th><th class="r">GMV</th><th class="r">Settled</th><th class="r">Revenue</th></tr></thead><tbody id="revAKT"></tbody><tfoot id="revFootAKT"></tfoot></table></div>
   </div>
 
-  <div class="sec-div"><div class="sec-div-line"></div><div class="sec-div-title gcu">🟢 GCU — Gemilang Cipta Utama</div><div class="sec-div-line"></div></div>
+  <div class="sec-div"><div class="sec-div-title gcu">GCU — Gemilang Cipta Utama</div></div>
   <div class="g4" id="kpiGCU"></div>
   <div class="g2e">
     <div class="card"><div class="card-hd">🟢 Transaction Status — GCU</div><table class="tbl" id="statusGCU"></table></div>
     <div class="card"><div class="card-hd">💰 Revenue Detail — GCU</div><table class="tbl"><thead class="navy"><tr><th>Acquirer</th><th class="r">GMV</th><th class="r">Settled</th><th class="r">Revenue</th></tr></thead><tbody id="revGCU"></tbody><tfoot id="revFootGCU"></tfoot></table></div>
   </div>
 
-  <div class="sec-div"><div class="sec-div-line"></div><div class="sec-div-title total">⭐ Total Gabungan — AKT + GCU</div><div class="sec-div-line"></div></div>
-  <div class="g4" id="kpiTotal" style="margin-bottom:10px"></div>
+  <!-- Daily Report -->
+  <div class="sec-div"><div class="sec-div-title akt">📅 Daily Report — Yesterday / MTD / YTD</div></div>
+  <div class="g2e" style="margin-bottom:10px">
+    <div class="card">
+      <div class="card-hd">AKT — Agro Karsa Terpadu</div>
+      <table class="tbl"><thead class="navy"><tr><th>Description</th><th class="r">Yesterday</th><th class="r">MTD</th><th class="r">YTD</th></tr></thead><tbody id="mtdAKT"></tbody></table>
+    </div>
+    <div class="card">
+      <div class="card-hd">GCU — Gemilang Cipta Utama</div>
+      <table class="tbl"><thead class="navy"><tr><th>Description</th><th class="r">Yesterday</th><th class="r">MTD</th><th class="r">YTD</th></tr></thead><tbody id="mtdGCU"></tbody></table>
+    </div>
+  </div>
+
+  <!-- Total AKT + GCU -->
+  <div class="sec-div"><div class="sec-div-title total">Total AKT + GCU</div></div>
+  <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:10px" id="kpiTotal"></div>
   <div class="card" style="margin-bottom:10px">
-    <div class="card-hd">📊 Ringkasan Perbandingan AKT vs GCU</div>
+    <div class="card-hd">📊 Summary AKT & GCU</div>
     <table class="sum-tbl"><thead><tr><th>Metrik</th><th>AKT</th><th>GCU</th><th>Total</th></tr></thead><tbody id="summaryBody"></tbody></table>
   </div>
+
+  <!-- Actual vs Budget -->
+  <div class="sec-div"><div class="sec-div-title akt">📊 Actual vs Budget</div></div>
+  <div class="g2e" style="margin-bottom:10px">
+    <div class="card">
+      <div class="card-hd" id="avbHdAKT">Actual vs Budget — AKT</div>
+      <div class="avb-kpi-row" id="avbKpiAKT" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px"></div>
+      <table class="tbl"><thead class="navy"><tr><th>Keterangan</th><th class="r">Budget</th><th class="r">Forecast</th><th class="r">Actual</th><th class="r">Below/Above</th></tr></thead><tbody id="avbTblAKT"></tbody></table>
+    </div>
+    <div class="card">
+      <div class="card-hd" id="avbHdGCU">Actual vs Budget — GCU</div>
+      <div class="avb-kpi-row" id="avbKpiGCU" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px"></div>
+      <table class="tbl"><thead class="navy"><tr><th>Keterangan</th><th class="r">Budget</th><th class="r">Forecast</th><th class="r">Actual</th><th class="r">Below/Above</th></tr></thead><tbody id="avbTblGCU"></tbody></table>
+    </div>
+  </div>
+  <!-- Top Merchants (hanya di web, tidak di PDF section ini) -->
+
   <div class="footer" id="footer"></div>
 </div>
 
@@ -154,6 +185,8 @@ const MO=['January','February','March','April','May','June','July','August','Sep
 const MOS=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
 const p2=s=>String(s).padStart(2,'0');
 const rpF=n=>{if(n==null||isNaN(n))return '—';const v=Math.round(n);return(v<0?'-':'')+'Rp '+Math.abs(v).toLocaleString('id-ID');};
+const rpFull=n=>{if(n==null||isNaN(n))return '-';const v=Math.round(n);return(v<0?'-':'')+'Rp '+Math.abs(v).toLocaleString('id-ID');};
+const nFmt=n=>(n==null||isNaN(n))?'0':Math.round(n).toLocaleString('id-ID');
 const rpS=n=>{if(n==null||isNaN(n))return '—';const v=Math.round(n),a=Math.abs(v),s=v<0?'-':'';if(a>=1e9)return s+'Rp '+(a/1e9).toFixed(2)+'M';if(a>=1e6)return s+'Rp '+(a/1e6).toFixed(1)+'jt';return s+'Rp '+a.toLocaleString('id-ID');};
 const nF=n=>(n==null||isNaN(n))?'—':Math.round(n).toLocaleString('id-ID');
 const pct=(a,b)=>b>0?(a/b*100).toFixed(2)+'%':'0.00%';
@@ -219,7 +252,7 @@ async function loadDate(dateISO){
     const[y,mo]=dateISO.split('-');
     const ms=`${y}-${mo}-01`,ys=`${y}-01-01`;
     const selFields='select=total_trx_success,gmv,total_mdr,total_chargeback,total_representment,total_dispute,total_transfer_fee,total_amount_transfer,settled_amount';
-    const[sAKT,sGCU,mtdAKT,mtdGCU,ytdAKT,ytdGCU,bfAKT,bfGCU,dsAKT,dsGCU]=await Promise.all([
+    const[sAKT,sGCU,mtdAKT,mtdGCU,ytdAKT,ytdGCU,bfAKT,bfGCU,dsAKT,dsGCU,mcAKT,mcGCU]=await Promise.all([
       sbFetch('daily_summary',`report_date=eq.${dateISO}&limit=1`,'AKT'),
       sbFetch('daily_summary',`report_date=eq.${dateISO}&limit=1`,'GCU'),
       sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${dateISO}&${selFields}`,'AKT'),
@@ -230,12 +263,15 @@ async function loadDate(dateISO){
       sbFetch('budget_forecast','select=month,budget,forecast,budget_per_day,forecast_per_day,start_day&order=month.asc','GCU'),
       sbFetch('daily_summary',`select=report_date,total_revenue&report_date=gte.${ys}&report_date=lte.${dateISO}`,'AKT'),
       sbFetch('daily_summary',`select=report_date,total_revenue&report_date=gte.${ys}&report_date=lte.${dateISO}`,'GCU'),
+      sbFetch('top_merchants',`report_date=eq.${dateISO}&order=rank.asc&limit=5`,'AKT'),
+      sbFetch('top_merchants',`report_date=eq.${dateISO}&order=rank.asc&limit=5`,'GCU'),
     ]);
     cAKT=sAKT[0]||null;cGCU=sGCU[0]||null;
     window._mtdAKT=mtdAKT;window._mtdGCU=mtdGCU;
     window._ytdAKT=ytdAKT;window._ytdGCU=ytdGCU;
     window._bfAKT=bfAKT;window._bfGCU=bfGCU;
     window._dsAKT=dsAKT;window._dsGCU=dsGCU;
+    window._mcAKT=mcAKT;window._mcGCU=mcGCU;
     selectedDate=dateISO;render(cAKT,cGCU,dateISO);
   }catch(e){document.getElementById('errorMsg').textContent=`Gagal: ${e.message}`;showSec('errorPg');}
 }
@@ -247,6 +283,7 @@ function render(akt,gcu,dateISO){
   document.getElementById('footer').textContent=`Auto-generated — Paycloud × AKT & GCU — ${dateStr}`;
   renderKPI('kpiAKT',akt);renderKPI('kpiGCU',gcu);renderStatus('statusAKT',akt);renderStatus('statusGCU',gcu);
   renderRev('revAKT','revFootAKT',akt);renderRev('revGCU','revFootGCU',gcu);renderTotal(akt,gcu);renderSummary(akt,gcu);
+  renderMTDWeb();renderAvbWeb();
   document.getElementById('btnPdf').style.display='inline-flex';document.getElementById('btnXls').style.display='inline-flex';
   showSec('mainDash');
 }
@@ -275,16 +312,33 @@ function renderRev(bodyId,footId,s){
 }
 
 function renderTotal(akt,gcu){
-  const tM=(akt?.total_merchant||0)+(gcu?.total_merchant||0),tTrx=(akt?.total_trx||0)+(gcu?.total_trx||0),tSuc=(akt?.total_trx_success||0)+(gcu?.total_trx_success||0),tGMV=(akt?.gmv||0)+(gcu?.gmv||0),tSet=(akt?.settled_amount||0)+(gcu?.settled_amount||0),tRev=(akt?.total_revenue||0)+(gcu?.total_revenue||0),tSR=tTrx>0?(tSuc/tTrx*100).toFixed(2):0;
-  document.getElementById('kpiTotal').innerHTML=[{lbl:'Total Merchant',val:nF(tM),sub:'AKT + GCU',cls:'navy'},{lbl:'Total Transaksi',val:nF(tTrx),sub:'AKT + GCU',cls:'navy'},{lbl:'Total GMV',val:rpS(tGMV),sub:'AKT + GCU',cls:'blue'},{lbl:'Total Settled',val:rpS(tSet),sub:'AKT + GCU',cls:'navy'},{lbl:'Total Revenue',val:rpS(tRev),sub:'AKT + GCU',cls:'green'},{lbl:'Success Rate Gab.',val:tSR+'%',sub:`${nF(tSuc)} sukses`,cls:parseFloat(tSR)>=80?'green':'amber'}].map(k=>`<div class="kpi amber-card"><div class="lbl">${k.lbl}</div><div class="val ${k.cls}">${k.val}</div><div class="sub">${k.sub}</div></div>`).join('');
+  const tM=(akt?.total_merchant||0)+(gcu?.total_merchant||0),tTrx=(akt?.total_trx||0)+(gcu?.total_trx||0),tSuc=(akt?.total_trx_success||0)+(gcu?.total_trx_success||0),tGMV=(akt?.gmv||0)+(gcu?.gmv||0),tAmt=Math.abs(akt?.total_amount_transfer||0)+Math.abs(gcu?.total_amount_transfer||0),tRev=(akt?.total_revenue||0)+(gcu?.total_revenue||0),tSR=tTrx>0?(tSuc/tTrx*100).toFixed(2):0;
+  document.getElementById('kpiTotal').innerHTML=[
+    {lbl:'Total Merchant',val:nF(tM),cls:'navy'},
+    {lbl:'Total Trx Sukses',val:nF(tSuc),cls:'green'},
+    {lbl:'Total GMV',val:rpS(tGMV),cls:'blue'},
+    {lbl:'Settle Amount',val:rpS(tAmt),cls:'navy'},
+    {lbl:'Total Revenue',val:rpS(tRev),cls:'green'},
+    {lbl:'Success Rate',val:tSR+'%',cls:parseFloat(tSR)>=80?'green':'amber'}
+  ].map(k=>`<div class="kpi sm amber-card"><div class="lbl">${k.lbl}</div><div class="val ${k.cls}">${k.val}</div></div>`).join('');
 }
 
 function renderSummary(akt,gcu){
-  const tM=(akt?.total_merchant||0)+(gcu?.total_merchant||0),tTrx=(akt?.total_trx||0)+(gcu?.total_trx||0),tSuc=(akt?.total_trx_success||0)+(gcu?.total_trx_success||0),tGMV=(akt?.gmv||0)+(gcu?.gmv||0),tSet=(akt?.settled_amount||0)+(gcu?.settled_amount||0),tRev=(akt?.total_revenue||0)+(gcu?.total_revenue||0);
-  const aktSR=(parseFloat(akt?.success_rate||0)).toFixed(2)+'%',gcuSR=(parseFloat(gcu?.success_rate||0)).toFixed(2)+'%',totSR=tTrx>0?(tSuc/tTrx*100).toFixed(2)+'%':'0%';
-  const aktFR=akt&&akt.total_trx>0?((akt.total_trx_fail/akt.total_trx)*100).toFixed(2)+'%':'—',gcuFR=gcu&&gcu.total_trx>0?((gcu.total_trx_fail/gcu.total_trx)*100).toFixed(2)+'%':'—',totFR=tTrx>0?(((akt?.total_trx_fail||0)+(gcu?.total_trx_fail||0))/tTrx*100).toFixed(2)+'%':'—';
-  const rows=[['Merchant',nF(akt?.total_merchant||0),nF(gcu?.total_merchant||0),nF(tM)],['Total Trx',nF(akt?.total_trx||0),nF(gcu?.total_trx||0),nF(tTrx)],['GMV',rpF(akt?.gmv||0),rpF(gcu?.gmv||0),rpF(tGMV)],['Settled',rpF(akt?.settled_amount||0),rpF(gcu?.settled_amount||0),rpF(tSet)],['Revenue',rpF(akt?.total_revenue||0),rpF(gcu?.total_revenue||0),rpF(tRev)],['Success Rate',aktSR,gcuSR,totSR],['Fail Rate',aktFR,gcuFR,totFR]];
-  document.getElementById('summaryBody').innerHTML=rows.map((r,i)=>`<tr ${i===rows.length-1?'class="total-row"':''}><td><strong>${r[0]}</strong></td><td>${r[1]}</td><td>${r[2]}</td><td><strong>${r[3]}</strong></td></tr>`).join('');
+  const tM=(akt?.total_merchant||0)+(gcu?.total_merchant||0);
+  const tTrx=(akt?.total_trx_success||0)+(gcu?.total_trx_success||0);
+  const tGMV=(akt?.gmv||0)+(gcu?.gmv||0);
+  const tMDR=Math.abs(akt?.total_mdr||0)+Math.abs(gcu?.total_mdr||0);
+  const tAmt=Math.abs(akt?.total_amount_transfer||0)+Math.abs(gcu?.total_amount_transfer||0);
+  const rows=[
+    ['Merchant',       nF(akt?.total_merchant||0),   nF(gcu?.total_merchant||0),   nF(tM)],
+    ['Total Trx',      nF(akt?.total_trx_success||0), nF(gcu?.total_trx_success||0), nF(tTrx)],
+    ['GMV',            rpF(akt?.gmv||0),               rpF(gcu?.gmv||0),               rpF(tGMV)],
+    ['MDR',            rpF(Math.abs(akt?.total_mdr||0)),rpF(Math.abs(gcu?.total_mdr||0)),rpF(tMDR)],
+    ['Settle Amount',  rpF(Math.abs(akt?.total_amount_transfer||0)),rpF(Math.abs(gcu?.total_amount_transfer||0)),rpF(tAmt)],
+  ];
+  document.getElementById('summaryBody').innerHTML=rows.map((r,i)=>
+    `<tr ${i===rows.length-1?'class="total-row"':''}><td><strong>${r[0]}</strong></td><td>${r[1]}</td><td>${r[2]}</td><td><strong>${r[3]}</strong></td></tr>`
+).join('');
 }
 
 function dlExcel(){
@@ -305,10 +359,10 @@ function dlExcel(){
 
 function dlPDF(){
   if(!cAKT&&!cGCU)return;
+  try{
   const{jsPDF}=window.jspdf,doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'}),W=210,M=12;
   const[y,mo,d]=selectedDate?selectedDate.split('-'):['','',''];
   const dateStr=selectedDate?`${parseInt(d)} ${MO[parseInt(mo)-1]} ${y}`:'-';
-  const rpFull=n=>{if(n==null||isNaN(n))return '-';const v=Math.round(n);return(v<0?'-':'')+'Rp '+Math.abs(v).toLocaleString('id-ID');};
   const sumF=(arr,f)=>(arr||[]).reduce((a,r)=>a+(Math.abs(parseFloat(r[f])||0)),0);
 
   // ═══ HALAMAN 1 ═══
@@ -330,7 +384,7 @@ function dlPDF(){
   const tAmt=Math.abs((cAKT?.total_amount_transfer||0))+Math.abs((cGCU?.total_amount_transfer||0));
   const tSR=tTrx>0?(tSuc/tTrx*100).toFixed(2):0;
   // KPI: pakai tSuc untuk Total Trx
-  const kpis6=[['Total Merchant',nF(tM)],['Total Trx Sukses',nF(tSuc)],['Total GMV',rpFull(tGMV)],['Settle Amount',rpFull(tAmt)],['Total Revenue',rpFull(tRev)],['Success Rate',tSR+'%']];
+  const kpis6=[['Total Merchant',nFmt(tM)],['Total Trx Sukses',nFmt(tSuc)],['Total GMV',rpFull(tGMV)],['Settle Amount',rpFull(tAmt)],['Total Revenue',rpFull(tRev)],['Success Rate',tSR+'%']];
   const bw6=(W-M*2-10)/6;
   kpis6.forEach((k,i)=>{const x=M+i*(bw6+2);doc.setFillColor(255,251,235);doc.roundedRect(x,y1,bw6,13,1.5,1.5,'F');doc.setDrawColor(253,230,138);doc.roundedRect(x,y1,bw6,13,1.5,1.5,'S');doc.setTextColor(146,64,14);doc.setFontSize(5.5);doc.setFont('helvetica','normal');doc.text(k[0].toUpperCase(),x+2,y1+4.5);doc.setTextColor(27,43,75);doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.text(k[1],x+2,y1+11);});
   y1+=17;
@@ -344,9 +398,9 @@ function dlPDF(){
   const aktSuc=cAKT?.total_trx_success||0,gcuSuc=cGCU?.total_trx_success||0;
   const aktFail=cAKT?.total_trx_fail||0,gcuFail=cGCU?.total_trx_fail||0;
   const combSuc=aktSuc+gcuSuc,combFail=aktFail+gcuFail;
-  [['SUCCESS',nF(aktSuc),nF(gcuSuc),nF(combSuc),combTot>0?(combSuc/combTot*100).toFixed(2)+'%':'-',209,250,229,6,95,70],
-   ['FAIL',nF(aktFail),nF(gcuFail),nF(combFail),combTot>0?(combFail/combTot*100).toFixed(2)+'%':'-',254,226,226,153,27,27],
-   ['TOTAL',nF(aktTot),nF(gcuTot),nF(combTot),'100.00%',241,245,249,15,23,42]
+  [['SUCCESS',nFmt(aktSuc),nFmt(gcuSuc),nFmt(combSuc),combTot>0?(combSuc/combTot*100).toFixed(2)+'%':'-',209,250,229,6,95,70],
+   ['FAIL',nFmt(aktFail),nFmt(gcuFail),nFmt(combFail),combTot>0?(combFail/combTot*100).toFixed(2)+'%':'-',254,226,226,153,27,27],
+   ['TOTAL',nFmt(aktTot),nFmt(gcuTot),nFmt(combTot),'100.00%',241,245,249,15,23,42]
   ].forEach(r=>{
     doc.setFillColor(r[5],r[6],r[7]);doc.rect(M,y1-3,W-M*2,5,'F');
     doc.setTextColor(r[8],r[9],r[10]);doc.setFont('helvetica',r[0]==='TOTAL'?'bold':'normal');doc.setFontSize(6);
@@ -402,6 +456,38 @@ function dlPDF(){
   doc.setFillColor(209,250,229);doc.rect(M,y1-3,W-M*2,5,'F');doc.setTextColor(6,95,70);doc.setFont('helvetica','bold');doc.setFontSize(6);
   doc.text('TOTAL',M+2,y1);doc.text(rpFull(rgmv),rc1,y1,{align:'right'});doc.text(rpFull(ramt),rc2,y1,{align:'right'});doc.text(rpFull(rrev),rc3,y1,{align:'right'});
 
+  // Top Merchants
+  y1+=6;
+  if(y1<230){
+    doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(15,23,42);doc.text('Top Merchants by Transaction Volume',M,y1);y1+=4;
+    // Header tabel
+    doc.setFillColor(27,43,75);doc.rect(M,y1-3,W-M*2,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(6);doc.setFont('helvetica','bold');
+    const tc1=M+10,tc2=M+120,tc3=M+145,tc4=M+W-M*2-1;
+    doc.text('#',M+2,y1);doc.text('Merchant',tc1,y1);doc.text('Trx',tc2,y1,{align:'right'});doc.text('Volume',tc4,y1,{align:'right'});y1+=5;
+    // AKT
+    const mcA=window._mcAKT||[],mcG=window._mcGCU||[];
+    if(mcA.length){
+      doc.setFillColor(219,234,254);doc.rect(M,y1-3,W-M*2,4,'F');doc.setTextColor(27,43,75);doc.setFontSize(5.5);doc.setFont('helvetica','bold');
+      doc.text('AKT - Agro Karsa Terpadu',M+2,y1);y1+=4;
+      mcA.forEach((m,i)=>{
+        if(y1>272)return;
+        doc.setFillColor(i%2===0?248:255,i%2===0?250:255,i%2===0?252:255);doc.rect(M,y1-3,W-M*2,5,'F');
+        doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);
+        doc.text(String(i+1),M+2,y1);doc.text((m.merchant_name||'-').slice(0,45),tc1,y1);doc.text(nFmt(m.total_trx),tc2,y1,{align:'right'});doc.text(rpFull(m.total_amount),tc4,y1,{align:'right'});y1+=5;
+      });
+    }
+    if(mcG.length&&y1<265){
+      doc.setFillColor(209,250,229);doc.rect(M,y1-3,W-M*2,4,'F');doc.setTextColor(6,95,70);doc.setFontSize(5.5);doc.setFont('helvetica','bold');
+      doc.text('GCU - Gemilang Cipta Utama',M+2,y1);y1+=4;
+      mcG.forEach((m,i)=>{
+        if(y1>278)return;
+        doc.setFillColor(i%2===0?240:255,i%2===0?253:255,i%2===0?244:255);doc.rect(M,y1-3,W-M*2,5,'F');
+        doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);
+        doc.text(String(i+1),M+2,y1);doc.text((m.merchant_name||'-').slice(0,45),tc1,y1);doc.text(nFmt(m.total_trx),tc2,y1,{align:'right'});doc.text(rpFull(m.total_amount),tc4,y1,{align:'right'});y1+=5;
+      });
+    }
+  }
+
   // Footer hal 1
   doc.setFillColor(27,43,75);doc.rect(0,284,W,13,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','normal');
   doc.text(`Auto-generated - Paycloud x AKT & GCU - ${dateStr} | Hal. 1/2`,W/2,291,{align:'center'});
@@ -412,9 +498,9 @@ function dlPDF(){
   doc.text('Actual vs Budget - AKT & GCU',W/2,10,{align:'center'});doc.setFontSize(8);doc.setFont('helvetica','normal');
   doc.text(`Data: ${dateStr}`,W/2,18,{align:'center'});y2=27;
 
-  // KPI Gabungan di halaman AvB
-  kpis6.forEach((k,i)=>{const x=M+i*(bw6+2);doc.setFillColor(255,251,235);doc.roundedRect(x,y2,bw6,13,1.5,1.5,'F');doc.setDrawColor(253,230,138);doc.roundedRect(x,y2,bw6,13,1.5,1.5,'S');doc.setTextColor(146,64,14);doc.setFontSize(5.5);doc.setFont('helvetica','normal');doc.text(k[0].toUpperCase(),x+2,y2+4.5);doc.setTextColor(27,43,75);doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.text(k[1],x+2,y2+11);});
-  y2+=20;
+  // KPI gabungan ringkas di atas AvB (6 box kecil)
+  kpis6.forEach((k,i)=>{const x=M+i*(bw6+2);doc.setFillColor(255,251,235);doc.roundedRect(x,y2,bw6,11,1.5,1.5,'F');doc.setDrawColor(253,230,138);doc.roundedRect(x,y2,bw6,11,1.5,1.5,'S');doc.setTextColor(146,64,14);doc.setFontSize(5);doc.setFont('helvetica','normal');doc.text(k[0].toUpperCase(),x+2,y2+4);doc.setTextColor(27,43,75);doc.setFontSize(6.5);doc.setFont('helvetica','bold');doc.text(k[1],x+2,y2+9);});
+  y2+=15;
 
   function drawAvb(bf,ds,ptName){
     if(!bf||!bf.length){
@@ -434,6 +520,14 @@ function dlPDF(){
     doc.setFillColor(27,43,75);doc.rect(M,y2-3,W-M*2,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','bold');
     doc.text(`Actual vs Budget - ${MOI[mo2]} ${yr2} (${ptName})`,M+2,y2);y2+=5;
 
+    // 4 KPI per PT
+    const bCur2=bfCur?parseFloat(bfCur.budget):0,fCur2=bfCur?parseFloat(bfCur.forecast):0;
+    const ach2=bCur2>0?(actualMtd/bCur2*100).toFixed(2)+'%':'--';
+    const kpi4=[['Budget',rpFull(bCur2)],['Forecast',rpFull(fCur2)],['Actual MTD',rpFull(actualMtd)],['Achievement',ach2]];
+    const kw4=(W-M*2-6)/4;
+    kpi4.forEach((k,i)=>{const x=M+i*(kw4+2);doc.setFillColor(239,246,255);doc.roundedRect(x,y2,kw4,12,1.5,1.5,'F');doc.setTextColor(100,116,139);doc.setFontSize(6);doc.setFont('helvetica','normal');doc.text(k[0].toUpperCase(),x+2,y2+4.5);doc.setTextColor(i===3?245:27,i===3?158:43,i===3?11:75);doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.text(k[1],x+2,y2+10);});
+    y2+=16;
+
     if(bfCur){
       const budget=parseFloat(bfCur.budget),bpd=parseFloat(bfCur.budget_per_day),fpd=parseFloat(bfCur.forecast_per_day);
       const startDay=parseInt(bfCur.start_day)||1,activeDays=Math.max(0,curDay-startDay+1);
@@ -446,7 +540,7 @@ function dlPDF(){
       const ac1=M+78,ac2=M+114,ac3=M+150,ac4=M+W-M*2-1;
       doc.text('Keterangan',M+2,y2);doc.text('Budget',ac1,y2,{align:'right'});doc.text('Forecast',ac2,y2,{align:'right'});doc.text('Actual',ac3,y2,{align:'right'});doc.text('Below/Above',ac4,y2,{align:'right'});y2+=5;
       [[`As of ${curDay} ${MOI[mo2]} ${yr2}`,rpFull(bSoFar),rpFull(fSoFar),rpFull(actualMtd),pct1.toFixed(2)+'%',248,250,252],
-       [`${dIM} ${MOI[mo2]} ${yr2} (proj)`,rpFull(budget),rpFull(parseFloat(bfCur.forecast)),rpFull(proj),pct2.toFixed(2)+'%',189,215,238]
+       [`${dIM} ${MOI[mo2]} ${yr2}`,rpFull(budget),rpFull(parseFloat(bfCur.forecast)),rpFull(proj),pct2.toFixed(2)+'%',189,215,238]
       ].forEach(r=>{
         doc.setFillColor(r[5],r[6],r[7]);doc.rect(M,y2-3,W-M*2,5,'F');
         doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);
@@ -489,8 +583,70 @@ function dlPDF(){
   doc.setFillColor(27,43,75);doc.rect(0,284,W,13,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','normal');
   doc.text(`Auto-generated - Paycloud x AKT & GCU - ${dateStr} | Hal. 2/2`,W/2,291,{align:'center'});
   doc.save(`Dashboard_Combined_${(selectedDate||'').replace(/-/g,'')}.pdf`);
+  }catch(err){alert('PDF Error: '+err.message);console.error(err);}
 }
 
+
+function renderMTDWeb(){
+  const sumF=(arr,f)=>(arr||[]).reduce((a,r)=>a+(Math.abs(parseFloat(r[f])||0)),0);
+  function buildRows(s,mtd,ytd){
+    if(!s) return '<tr><td colspan="4" style="text-align:center;color:var(--text3)">Tidak ada data</td></tr>';
+    const mdr=Math.abs(s.total_mdr||0),cb=Math.abs(s.total_chargeback||0),trf=Math.abs(s.total_transfer_fee||0),amt=Math.abs(s.total_amount_transfer||0);
+    return [
+      ['Total Trx',nF(s.total_trx_success||0),nF(sumF(mtd,'total_trx_success')),nF(sumF(ytd,'total_trx_success'))],
+      ['Amount (GMV)',rpF(s.gmv||0),rpF(sumF(mtd,'gmv')),rpF(sumF(ytd,'gmv'))],
+      ['MDR',rpF(mdr),rpF(sumF(mtd,'total_mdr')),rpF(sumF(ytd,'total_mdr'))],
+      ['Chargeback',cb?rpF(cb):'-',sumF(mtd,'total_chargeback')?rpF(sumF(mtd,'total_chargeback')):'-','-'],
+      ['Biaya Transfer',rpF(trf),rpF(sumF(mtd,'total_transfer_fee')),rpF(sumF(ytd,'total_transfer_fee'))],
+      ['Settle Amount',rpF(amt),rpF(sumF(mtd,'total_amount_transfer')),rpF(sumF(ytd,'total_amount_transfer'))],
+    ].map((r,i)=>`<tr ${i===5?'class="hl2"':''}><td>${r[0]}</td><td class="r">${r[1]}</td><td class="r">${r[2]}</td><td class="r">${r[3]}</td></tr>`).join('');
+  }
+  document.getElementById('mtdAKT').innerHTML=buildRows(cAKT,window._mtdAKT,window._ytdAKT);
+  document.getElementById('mtdGCU').innerHTML=buildRows(cGCU,window._mtdGCU,window._ytdGCU);
+}
+
+function renderAvbWeb(){
+  const MOI=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const fmt=n=>{if(!n&&n!==0)return '-';const v=Math.round(n);return(v<0?'-':'')+'Rp '+Math.abs(v).toLocaleString('id-ID');};
+  function buildAvb(bf,ds,ptKey,hdId,kpiId,tblId){
+    const curYM=selectedDate?selectedDate.slice(0,7):'';
+    const curDay=selectedDate?parseInt(selectedDate.split('-')[2]):new Date().getDate();
+    const[cy,cm]=curYM.split('-');const mo=parseInt(cm)-1,yr=parseInt(cy);
+    document.getElementById(hdId).textContent=`Actual vs Budget — ${MOI[mo]} ${yr} (${ptKey})`;
+    if(!bf||!bf.length){
+      document.getElementById(kpiId).innerHTML='<div style="color:var(--text3);font-size:11px;padding:4px 0">Data budget belum tersedia</div>';
+      document.getElementById(tblId).innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text3)">—</td></tr>';
+      return;
+    }
+    const actualByMonth={};(ds||[]).forEach(r=>{const ym=r.report_date.slice(0,7);if(!actualByMonth[ym])actualByMonth[ym]=0;actualByMonth[ym]+=parseFloat(r.total_revenue||0);});
+    const bfCur=bf.find(b=>b.month===curYM);
+    const actualMtd=actualByMonth[curYM]||0;
+    const budget=bfCur?parseFloat(bfCur.budget):0;
+    const forecast=bfCur?parseFloat(bfCur.forecast):0;
+    const achieve=budget>0?(actualMtd/budget*100).toFixed(2)+'%':'-';
+    // KPI 4 box
+    document.getElementById(kpiId).innerHTML=[
+      {lbl:'Budget',val:fmt(budget)},{lbl:'Forecast',val:fmt(forecast)},
+      {lbl:'Actual MTD',val:fmt(actualMtd)},{lbl:'Achievement',val:achieve,amber:true}
+    ].map(k=>`<div class="kpi sm"><div class="lbl">${k.lbl}</div><div class="val ${k.amber?'amber':'navy'}">${k.val}</div></div>`).join('');
+    // Tabel
+    if(bfCur){
+      const bpd=parseFloat(bfCur.budget_per_day),fpd=parseFloat(bfCur.forecast_per_day);
+      const startDay=parseInt(bfCur.start_day)||1,activeDays=Math.max(0,curDay-startDay+1);
+      const bSoFar=bpd*activeDays,fSoFar=fpd*activeDays;
+      const dIM=new Date(yr,mo+1,0).getDate(),proj=actualMtd+(fpd*Math.max(0,dIM-curDay));
+      const pct1=bSoFar>0?((bSoFar-actualMtd)/bSoFar*100).toFixed(2)+'%':'-';
+      const pct2=budget>0?((budget-proj)/budget*100).toFixed(2)+'%':'-';
+      document.getElementById(tblId).innerHTML=`
+        <tr><td>As of ${curDay} ${MOI[mo]} ${yr}</td><td class="r">${fmt(bSoFar)}</td><td class="r">${fmt(fSoFar)}</td><td class="r"><strong>${fmt(actualMtd)}</strong></td><td class="r">${pct1}</td></tr>
+        <tr class="ttl"><td>${dIM} ${MOI[mo]} ${yr}</td><td class="r">${fmt(budget)}</td><td class="r">${fmt(forecast)}</td><td class="r">${fmt(proj)}</td><td class="r">${pct2}</td></tr>`;
+    } else {
+      document.getElementById(tblId).innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text3)">Tidak ada data budget untuk bulan ini</td></tr>';
+    }
+  }
+  buildAvb(window._bfAKT,window._dsAKT,'AKT','avbHdAKT','avbKpiAKT','avbTblAKT');
+  buildAvb(window._bfGCU,window._dsGCU,'GCU','avbHdGCU','avbKpiGCU','avbTblGCU');
+}
 
 init();
 </script>
