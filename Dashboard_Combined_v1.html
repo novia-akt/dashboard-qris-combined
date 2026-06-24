@@ -216,8 +216,27 @@ async function init(){
 async function loadDate(dateISO){
   showSec('loadingPg');
   try{
-    const[sAKT,sGCU]=await Promise.all([sbFetch('daily_summary',`report_date=eq.${dateISO}&limit=1`,'AKT'),sbFetch('daily_summary',`report_date=eq.${dateISO}&limit=1`,'GCU')]);
-    cAKT=sAKT[0]||null;cGCU=sGCU[0]||null;selectedDate=dateISO;render(cAKT,cGCU,dateISO);
+    const[y,mo]=dateISO.split('-');
+    const ms=`${y}-${mo}-01`,ys=`${y}-01-01`;
+    const selFields='select=total_trx_success,gmv,total_mdr,total_chargeback,total_representment,total_dispute,total_transfer_fee,total_amount_transfer,settled_amount';
+    const[sAKT,sGCU,mtdAKT,mtdGCU,ytdAKT,ytdGCU,bfAKT,bfGCU,dsAKT,dsGCU]=await Promise.all([
+      sbFetch('daily_summary',`report_date=eq.${dateISO}&limit=1`,'AKT'),
+      sbFetch('daily_summary',`report_date=eq.${dateISO}&limit=1`,'GCU'),
+      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${dateISO}&${selFields}`,'AKT'),
+      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${dateISO}&${selFields}`,'GCU'),
+      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${dateISO}&${selFields}`,'AKT'),
+      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${dateISO}&${selFields}`,'GCU'),
+      sbFetch('budget_forecast','select=month,budget,forecast,budget_per_day,forecast_per_day,start_day&order=month.asc','AKT'),
+      sbFetch('budget_forecast','select=month,budget,forecast,budget_per_day,forecast_per_day,start_day&order=month.asc','GCU'),
+      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${dateISO}&select=report_date,total_revenue`,'AKT'),
+      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${dateISO}&select=report_date,total_revenue`,'GCU'),
+    ]);
+    cAKT=sAKT[0]||null;cGCU=sGCU[0]||null;
+    window._mtdAKT=mtdAKT;window._mtdGCU=mtdGCU;
+    window._ytdAKT=ytdAKT;window._ytdGCU=ytdGCU;
+    window._bfAKT=bfAKT;window._bfGCU=bfGCU;
+    window._dsAKT=dsAKT;window._dsGCU=dsGCU;
+    selectedDate=dateISO;render(cAKT,cGCU,dateISO);
   }catch(e){document.getElementById('errorMsg').textContent=`Gagal: ${e.message}`;showSec('errorPg');}
 }
 
@@ -286,40 +305,190 @@ function dlExcel(){
 
 function dlPDF(){
   if(!cAKT&&!cGCU)return;
-  const{jsPDF}=window.jspdf,doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'}),W=210,M=14;
+  const{jsPDF}=window.jspdf,doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'}),W=210,M=12;
   const[y,mo,d]=selectedDate?selectedDate.split('-'):['','',''];
   const dateStr=selectedDate?`${parseInt(d)} ${MO[parseInt(mo)-1]} ${y}`:'—';
+  const sumF=(arr,f)=>(arr||[]).reduce((a,r)=>a+(Math.abs(parseFloat(r[f])||0)),0);
 
-  function addPTPage(s,ptName,isFirst){
-    if(!isFirst)doc.addPage();let yy=0;
-    doc.setFillColor(27,43,75);doc.rect(0,0,W,24,'F');doc.setTextColor(255,255,255);doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text(`Daily QRIS Dashboard — ${ptName}`,W/2,12,{align:'center'});doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text(`Data: ${dateStr}`,W/2,20,{align:'center'});yy=30;
-    if(!s){doc.setFontSize(12);doc.setTextColor(100,116,139);doc.text(`Data ${ptName} tidak tersedia`,W/2,yy+20,{align:'center'});return;}
-    const sr=parseFloat(s.success_rate)||0,fr=s.total_trx>0?((s.total_trx_fail/s.total_trx)*100).toFixed(2):'0.00';
-    const kpis=[['Active Merchant',nF(s.total_merchant)],['Successful Trx',nF(s.total_trx_success)],['Success Rate',sr+'%'],['Total GMV',rpS(s.gmv)],['Settled Amount',rpS(s.settled_amount)],['Total Revenue',rpS(s.total_revenue)],['Avg Transaction',rpS(s.avg_trx_value)],['Fail Rate',fr+'%']];
-    const bw=(W-M*2-15)/4;
-    for(let row=0;row<2;row++){for(let col=0;col<4;col++){const k=kpis[row*4+col];if(!k)continue;const x=M+col*(bw+5);doc.setFillColor(241,245,249);doc.roundedRect(x,yy,bw,14,2,2,'F');doc.setTextColor(100,116,139);doc.setFontSize(6);doc.setFont('helvetica','normal');doc.text(k[0],x+3,yy+5);doc.setTextColor(27,43,75);doc.setFontSize(9);doc.setFont('helvetica','bold');doc.text(k[1],x+3,yy+12);}yy+=18;}yy+=4;
-    doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(15,23,42);doc.text('Transaction Status',M,yy);yy+=5;
-    [['Status','Count','%'],['SUCCESS',nF(s.total_trx_success),pct(s.total_trx_success,s.total_trx)],['FAIL',nF(s.total_trx_fail),pct(s.total_trx_fail,s.total_trx)],['TOTAL',nF(s.total_trx),'100.00%']].forEach((r,ri)=>{doc.setFillColor(ri===0?27:ri===3?241:255,ri===0?43:ri===3?245:255,ri===0?75:ri===3?249:255);doc.rect(M,yy-3,90,6,'F');doc.setTextColor(ri===0?255:15,ri===0?255:23,ri===0?255:42);doc.setFont('helvetica',ri===0||ri===3?'bold':'normal');doc.setFontSize(7);doc.text(r[0],M+2,yy+1);doc.text(r[1],M+55,yy+1,{align:'right'});doc.text(r[2],M+72,yy+1,{align:'right'});yy+=6;});yy+=6;
-    const rev=s.revenue_detail||{};doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(15,23,42);doc.text('Revenue Detail per Acquirer',M,yy);yy+=5;
-    doc.setFillColor(27,43,75);doc.rect(M,yy-3,W-M*2,6,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','bold');doc.text('Acquirer',M+2,yy+1);doc.text('GMV',M+90,yy+1,{align:'right'});doc.text('Settled',M+130,yy+1,{align:'right'});doc.text('Revenue',M+178,yy+1,{align:'right'});yy+=6;
-    let tG=0,tS=0,tR=0;const ent=Object.entries(rev).length?Object.entries(rev):[['Qoin',{gmv:s.gmv,settled:s.settled_amount,revenue:s.total_revenue}]];
-    ent.forEach(([acq,rd],i)=>{tG+=rd.gmv||0;tS+=rd.settled||0;tR+=rd.revenue||0;doc.setFillColor(i%2===0?248:255,i%2===0?250:255,i%2===0?252:255);doc.rect(M,yy-3,W-M*2,6,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(7);doc.text(acq,M+2,yy+1);doc.text(rpF(rd.gmv),M+90,yy+1,{align:'right'});doc.text(rpF(rd.settled),M+130,yy+1,{align:'right'});doc.text(rpF(rd.revenue),M+178,yy+1,{align:'right'});yy+=6;});
-    doc.setFillColor(209,250,229);doc.rect(M,yy-3,W-M*2,6,'F');doc.setTextColor(6,95,70);doc.setFont('helvetica','bold');doc.setFontSize(7);doc.text('TOTAL',M+2,yy+1);doc.text(rpF(tG),M+90,yy+1,{align:'right'});doc.text(rpF(tS),M+130,yy+1,{align:'right'});doc.text(rpF(tR),M+178,yy+1,{align:'right'});
-    doc.setFillColor(27,43,75);doc.rect(0,284,W,13,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','normal');doc.text(`Auto-generated — Paycloud × ${ptName} — ${dateStr}`,W/2,291,{align:'center'});
+  // ═══════════════════════════════════════
+  // HALAMAN 1 — REKONSILIASI
+  // ═══════════════════════════════════════
+  let yy=0;
+  // Header
+  doc.setFillColor(27,43,75);doc.rect(0,0,W,22,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(13);doc.setFont('helvetica','bold');
+  doc.text('Dashboard Gabungan QRIS — AKT & GCU',W/2,10,{align:'center'});
+  doc.setFontSize(8);doc.setFont('helvetica','normal');
+  doc.text(`Data: ${dateStr}`,W/2,18,{align:'center'});
+  yy=27;
+
+  // ── KPI GABUNGAN (6 boxes, 1 baris) ──
+  const tM=(cAKT?.total_merchant||0)+(cGCU?.total_merchant||0);
+  const tTrx=(cAKT?.total_trx||0)+(cGCU?.total_trx||0);
+  const tSuc=(cAKT?.total_trx_success||0)+(cGCU?.total_trx_success||0);
+  const tFail=(cAKT?.total_trx_fail||0)+(cGCU?.total_trx_fail||0);
+  const tGMV=(cAKT?.gmv||0)+(cGCU?.gmv||0);
+  const tSet=(cAKT?.settled_amount||0)+(cGCU?.settled_amount||0);
+  const tRev=(cAKT?.total_revenue||0)+(cGCU?.total_revenue||0);
+  const tSR=tTrx>0?(tSuc/tTrx*100).toFixed(2):0;
+  const tFR=tTrx>0?(tFail/tTrx*100).toFixed(2):0;
+  const kpis6=[['Total Merchant',nF(tM)],['Total Trx',nF(tTrx)],['Total GMV',rpS(tGMV)],['Total Settled',rpS(tSet)],['Total Revenue',rpS(tRev)],['Success Rate',tSR+'%']];
+  const bw6=(W-M*2-10)/6;
+  kpis6.forEach((k,i)=>{const x=M+i*(bw6+2);doc.setFillColor(255,251,235);doc.roundedRect(x,yy,bw6,13,1.5,1.5,'F');doc.setDrawColor(253,230,138);doc.roundedRect(x,yy,bw6,13,1.5,1.5,'S');doc.setTextColor(146,64,14);doc.setFontSize(5.5);doc.setFont('helvetica','normal');doc.text(k[0].toUpperCase(),x+2,yy+4.5);doc.setTextColor(27,43,75);doc.setFontSize(8);doc.setFont('helvetica','bold');doc.text(k[1],x+2,yy+11);});
+  yy+=18;
+
+  // ── MTD/YTD AKT & GCU side by side ──
+  const colW=(W-M*2-4)/2,colR=M+colW+4;
+  function drawMTD(s,mtd,ytd,ptName,xStart,yStart){
+    const mdr=Math.abs(s?.total_mdr||0),cb=Math.abs(s?.total_chargeback||0),rep=Math.abs(s?.total_representment||0),trf=Math.abs(s?.total_transfer_fee||0),amt=Math.abs(s?.total_amount_transfer||0);
+    doc.setFillColor(27,43,75);doc.rect(xStart,yStart-3,colW,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','bold');doc.text(ptName,xStart+2,yStart);
+    yStart+=3;
+    doc.setFillColor(241,245,249);doc.rect(xStart,yStart-3,colW,5,'F');doc.setTextColor(100,116,139);doc.setFontSize(6);doc.setFont('helvetica','bold');
+    doc.text('Description',xStart+2,yStart);doc.text('Yesterday',xStart+colW*0.45,yStart,{align:'right'});doc.text('MTD',xStart+colW*0.72,yStart,{align:'right'});doc.text('YTD',xStart+colW-1,yStart,{align:'right'});
+    yStart+=3;
+    const rows=[
+      ['Total Trx',nF(s?.total_trx_success||0),nF((mtd||[]).reduce((a,r)=>a+(r.total_trx_success||0),0)),nF((ytd||[]).reduce((a,r)=>a+(r.total_trx_success||0),0))],
+      ['GMV',rpS(s?.gmv||0),rpS(sumF(mtd,'gmv')),rpS(sumF(ytd,'gmv'))],
+      ['MDR',rpS(mdr),rpS(sumF(mtd,'total_mdr')),rpS(sumF(ytd,'total_mdr'))],
+      ['CB',cb?rpS(cb):'—',sumF(mtd,'total_chargeback')?rpS(sumF(mtd,'total_chargeback')):'—','—'],
+      ['Transfer Fee',rpS(trf),rpS(sumF(mtd,'total_transfer_fee')),rpS(sumF(ytd,'total_transfer_fee'))],
+      ['Settled',rpS(s?.settled_amount||0),rpS(sumF(mtd,'settled_amount')),rpS(sumF(ytd,'settled_amount'))],
+      ['Amt Transfer',rpS(amt),rpS(sumF(mtd,'total_amount_transfer')),rpS(sumF(ytd,'total_amount_transfer'))],
+    ];
+    rows.forEach((r,i)=>{
+      const isBold=i>=5;
+      if(isBold)doc.setFillColor(189,215,238);else doc.setFillColor(i%2===0?248:255,i%2===0?250:255,i%2===0?252:255);
+      doc.rect(xStart,yStart-3,colW,5,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica',isBold?'bold':'normal');doc.setFontSize(6);
+      doc.text(r[0],xStart+2,yStart);doc.text(r[1],xStart+colW*0.45,yStart,{align:'right'});doc.text(r[2],xStart+colW*0.72,yStart,{align:'right'});doc.text(r[3],xStart+colW-1,yStart,{align:'right'});
+      yStart+=5;
+    });
+    return yStart;
+  }
+  doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(15,23,42);
+  doc.text('Daily Report — Yesterday / MTD / YTD',M,yy);yy+=4;
+  const y1=drawMTD(cAKT,window._mtdAKT,window._ytdAKT,'AKT — Agro Karsa Terpadu',M,yy);
+  const y2=drawMTD(cGCU,window._mtdGCU,window._ytdGCU,'GCU — Gemilang Cipta Utama',colR,yy);
+  yy=Math.max(y1,y2)+4;
+
+  // ── TOTAL GABUNGAN ──
+  doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(15,23,42);doc.text('Total Gabungan — AKT + GCU',M,yy);yy+=4;
+  const totRows=[['GMV',rpF(cAKT?.gmv||0),rpF(cGCU?.gmv||0),rpF(tGMV)],['Settled',rpF(cAKT?.settled_amount||0),rpF(cGCU?.settled_amount||0),rpF(tSet)],['Revenue',rpF(cAKT?.total_revenue||0),rpF(cGCU?.total_revenue||0),rpF(tRev)],['Trx',nF(cAKT?.total_trx||0),nF(cGCU?.total_trx||0),nF(tTrx)]];
+  doc.setFillColor(27,43,75);doc.rect(M,yy-3,W-M*2,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(6);doc.setFont('helvetica','bold');
+  doc.text('Metrik',M+2,yy);doc.text('AKT',M+72,yy,{align:'right'});doc.text('GCU',M+122,yy,{align:'right'});doc.text('TOTAL',M+W-M*2-1,yy,{align:'right'});yy+=5;
+  totRows.forEach((r,i)=>{doc.setFillColor(i%2===0?255:248,i%2===0?251:250,i%2===0?235:252);doc.rect(M,yy-3,W-M*2,5,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.text(r[0],M+2,yy);doc.text(r[1],M+72,yy,{align:'right'});doc.text(r[2],M+122,yy,{align:'right'});doc.setFont('helvetica','bold');doc.setTextColor(146,64,14);doc.text(r[3],M+W-M*2-1,yy,{align:'right'});yy+=5;});
+  yy+=4;
+
+  // ── TRANSACTION STATUS compact ──
+  doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(15,23,42);doc.text('Transaction Status',M,yy);yy+=4;
+  const aktTot=cAKT?.total_trx||0,gcuTot=cGCU?.total_trx||0,combTot=aktTot+gcuTot;
+  const aktSuc=cAKT?.total_trx_success||0,gcuSuc=cGCU?.total_trx_success||0;
+  const aktFail=cAKT?.total_trx_fail||0,gcuFail=cGCU?.total_trx_fail||0;
+  doc.setFillColor(27,43,75);doc.rect(M,yy-3,W-M*2,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(6);doc.setFont('helvetica','bold');
+  doc.text('Status',M+2,yy);doc.text('AKT',M+72,yy,{align:'right'});doc.text('GCU',M+122,yy,{align:'right'});doc.text('Total',M+W-M*2-1,yy,{align:'right'});yy+=5;
+  [['✓ SUCCESS',nF(aktSuc),nF(gcuSuc),nF(aktSuc+gcuSuc)],['✕ FAIL',nF(aktFail),nF(gcuFail),nF(aktFail+gcuFail)],['TOTAL',nF(aktTot),nF(gcuTot),nF(combTot)]].forEach((r,i)=>{
+    if(i===2)doc.setFillColor(241,245,249);else if(i===0)doc.setFillColor(209,250,229);else doc.setFillColor(254,226,226);
+    doc.rect(M,yy-3,W-M*2,5,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica',i===2?'bold':'normal');doc.setFontSize(6);
+    doc.text(r[0],M+2,yy);doc.text(r[1],M+72,yy,{align:'right'});doc.text(r[2],M+122,yy,{align:'right'});doc.text(r[3],M+W-M*2-1,yy,{align:'right'});yy+=5;});
+  yy+=4;
+
+  // ── REVENUE DETAIL ──
+  doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(15,23,42);doc.text('Revenue Detail',M,yy);yy+=4;
+  doc.setFillColor(27,43,75);doc.rect(M,yy-3,W-M*2,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(6);doc.setFont('helvetica','bold');
+  doc.text('PT — Acquirer',M+2,yy);doc.text('GMV',M+90,yy,{align:'right'});doc.text('Settled',M+130,yy,{align:'right'});doc.text('Revenue',M+W-M*2-1,yy,{align:'right'});yy+=5;
+  let rgmv=0,rset=0,rrev=0;
+  [[cAKT,'AKT'],[cGCU,'GCU']].forEach(([s,pt],pi)=>{
+    const rev=s?.revenue_detail||{};
+    const ent=Object.entries(rev).length?Object.entries(rev):[[s?'Qoin':'—',{gmv:s?.gmv||0,settled:s?.settled_amount||0,revenue:s?.total_revenue||0}]];
+    ent.forEach(([acq,rd])=>{rgmv+=rd.gmv||0;rset+=rd.settled||0;rrev+=rd.revenue||0;
+      doc.setFillColor(pi===0?239:240,pi===0?246:253,pi===0?255:244);doc.rect(M,yy-3,W-M*2,5,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);
+      doc.text(`${pt} — ${acq}`,M+2,yy);doc.text(rpF(rd.gmv),M+90,yy,{align:'right'});doc.text(rpF(rd.settled),M+130,yy,{align:'right'});doc.text(rpF(rd.revenue),M+W-M*2-1,yy,{align:'right'});yy+=5;});
+  });
+  doc.setFillColor(209,250,229);doc.rect(M,yy-3,W-M*2,5,'F');doc.setTextColor(6,95,70);doc.setFont('helvetica','bold');doc.setFontSize(6);
+  doc.text('TOTAL',M+2,yy);doc.text(rpF(rgmv),M+90,yy,{align:'right'});doc.text(rpF(rset),M+130,yy,{align:'right'});doc.text(rpF(rrev),M+W-M*2-1,yy,{align:'right'});
+
+  // Footer hal 1
+  doc.setFillColor(27,43,75);doc.rect(0,284,W,13,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','normal');
+  doc.text(`Auto-generated — Paycloud × AKT & GCU — ${dateStr} | Hal. 1/2`,W/2,291,{align:'center'});
+
+  // ═══════════════════════════════════════
+  // HALAMAN 2 — ACTUAL VS BUDGET
+  // ═══════════════════════════════════════
+  doc.addPage();yy=0;
+  doc.setFillColor(27,43,75);doc.rect(0,0,W,22,'F');doc.setTextColor(255,255,255);doc.setFontSize(13);doc.setFont('helvetica','bold');
+  doc.text('Actual vs Budget — AKT & GCU',W/2,10,{align:'center'});doc.setFontSize(8);doc.setFont('helvetica','normal');
+  doc.text(`Data: ${dateStr}`,W/2,18,{align:'center'});yy=27;
+
+  function drawAvb(bf,ds,ptName,yStart){
+    if(!bf||!bf.length){doc.setFontSize(9);doc.setTextColor(100,116,139);doc.text(`Data Budget ${ptName} belum tersedia`,M,yStart+8);return yStart+16;}
+    const now=new Date(),curYM=selectedDate?selectedDate.slice(0,7):`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    const[cy,cm]=curYM.split('-');const curDay=selectedDate?parseInt(selectedDate.split('-')[2]):now.getDate();
+    const mo=parseInt(cm)-1,yr=parseInt(cy);
+    const MOI=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    const actualByMonth={};
+    (ds||[]).forEach(r=>{const ym=r.report_date.slice(0,7);if(!actualByMonth[ym])actualByMonth[ym]=0;actualByMonth[ym]+=parseFloat(r.total_revenue||0);});
+    const bfCur=bf.find(b=>b.month===curYM);
+    const actualMtd=actualByMonth[curYM]||0;
+
+    // Judul PT
+    doc.setFillColor(27,43,75);doc.rect(M,yStart-3,W-M*2,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','bold');
+    doc.text(`Actual vs Budget — ${MOI[mo]} ${yr} (${ptName})`,M+2,yStart);yStart+=5;
+
+    if(bfCur){
+      const budget=parseFloat(bfCur.budget),bpd=parseFloat(bfCur.budget_per_day),fpd=parseFloat(bfCur.forecast_per_day);
+      const startDay=parseInt(bfCur.start_day)||1,activeDays=Math.max(0,curDay-startDay+1);
+      const bSoFar=bpd*activeDays,fSoFar=fpd*activeDays;
+      const dIM=new Date(yr,mo+1,0).getDate(),remainDays=dIM-curDay;
+      const proj=actualMtd+(fpd*remainDays);
+      const pct1=bSoFar>0?((bSoFar-actualMtd)/bSoFar*100):0;
+      const pct2=budget>0?((budget-proj)/budget*100):0;
+      doc.setFillColor(241,245,249);doc.rect(M,yStart-3,W-M*2,5,'F');doc.setTextColor(100,116,139);doc.setFontSize(6);doc.setFont('helvetica','bold');
+      doc.text('Keterangan',M+2,yStart);doc.text('Budget',M+85,yStart,{align:'right'});doc.text('Forecast',M+115,yStart,{align:'right'});doc.text('Actual',M+148,yStart,{align:'right'});doc.text('Below/Above',M+W-M*2-1,yStart,{align:'right'});yStart+=5;
+      [[`As of ${curDay} ${MOI[mo]} ${yr}`,rpF(bSoFar),rpF(fSoFar),rpF(actualMtd),pct1.toFixed(2)+'%'],[`${dIM} ${MOI[mo]} ${yr} (proj)`,rpF(budget),rpF(parseFloat(bfCur.forecast)),rpF(proj),pct2.toFixed(2)+'%']].forEach((r,i)=>{
+        if(i===1)doc.setFillColor(189,215,238);else doc.setFillColor(248,250,252);
+        doc.rect(M,yStart-3,W-M*2,5,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica',i===1?'bold':'normal');doc.setFontSize(6);
+        doc.text(r[0],M+2,yStart);doc.text(r[1],M+85,yStart,{align:'right'});doc.text(r[2],M+115,yStart,{align:'right'});doc.text(r[3],M+148,yStart,{align:'right'});doc.text(r[4],M+W-M*2-1,yStart,{align:'right'});yStart+=5;});
+    } else {
+      doc.setFillColor(248,250,252);doc.rect(M,yStart-3,W-M*2,5,'F');doc.setTextColor(100,116,139);doc.setFontSize(6);doc.setFont('helvetica','normal');
+      doc.text(`Data budget ${ptName} belum tersedia untuk ${curYM}`,M+2,yStart);yStart+=5;
+    }
+    yStart+=3;
+
+    // Monthly Summary
+    doc.setFillColor(27,43,75);doc.rect(M,yStart-3,W-M*2,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','bold');
+    doc.text(`Monthly Summary — Actual vs Budget 2026 (${ptName})`,M+2,yStart);yStart+=5;
+    doc.setFillColor(241,245,249);doc.rect(M,yStart-3,W-M*2,5,'F');doc.setTextColor(100,116,139);doc.setFontSize(6);doc.setFont('helvetica','bold');
+    doc.text('Bulan',M+2,yStart);doc.text('Budget',M+68,yStart,{align:'right'});doc.text('Forecast',M+100,yStart,{align:'right'});doc.text('Actual/Proj',M+135,yStart,{align:'right'});doc.text('Below/Above',M+170,yStart,{align:'right'});doc.text('Status',M+W-M*2-1,yStart,{align:'right'});yStart+=5;
+    const curYM2=selectedDate?selectedDate.slice(0,7):`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    const curDay2=selectedDate?parseInt(selectedDate.split('-')[2]):now.getDate();
+    bf.forEach((b,i)=>{
+      const ym=b.month,[by,bm]=ym.split('-'),bmIdx=parseInt(bm)-1;
+      const budget=parseFloat(b.budget),fore=parseFloat(b.forecast),actual=actualByMonth[ym]||0;
+      const isCur=ym===curYM2,isPast=ym<curYM2;
+      let dispAct,pctV,status;
+      if(isPast){dispAct=rpF(actual);pctV=budget>0?((budget-actual)/budget*100).toFixed(2)+'%':'—';status=actual>=budget?'Above':'Below';}
+      else if(isCur){const dIM2=new Date(parseInt(by),bmIdx+1,0).getDate(),sd=parseInt(b.start_day)||1,ad=Math.max(0,curDay2-sd+1);const proj=actual+(parseFloat(b.forecast_per_day)*Math.max(0,dIM2-curDay2));dispAct=rpF(proj);pctV=budget>0?((budget-proj)/budget*100).toFixed(2)+'%':'—';status='Berjalan';}
+      else{dispAct='—';pctV='—';status='Belum';}
+      if(isCur)doc.setFillColor(255,251,235);else doc.setFillColor(i%2===0?248:255,i%2===0?250:255,i%2===0?252:255);
+      doc.rect(M,yStart-3,W-M*2,5,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica',isCur?'bold':'normal');doc.setFontSize(6);
+      const MOI2=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
+      doc.text(`${MOI2[bmIdx]} ${by}`,M+2,yStart);doc.text(rpF(budget),M+68,yStart,{align:'right'});doc.text(rpF(fore),M+100,yStart,{align:'right'});doc.text(dispAct,M+135,yStart,{align:'right'});doc.text(pctV,M+170,yStart,{align:'right'});
+      if(status==='Above')doc.setTextColor(6,95,70);else if(status==='Below')doc.setTextColor(153,27,27);else doc.setTextColor(146,64,14);
+      doc.text(status,M+W-M*2-1,yStart,{align:'right'});yStart+=5;
+    });
+    return yStart+4;
   }
 
-  addPTPage(cAKT,'AKT',true);addPTPage(cGCU,'GCU',false);
+  yy=drawAvb(window._bfAKT,window._dsAKT,'AKT',yy);
+  yy+=4;
+  drawAvb(window._bfGCU,window._dsGCU,'GCU',yy);
 
-  // Total Gabungan page
-  doc.addPage();let yy=0;
-  doc.setFillColor(245,158,11);doc.rect(0,0,W,24,'F');doc.setTextColor(255,255,255);doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text('Total Gabungan — AKT + GCU',W/2,12,{align:'center'});doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text(`Data: ${dateStr}`,W/2,20,{align:'center'});yy=32;
-  const tM=(cAKT?.total_merchant||0)+(cGCU?.total_merchant||0),tTrx=(cAKT?.total_trx||0)+(cGCU?.total_trx||0),tSuc=(cAKT?.total_trx_success||0)+(cGCU?.total_trx_success||0),tGMV=(cAKT?.gmv||0)+(cGCU?.gmv||0),tSet=(cAKT?.settled_amount||0)+(cGCU?.settled_amount||0),tRev=(cAKT?.total_revenue||0)+(cGCU?.total_revenue||0),tSR=tTrx>0?(tSuc/tTrx*100).toFixed(2):0,tFR=tTrx>0?(((tTrx-tSuc)/tTrx)*100).toFixed(2):0;
-  doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(15,23,42);doc.text('Ringkasan Perbandingan',M,yy);yy+=5;
-  doc.setFillColor(27,43,75);doc.rect(M,yy-3,W-M*2,6,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','bold');doc.text('Metrik',M+2,yy+1);doc.text('AKT',M+70,yy+1,{align:'right'});doc.text('GCU',M+120,yy+1,{align:'right'});doc.text('TOTAL',M+178,yy+1,{align:'right'});yy+=6;
-  [['Merchant',nF(cAKT?.total_merchant||0),nF(cGCU?.total_merchant||0),nF(tM)],['Total Trx',nF(cAKT?.total_trx||0),nF(cGCU?.total_trx||0),nF(tTrx)],['GMV',rpF(cAKT?.gmv||0),rpF(cGCU?.gmv||0),rpF(tGMV)],['Settled',rpF(cAKT?.settled_amount||0),rpF(cGCU?.settled_amount||0),rpF(tSet)],['Revenue',rpF(cAKT?.total_revenue||0),rpF(cGCU?.total_revenue||0),rpF(tRev)],['Success Rate',(parseFloat(cAKT?.success_rate||0)).toFixed(2)+'%',(parseFloat(cGCU?.success_rate||0)).toFixed(2)+'%',tSR+'%'],['Fail Rate',cAKT&&cAKT.total_trx>0?((cAKT.total_trx_fail/cAKT.total_trx)*100).toFixed(2)+'%':'—',cGCU&&cGCU.total_trx>0?((cGCU.total_trx_fail/cGCU.total_trx)*100).toFixed(2)+'%':'—',tFR+'%']].forEach((r,i)=>{doc.setFillColor(i%2===0?248:255,i%2===0?250:255,i%2===0?252:255);doc.rect(M,yy-3,W-M*2,6,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(7);doc.text(r[0],M+2,yy+1);doc.text(r[1],M+70,yy+1,{align:'right'});doc.text(r[2],M+120,yy+1,{align:'right'});doc.text(r[3],M+178,yy+1,{align:'right'});yy+=6;});
-  doc.setFillColor(27,43,75);doc.rect(0,284,W,13,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','normal');doc.text(`Auto-generated — Paycloud × AKT & GCU — ${dateStr}`,W/2,291,{align:'center'});
+  // Footer hal 2
+  doc.setFillColor(27,43,75);doc.rect(0,284,W,13,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','normal');
+  doc.text(`Auto-generated — Paycloud × AKT & GCU — ${dateStr} | Hal. 2/2`,W/2,291,{align:'center'});
+
   doc.save(`Dashboard_Combined_${(selectedDate||'').replace(/-/g,'')}.pdf`);
 }
+
 
 init();
 </script>
