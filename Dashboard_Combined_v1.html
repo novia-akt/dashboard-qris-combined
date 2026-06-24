@@ -310,19 +310,17 @@ function dlPDF(){
   const dateStr=selectedDate?`${parseInt(d)} ${MO[parseInt(mo)-1]} ${y}`:'--';
   const rpFull=n=>{if(n==null||isNaN(n))return '--';const v=Math.round(n);return(v<0?'-':'')+'Rp '+Math.abs(v).toLocaleString('id-ID');};
   const sumF=(arr,f)=>(arr||[]).reduce((a,r)=>a+(Math.abs(parseFloat(r[f])||0)),0);
-  const sumFull=(arr,f)=>(arr||[]).reduce((a,r)=>a+(parseFloat(r[f])||0),0);
 
-  // ═══ HALAMAN 1 — REKONSILIASI ═══
+  // ═══ HALAMAN 1 ═══
   let y1=0;
-  // Header
   doc.setFillColor(27,43,75);doc.rect(0,0,W,22,'F');
   doc.setTextColor(255,255,255);doc.setFontSize(13);doc.setFont('helvetica','bold');
-  doc.text('Dashboard QRIS — AKT & GCU',W/2,10,{align:'center'});
+  doc.text('Dashboard QRIS -- AKT & GCU',W/2,10,{align:'center'});
   doc.setFontSize(8);doc.setFont('helvetica','normal');
   doc.text(`Data: ${dateStr}`,W/2,18,{align:'center'});
   y1=27;
 
-  // KPI Gabungan 6 box
+  // KPI Gabungan
   const tM=(cAKT?.total_merchant||0)+(cGCU?.total_merchant||0);
   const tTrx=(cAKT?.total_trx||0)+(cGCU?.total_trx||0);
   const tSuc=(cAKT?.total_trx_success||0)+(cGCU?.total_trx_success||0);
@@ -330,93 +328,100 @@ function dlPDF(){
   const tGMV=(cAKT?.gmv||0)+(cGCU?.gmv||0);
   const tSet=(cAKT?.settled_amount||0)+(cGCU?.settled_amount||0);
   const tRev=(cAKT?.total_revenue||0)+(cGCU?.total_revenue||0);
+  const tAmt=(cAKT?.total_amount_transfer||0)+(cGCU?.total_amount_transfer||0);
   const tSR=tTrx>0?(tSuc/tTrx*100).toFixed(2):0;
-  const tFR=tTrx>0?(tFail/tTrx*100).toFixed(2):0;
-  const kpis6=[['Total Merchant',nF(tM)],['Total Trx',nF(tTrx)],['Total GMV',rpFull(tGMV)],['Total Settled',rpFull(tSet)],['Total Revenue',rpFull(tRev)],['Success Rate',tSR+'%']];
+  const kpis6=[['Total Merchant',nF(tM)],['Total Trx',nF(tTrx)],['Total GMV',rpFull(tGMV)],['Settle Amount',rpFull(Math.abs(tAmt))],['Total Revenue',rpFull(tRev)],['Success Rate',tSR+'%']];
   const bw6=(W-M*2-10)/6;
   kpis6.forEach((k,i)=>{const x=M+i*(bw6+2);doc.setFillColor(255,251,235);doc.roundedRect(x,y1,bw6,13,1.5,1.5,'F');doc.setDrawColor(253,230,138);doc.roundedRect(x,y1,bw6,13,1.5,1.5,'S');doc.setTextColor(146,64,14);doc.setFontSize(5.5);doc.setFont('helvetica','normal');doc.text(k[0].toUpperCase(),x+2,y1+4.5);doc.setTextColor(27,43,75);doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.text(k[1],x+2,y1+11);});
   y1+=17;
 
-  // Transaction Status — compact, di bawah KPI
+  // Transaction Status — dengan %
   doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(15,23,42);doc.text('Transaction Status',M,y1);y1+=4;
   doc.setFillColor(27,43,75);doc.rect(M,y1-3,W-M*2,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(6);doc.setFont('helvetica','bold');
-  doc.text('Status',M+2,y1);doc.text('AKT',M+72,y1,{align:'right'});doc.text('GCU',M+115,y1,{align:'right'});doc.text('Total',M+W-M*2-1,y1,{align:'right'});y1+=5;
-  const aktTot=cAKT?.total_trx||0,gcuTot=cGCU?.total_trx||0;
+  const sc1=M+55,sc2=M+88,sc3=M+121,sc4=M+154,sc5=M+W-M*2-1;
+  doc.text('Status',M+2,y1);doc.text('AKT',sc1,y1,{align:'right'});doc.text('GCU',sc2,y1,{align:'right'});doc.text('Total',sc3,y1,{align:'right'});doc.text('%',sc4,y1,{align:'right'});y1+=5;
+  const aktTot=cAKT?.total_trx||0,gcuTot=cGCU?.total_trx||0,combTot=aktTot+gcuTot;
   const aktSuc=cAKT?.total_trx_success||0,gcuSuc=cGCU?.total_trx_success||0;
   const aktFail=cAKT?.total_trx_fail||0,gcuFail=cGCU?.total_trx_fail||0;
-  [['SUCCESS',nF(aktSuc),nF(gcuSuc),nF(aktSuc+gcuSuc),209,250,229,6,95,70],
-   ['FAIL',nF(aktFail),nF(gcuFail),nF(aktFail+gcuFail),254,226,226,153,27,27],
-   ['TOTAL',nF(aktTot),nF(gcuTot),nF(aktTot+gcuTot),241,245,249,15,23,42]
+  const combSuc=aktSuc+gcuSuc,combFail=aktFail+gcuFail;
+  [['SUCCESS',nF(aktSuc),nF(gcuSuc),nF(combSuc),combTot>0?(combSuc/combTot*100).toFixed(2)+'%':'--',209,250,229,6,95,70],
+   ['FAIL',nF(aktFail),nF(gcuFail),nF(combFail),combTot>0?(combFail/combTot*100).toFixed(2)+'%':'--',254,226,226,153,27,27],
+   ['TOTAL',nF(aktTot),nF(gcuTot),nF(combTot),'100.00%',241,245,249,15,23,42]
   ].forEach(r=>{
-    doc.setFillColor(r[4],r[5],r[6]);doc.rect(M,y1-3,W-M*2,5,'F');
-    doc.setTextColor(r[7],r[8],r[9]);doc.setFont('helvetica',r[0]==='TOTAL'?'bold':'normal');doc.setFontSize(6);
-    doc.text(r[0],M+2,y1);doc.text(r[1],M+72,y1,{align:'right'});doc.text(r[2],M+115,y1,{align:'right'});doc.text(r[3],M+W-M*2-1,y1,{align:'right'});y1+=5;
+    doc.setFillColor(r[5],r[6],r[7]);doc.rect(M,y1-3,W-M*2,5,'F');
+    doc.setTextColor(r[8],r[9],r[10]);doc.setFont('helvetica',r[0]==='TOTAL'?'bold':'normal');doc.setFontSize(6);
+    doc.text(r[0],M+2,y1);doc.text(r[1],sc1,y1,{align:'right'});doc.text(r[2],sc2,y1,{align:'right'});doc.text(r[3],sc3,y1,{align:'right'});doc.text(r[4],sc4,y1,{align:'right'});y1+=5;
   });
   y1+=4;
 
-  // Daily Report AKT — atas bawah, full width, nominal penuh
+  // Daily Report — atas bawah, full width, nominal penuh
+  // Settle Amount = amount_transfer, hapus settled_amount row
   function drawMTDFull(s,mtd,ytd,ptLabel){
+    const mdr=Math.abs(s?.total_mdr||0),cb=Math.abs(s?.total_chargeback||0),trf=Math.abs(s?.total_transfer_fee||0),amt=Math.abs(s?.total_amount_transfer||0);
     doc.setFillColor(27,43,75);doc.rect(M,y1-3,W-M*2,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','bold');
     doc.text(ptLabel,M+2,y1);y1+=5;
     doc.setFillColor(241,245,249);doc.rect(M,y1-3,W-M*2,5,'F');doc.setTextColor(100,116,139);doc.setFontSize(6);doc.setFont('helvetica','bold');
-    const c1=M+55,c2=M+110,c3=M+W-M*2-1;
+    const c1=M+65,c2=M+118,c3=M+W-M*2-1;
     doc.text('Description',M+2,y1);doc.text('Yesterday',c1,y1,{align:'right'});doc.text('MTD',c2,y1,{align:'right'});doc.text('YTD',c3,y1,{align:'right'});y1+=5;
-    const mdr=Math.abs(s?.total_mdr||0),cb=Math.abs(s?.total_chargeback||0),trf=Math.abs(s?.total_transfer_fee||0),amt=Math.abs(s?.total_amount_transfer||0);
     const rows=[
       ['Total Trx',nF(s?.total_trx_success||0),nF(sumF(mtd,'total_trx_success')),nF(sumF(ytd,'total_trx_success')),false],
       ['Amount (GMV)',rpFull(s?.gmv||0),rpFull(sumF(mtd,'gmv')),rpFull(sumF(ytd,'gmv')),false],
       ['MDR',rpFull(mdr),rpFull(sumF(mtd,'total_mdr')),rpFull(sumF(ytd,'total_mdr')),false],
       ['Chargeback',cb?rpFull(cb):'--',sumF(mtd,'total_chargeback')?rpFull(sumF(mtd,'total_chargeback')):'--','--',false],
       ['Biaya Transfer',rpFull(trf),rpFull(sumF(mtd,'total_transfer_fee')),rpFull(sumF(ytd,'total_transfer_fee')),false],
-      ['Settled Amount',rpFull(s?.settled_amount||0),rpFull(sumF(mtd,'settled_amount')),rpFull(sumF(ytd,'settled_amount')),true],
-      ['Amount Transfer',rpFull(amt),rpFull(sumF(mtd,'total_amount_transfer')),rpFull(sumF(ytd,'total_amount_transfer')),true],
+      ['Settle Amount',rpFull(amt),rpFull(sumF(mtd,'total_amount_transfer')),rpFull(sumF(ytd,'total_amount_transfer')),true],
     ];
     rows.forEach((r,i)=>{
-      if(r[4])doc.setFillColor(189,215,238);else doc.setFillColor(i%2===0?248:255,i%2===0?250:255,i%2===0?252:255);
-      doc.rect(M,y1-3,W-M*2,5,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica',r[4]?'bold':'normal');doc.setFontSize(6);
+      if(r[4])doc.setFillColor(209,250,229);else doc.setFillColor(i%2===0?248:255,i%2===0?250:255,i%2===0?252:255);
+      doc.rect(M,y1-3,W-M*2,5,'F');doc.setTextColor(r[4]?6:15,r[4]?95:23,r[4]?70:42);doc.setFont('helvetica',r[4]?'bold':'normal');doc.setFontSize(6);
       doc.text(r[0],M+2,y1);doc.text(r[1],c1,y1,{align:'right'});doc.text(r[2],c2,y1,{align:'right'});doc.text(r[3],c3,y1,{align:'right'});y1+=5;
     });
     y1+=3;
   }
 
-  doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(15,23,42);doc.text('Daily Report — Yesterday / MTD / YTD',M,y1);y1+=4;
-  drawMTDFull(cAKT,window._mtdAKT,window._ytdAKT,'AKT — Agro Karsa Terpadu');
-  drawMTDFull(cGCU,window._mtdGCU,window._ytdGCU,'GCU — Gemilang Cipta Utama');
+  doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(15,23,42);doc.text('Daily Report -- Yesterday / MTD / YTD',M,y1);y1+=4;
+  drawMTDFull(cAKT,window._mtdAKT,window._ytdAKT,'AKT -- Agro Karsa Terpadu');
+  drawMTDFull(cGCU,window._mtdGCU,window._ytdGCU,'GCU -- Gemilang Cipta Utama');
 
-  // Revenue Detail
+  // Revenue Detail — Settled pakai amount_transfer
   doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(15,23,42);doc.text('Revenue Detail',M,y1);y1+=4;
   doc.setFillColor(27,43,75);doc.rect(M,y1-3,W-M*2,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(6);doc.setFont('helvetica','bold');
-  const rc1=M+85,rc2=M+130,rc3=M+W-M*2-1;
-  doc.text('PT - Acquirer',M+2,y1);doc.text('GMV',rc1,y1,{align:'right'});doc.text('Settled',rc2,y1,{align:'right'});doc.text('Revenue',rc3,y1,{align:'right'});y1+=5;
-  let rgmv=0,rset=0,rrev=0;
+  const rc1=M+85,rc2=M+133,rc3=M+W-M*2-1;
+  doc.text('PT - Acquirer',M+2,y1);doc.text('GMV',rc1,y1,{align:'right'});doc.text('Settle Amount',rc2,y1,{align:'right'});doc.text('Revenue',rc3,y1,{align:'right'});y1+=5;
+  let rgmv=0,ramt=0,rrev=0;
   [[cAKT,'AKT'],[cGCU,'GCU']].forEach(([s,pt],pi)=>{
     if(!s)return;
     const rev=s.revenue_detail||{};
-    const ent=Object.entries(rev).length?Object.entries(rev):[['Qoin',{gmv:s.gmv||0,settled:s.settled_amount||0,revenue:s.total_revenue||0}]];
-    ent.forEach(([acq,rd])=>{rgmv+=rd.gmv||0;rset+=rd.settled||0;rrev+=rd.revenue||0;
-      doc.setFillColor(pi===0?239:240,pi===0?246:253,pi===0?255:244);doc.rect(M,y1-3,W-M*2,5,'F');
-      doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);
-      doc.text(`${pt} - ${acq}`,M+2,y1);doc.text(rpFull(rd.gmv),rc1,y1,{align:'right'});doc.text(rpFull(rd.settled),rc2,y1,{align:'right'});doc.text(rpFull(rd.revenue),rc3,y1,{align:'right'});y1+=5;
-    });
+    // Settle Amount = total_amount_transfer per PT
+    const ptAmt=Math.abs(s.total_amount_transfer||0);
+    const ptRev=s.total_revenue||0;
+    const ptGMV=s.gmv||0;
+    rgmv+=ptGMV;ramt+=ptAmt;rrev+=ptRev;
+    const ent=Object.entries(rev).length?Object.entries(rev):[['Qoin',{gmv:ptGMV}]];
+    // Hanya 1 row per PT
+    doc.setFillColor(pi===0?239:240,pi===0?246:253,pi===0?255:244);doc.rect(M,y1-3,W-M*2,5,'F');
+    doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);
+    const acqName=ent.length>0?ent[0][0]:'Qoin';
+    doc.text(`${pt} - ${acqName}`,M+2,y1);doc.text(rpFull(ptGMV),rc1,y1,{align:'right'});doc.text(rpFull(ptAmt),rc2,y1,{align:'right'});doc.text(rpFull(ptRev),rc3,y1,{align:'right'});y1+=5;
   });
   doc.setFillColor(209,250,229);doc.rect(M,y1-3,W-M*2,5,'F');doc.setTextColor(6,95,70);doc.setFont('helvetica','bold');doc.setFontSize(6);
-  doc.text('TOTAL',M+2,y1);doc.text(rpFull(rgmv),rc1,y1,{align:'right'});doc.text(rpFull(rset),rc2,y1,{align:'right'});doc.text(rpFull(rrev),rc3,y1,{align:'right'});
+  doc.text('TOTAL',M+2,y1);doc.text(rpFull(rgmv),rc1,y1,{align:'right'});doc.text(rpFull(ramt),rc2,y1,{align:'right'});doc.text(rpFull(rrev),rc3,y1,{align:'right'});
 
   // Footer hal 1
   doc.setFillColor(27,43,75);doc.rect(0,284,W,13,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','normal');
   doc.text(`Auto-generated -- Paycloud x AKT & GCU -- ${dateStr} | Hal. 1/2`,W/2,291,{align:'center'});
 
-  // ═══ HALAMAN 2 — ACTUAL VS BUDGET ═══
+  // ═══ HALAMAN 2 — AVB ═══
   doc.addPage();let y2=0;
   doc.setFillColor(27,43,75);doc.rect(0,0,W,22,'F');doc.setTextColor(255,255,255);doc.setFontSize(13);doc.setFont('helvetica','bold');
-  doc.text('Actual vs Budget — AKT & GCU',W/2,10,{align:'center'});doc.setFontSize(8);doc.setFont('helvetica','normal');
+  doc.text('Actual vs Budget -- AKT & GCU',W/2,10,{align:'center'});doc.setFontSize(8);doc.setFont('helvetica','normal');
   doc.text(`Data: ${dateStr}`,W/2,18,{align:'center'});y2=27;
 
   function drawAvb(bf,ds,ptName){
     if(!bf||!bf.length){
       doc.setFillColor(254,249,195);doc.rect(M,y2-3,W-M*2,7,'F');
       doc.setTextColor(146,64,14);doc.setFontSize(7);doc.setFont('helvetica','normal');
-      doc.text(`Data Budget/Forecast ${ptName} belum tersedia`,M+2,y2+1);y2+=10;return;
+      doc.text(`Data Budget/Forecast ${ptName} belum tersedia`,M+2,y2+1);y2+=12;return;
     }
     const curYM=selectedDate?selectedDate.slice(0,7):'';
     const curDay=selectedDate?parseInt(selectedDate.split('-')[2]):new Date().getDate();
@@ -427,7 +432,6 @@ function dlPDF(){
     const bfCur=bf.find(b=>b.month===curYM);
     const actualMtd=actualByMonth[curYM]||0;
 
-    // Header AvB bulan ini
     doc.setFillColor(27,43,75);doc.rect(M,y2-3,W-M*2,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','bold');
     doc.text(`Actual vs Budget -- ${MOI[mo2]} ${yr2} (${ptName})`,M+2,y2);y2+=5;
 
@@ -440,7 +444,7 @@ function dlPDF(){
       const pct1=bSoFar>0?((bSoFar-actualMtd)/bSoFar*100):0;
       const pct2=budget>0?((budget-proj)/budget*100):0;
       doc.setFillColor(241,245,249);doc.rect(M,y2-3,W-M*2,5,'F');doc.setTextColor(100,116,139);doc.setFontSize(6);doc.setFont('helvetica','bold');
-      const ac1=M+80,ac2=M+115,ac3=M+148,ac4=M+W-M*2-1;
+      const ac1=M+78,ac2=M+114,ac3=M+150,ac4=M+W-M*2-1;
       doc.text('Keterangan',M+2,y2);doc.text('Budget',ac1,y2,{align:'right'});doc.text('Forecast',ac2,y2,{align:'right'});doc.text('Actual',ac3,y2,{align:'right'});doc.text('Below/Above',ac4,y2,{align:'right'});y2+=5;
       [[`As of ${curDay} ${MOI[mo2]} ${yr2}`,rpFull(bSoFar),rpFull(fSoFar),rpFull(actualMtd),pct1.toFixed(2)+'%',248,250,252],
        [`${dIM} ${MOI[mo2]} ${yr2} (proj)`,rpFull(budget),rpFull(parseFloat(bfCur.forecast)),rpFull(proj),pct2.toFixed(2)+'%',189,215,238]
@@ -450,8 +454,7 @@ function dlPDF(){
         doc.text(r[0],M+2,y2);doc.text(r[1],ac1,y2,{align:'right'});doc.text(r[2],ac2,y2,{align:'right'});doc.text(r[3],ac3,y2,{align:'right'});doc.text(r[4],ac4,y2,{align:'right'});y2+=5;
       });
     } else {
-      doc.setFillColor(248,250,252);doc.rect(M,y2-3,W-M*2,5,'F');doc.setTextColor(100,116,139);doc.setFontSize(6);doc.setFont('helvetica','normal');
-      doc.text(`Tidak ada data budget untuk ${curYM}`,M+2,y2);y2+=5;
+      doc.setFillColor(248,250,252);doc.rect(M,y2-3,W-M*2,5,'F');doc.setTextColor(100,116,139);doc.setFontSize(6);doc.text(`Tidak ada data budget untuk ${curYM}`,M+2,y2);y2+=5;
     }
     y2+=3;
 
@@ -481,10 +484,8 @@ function dlPDF(){
   drawAvb(window._bfAKT,window._dsAKT,'AKT');
   drawAvb(window._bfGCU,window._dsGCU,'GCU');
 
-  // Footer hal 2
   doc.setFillColor(27,43,75);doc.rect(0,284,W,13,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','normal');
   doc.text(`Auto-generated -- Paycloud x AKT & GCU -- ${dateStr} | Hal. 2/2`,W/2,291,{align:'center'});
-
   doc.save(`Dashboard_Combined_${(selectedDate||'').replace(/-/g,'')}.pdf`);
 }
 
