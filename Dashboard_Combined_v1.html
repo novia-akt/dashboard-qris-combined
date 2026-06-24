@@ -465,7 +465,8 @@ function dlPDF(){
     const mc1=M+58,mc2=M+95,mc3=M+132,mc4=M+162,mc5=M+W-M*2-1;
     doc.text('Bulan',M+2,y2);doc.text('Budget',mc1,y2,{align:'right'});doc.text('Forecast',mc2,y2,{align:'right'});doc.text('Actual/Proj',mc3,y2,{align:'right'});doc.text('Below/Above',mc4,y2,{align:'right'});doc.text('Status',mc5,y2,{align:'right'});y2+=5;
     const MOS2=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
-    bf.forEach((b,i)=>{
+    const bfShow=bf.filter(b=>b.month<=curYM);
+    bfShow.forEach((b,i)=>{
       const ym=b.month,[by,bm]=ym.split('-'),bmIdx=parseInt(bm)-1;
       const budget=parseFloat(b.budget),fore=parseFloat(b.forecast),actual=actualByMonth[ym]||0;
       const isCur=ym===curYM,isPast=ym<curYM;
