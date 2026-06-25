@@ -667,6 +667,87 @@ function dlAvbPDF(){
 }
 
 
+function renderMTDWeb(){
+  function buildRows(s,mtd,ytd){
+    if(!s)return '<tr><td colspan="4" style="text-align:center;color:var(--text3)">Tidak ada data</td></tr>';
+    const mdr=Math.abs(s.total_mdr||0),cb=Math.abs(s.total_chargeback||0),trf=Math.abs(s.total_transfer_fee||0),amt=Math.abs(s.total_amount_transfer||0);
+    return [
+      ['Total Trx',nF(s.total_trx_success||0),nF(sumF(mtd,'total_trx_success')),nF(sumF(ytd,'total_trx_success'))],
+      ['Amount (GMV)',rpF(s.gmv||0),rpF(sumF(mtd,'gmv')),rpF(sumF(ytd,'gmv'))],
+      ['MDR',rpF(mdr),rpF(sumF(mtd,'total_mdr')),rpF(sumF(ytd,'total_mdr'))],
+      ['Chargeback',cb?rpF(cb):'—',sumF(mtd,'total_chargeback')?rpF(sumF(mtd,'total_chargeback')):'—','—'],
+      ['Biaya Transfer',rpF(trf),rpF(sumF(mtd,'total_transfer_fee')),rpF(sumF(ytd,'total_transfer_fee'))],
+      ['Settle Amount',rpF(amt),rpF(sumF(mtd,'total_amount_transfer')),rpF(sumF(ytd,'total_amount_transfer'))],
+    ].map((r,i)=>`<tr ${i===5?'class="hl2"':''}><td>${r[0]}</td><td class="r">${r[1]}</td><td class="r">${r[2]}</td><td class="r">${r[3]}</td></tr>`).join('');
+  }
+  document.getElementById('mtdAKT').innerHTML=buildRows(cAKT,window._mtdAKT,window._ytdAKT);
+  document.getElementById('mtdGCU').innerHTML=buildRows(cGCU,window._mtdGCU,window._ytdGCU);
+}
+
+function renderAvbWeb(){
+  const MOI=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const fmt=n=>{if(!n&&n!==0)return '—';const v=Math.round(n);return(v<0?'-':'')+'Rp '+Math.abs(v).toLocaleString('id-ID');};
+  function buildAvb(bf,ds,ptKey,hdId,kpiId,tblId){
+    const curYM=selectedDate?selectedDate.slice(0,7):'';
+    const curDay=selectedDate?parseInt(selectedDate.split('-')[2]):new Date().getDate();
+    const[cy,cm]=curYM.split('-');const mo=parseInt(cm)-1,yr=parseInt(cy);
+    document.getElementById(hdId).textContent=`Actual vs Budget — ${MOI[mo]} ${yr} (${ptKey})`;
+    if(!bf||!bf.length){document.getElementById(kpiId).innerHTML='<div style="color:var(--text3);font-size:11px;padding:4px 0">Data budget belum tersedia</div>';document.getElementById(tblId).innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text3)">—</td></tr>';return;}
+    const actualByMonth={};(ds||[]).forEach(r=>{const ym=r.report_date.slice(0,7);if(!actualByMonth[ym])actualByMonth[ym]=0;actualByMonth[ym]+=parseFloat(r.total_revenue||0);});
+    const bfCur=bf.find(b=>b.month===curYM);
+    const actualMtd=actualByMonth[curYM]||0;
+    const budget=bfCur?parseFloat(bfCur.budget):0,forecast=bfCur?parseFloat(bfCur.forecast):0;
+    const achieve=budget>0?(actualMtd/budget*100).toFixed(2)+'%':'—';
+    document.getElementById(kpiId).innerHTML=[{lbl:'Budget',val:fmt(budget)},{lbl:'Forecast',val:fmt(forecast)},{lbl:'Actual MTD',val:fmt(actualMtd)},{lbl:'Achievement',val:achieve,amber:true}].map(k=>`<div class="kpi sm"><div class="lbl">${k.lbl}</div><div class="val ${k.amber?'amber':'navy'}">${k.val}</div></div>`).join('');
+    if(bfCur){
+      const bpd=parseFloat(bfCur.budget_per_day),fpd=parseFloat(bfCur.forecast_per_day);
+      const startDay=parseInt(bfCur.start_day)||1,activeDays=Math.max(0,curDay-startDay+1);
+      const bSoFar=bpd*activeDays,fSoFar=fpd*activeDays;
+      const dIM=new Date(yr,mo+1,0).getDate(),proj=actualMtd+(fpd*Math.max(0,dIM-curDay));
+      const pct1=bSoFar>0?((bSoFar-actualMtd)/bSoFar*100).toFixed(2)+'%':'—';
+      const pct2=budget>0?((budget-proj)/budget*100).toFixed(2)+'%':'—';
+      document.getElementById(tblId).innerHTML=`<tr><td>As of ${curDay} ${MOI[mo]} ${yr}</td><td class="r">${fmt(bSoFar)}</td><td class="r">${fmt(fSoFar)}</td><td class="r"><strong>${fmt(actualMtd)}</strong></td><td class="r">${pct1}</td></tr><tr class="ttl"><td>${dIM} ${MOI[mo]} ${yr}</td><td class="r">${fmt(budget)}</td><td class="r">${fmt(forecast)}</td><td class="r">${fmt(proj)}</td><td class="r">${pct2}</td></tr>`;
+    } else {document.getElementById(tblId).innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text3)">Tidak ada data budget untuk bulan ini</td></tr>';}
+  }
+  buildAvb(window._bfAKT,window._dsAKT,'AKT','avbHdAKT','avbKpiAKT','avbTblAKT');
+  buildAvb(window._bfGCU,window._dsGCU,'GCU','avbHdGCU','avbKpiGCU','avbTblGCU');
+}
+
+function renderTopMerch(){
+  const mcA=window._mcAKT||[],mcG=window._mcGCU||[];
+  let rows='';
+  if(mcA.length){rows+=`<tr><td colspan="4" style="background:#DBEAFE;font-weight:700;color:#1B2B4B;font-size:10px;padding:6px 8px">AKT — Agro Karsa Terpadu</td></tr>`;mcA.forEach((m,i)=>{rows+=`<tr><td style="color:var(--text3);font-size:11px;font-weight:600;text-align:center">${i+1}</td><td style="padding-left:8px">${m.merchant_name||'—'}</td><td class="r">${nF(m.total_trx)}</td><td class="r" style="color:var(--blue)">${rpF(m.total_amount)}</td></tr>`;});}
+  if(mcG.length){rows+=`<tr><td colspan="4" style="background:#D1FAE5;font-weight:700;color:#065F46;font-size:10px;padding:6px 8px">GCU — Gemilang Cipta Utama</td></tr>`;mcG.forEach((m,i)=>{rows+=`<tr><td style="color:var(--text3);font-size:11px;font-weight:600;text-align:center">${i+1}</td><td style="padding-left:8px">${m.merchant_name||'—'}</td><td class="r">${nF(m.total_trx)}</td><td class="r" style="color:var(--blue)">${rpF(m.total_amount)}</td></tr>`;});}
+  document.getElementById('topMerchBody').innerHTML=rows||'<tr><td colspan="4" style="text-align:center;color:var(--text3)">Tidak ada data</td></tr>';
+}
+
+function renderAvbMonthly(){
+  const MOI=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const MOS=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
+  const curYM=selectedDate?selectedDate.slice(0,7):'';
+  const curDay=selectedDate?parseInt(selectedDate.split('-')[2]):new Date().getDate();
+  function buildMonthly(bf,ds,tbodyId){
+    const el=document.getElementById(tbodyId);if(!el)return;
+    if(!bf||!bf.length){el.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3)">Data budget belum tersedia</td></tr>';return;}
+    const actualByMonth={};(ds||[]).forEach(r=>{const ym=r.report_date.slice(0,7);if(!actualByMonth[ym])actualByMonth[ym]=0;actualByMonth[ym]+=parseFloat(r.total_revenue||0);});
+    const bfShow=bf.filter(b=>b.month<=curYM);
+    el.innerHTML=bfShow.map((b,i)=>{
+      const ym=b.month,[by,bm]=ym.split('-'),bmIdx=parseInt(bm)-1;
+      const budget=parseFloat(b.budget),fore=parseFloat(b.forecast),actual=actualByMonth[ym]||0;
+      const isCur=ym===curYM,isPast=ym<curYM;
+      let dispAct,pctV,statusHtml,rowCls='';
+      if(isPast&&budget===0){dispAct=rpF(actual);pctV='—';statusHtml='<span style="color:var(--text3)">—</span>';}
+      else if(isPast){dispAct=rpF(actual);pctV=budget>0?((budget-actual)/budget*100).toFixed(2)+'%':'—';statusHtml=actual>=budget?'<span style="background:#DCFCE7;color:#166534;padding:1px 7px;border-radius:8px;font-size:9px">Above</span>':'<span style="background:#FEE2E2;color:#991B1B;padding:1px 7px;border-radius:8px;font-size:9px">Below</span>';}
+      else if(isCur){const dIM=new Date(parseInt(by),bmIdx+1,0).getDate(),sd=parseInt(b.start_day)||1,fpd=parseFloat(b.forecast_per_day);const proj=actual+(fpd*Math.max(0,dIM-curDay));dispAct=rpF(proj);pctV=budget>0?((budget-proj)/budget*100).toFixed(2)+'%':'—';statusHtml='<span style="background:#FEF3C7;color:#92400E;padding:1px 7px;border-radius:8px;font-size:9px">Berjalan</span>';rowCls='style="background:#FFFBEB"';}
+      else{dispAct='—';pctV='—';statusHtml='<span style="color:var(--text3)">Belum</span>';}
+      return `<tr ${rowCls}><td>${isCur?'<strong>':''  }${MOS[bmIdx]} ${by}${isCur?'</strong>':''}</td><td class="r">${rpF(budget)}</td><td class="r">${rpF(fore)}</td><td class="r">${dispAct}</td><td class="r">${pctV}</td><td class="r">${statusHtml}</td></tr>`;
+    }).join('');
+  }
+  buildMonthly(window._bfAKT,window._dsAKT,'avbMonthlyAKT');
+  buildMonthly(window._bfGCU,window._dsGCU,'avbMonthlyGCU');
+}
+
+
 // Tab switching
 let currentTab = 'rekon';
 function switchTab(tab) {
