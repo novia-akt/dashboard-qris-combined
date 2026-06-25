@@ -167,8 +167,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   <div class="sec-div"><div class="sec-div-title total">Total AKT + GCU</div></div>
   <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:10px" id="kpiTotal"></div>
   <div class="card" style="margin-bottom:10px">
-    <div class="card-hd">📊 Summary AKT & GCU</div>
-    <table class="sum-tbl"><thead><tr><th>Metrik</th><th>AKT</th><th>GCU</th><th>Total</th></tr></thead><tbody id="summaryBody"></tbody></table>
+    <div class="card-hd">📋 Transaction Summary — AKT & GCU</div>
+    <table class="tbl"><thead class="navy"><tr><th>Description</th><th class="r">Yesterday</th><th class="r">MTD</th><th class="r">YTD</th></tr></thead><tbody id="txSummaryBody"></tbody></table>
   </div>
 
   <!-- Top Merchants -->
@@ -349,21 +349,25 @@ function renderTotal(akt,gcu){
 }
 
 function renderSummary(akt,gcu){
-  const tM=(akt?.total_merchant||0)+(gcu?.total_merchant||0);
-  const tTrx=(akt?.total_trx_success||0)+(gcu?.total_trx_success||0);
-  const tGMV=(akt?.gmv||0)+(gcu?.gmv||0);
-  const tMDR=Math.abs(akt?.total_mdr||0)+Math.abs(gcu?.total_mdr||0);
-  const tAmt=Math.abs(akt?.total_amount_transfer||0)+Math.abs(gcu?.total_amount_transfer||0);
+  const el=document.getElementById('txSummaryBody');
+  if(!el)return;
+  const sfA=(arr,f)=>(arr||[]).reduce((a,r)=>a+(Math.abs(parseFloat(r[f])||0)),0);
+  const sfN=(arr,f)=>(arr||[]).reduce((a,r)=>a+(parseFloat(r[f])||0),0);
+  const mtdA=window._mtdAKT||[],mtdG=window._mtdGCU||[];
+  const ytdA=window._ytdAKT||[],ytdG=window._ytdGCU||[];
+  const yCB=Math.abs(akt?.total_chargeback||0)+Math.abs(gcu?.total_chargeback||0);
+  const mCB=sfA(mtdA,'total_chargeback')+sfA(mtdG,'total_chargeback');
   const rows=[
-    ['Merchant',       nF(akt?.total_merchant||0),   nF(gcu?.total_merchant||0),   nF(tM)],
-    ['Total Trx',      nF(akt?.total_trx_success||0), nF(gcu?.total_trx_success||0), nF(tTrx)],
-    ['GMV',            rpF(akt?.gmv||0),               rpF(gcu?.gmv||0),               rpF(tGMV)],
-    ['MDR',            rpF(Math.abs(akt?.total_mdr||0)),rpF(Math.abs(gcu?.total_mdr||0)),rpF(tMDR)],
-    ['Settle Amount',  rpF(Math.abs(akt?.total_amount_transfer||0)),rpF(Math.abs(gcu?.total_amount_transfer||0)),rpF(tAmt)],
+    ['Total Trx',nF((akt?.total_trx_success||0)+(gcu?.total_trx_success||0)),nF(sfN(mtdA,'total_trx_success')+sfN(mtdG,'total_trx_success')),nF(sfN(ytdA,'total_trx_success')+sfN(ytdG,'total_trx_success')),false],
+    ['Amount (GMV)',rpF((akt?.gmv||0)+(gcu?.gmv||0)),rpF(sfA(mtdA,'gmv')+sfA(mtdG,'gmv')),rpF(sfA(ytdA,'gmv')+sfA(ytdG,'gmv')),false],
+    ['MDR',rpF(Math.abs(akt?.total_mdr||0)+Math.abs(gcu?.total_mdr||0)),rpF(sfA(mtdA,'total_mdr')+sfA(mtdG,'total_mdr')),rpF(sfA(ytdA,'total_mdr')+sfA(ytdG,'total_mdr')),false],
+    ['Chargeback',yCB?rpF(yCB):'—',mCB?rpF(mCB):'—','—',false],
+    ['Biaya Transfer',rpF(Math.abs(akt?.total_transfer_fee||0)+Math.abs(gcu?.total_transfer_fee||0)),rpF(sfA(mtdA,'total_transfer_fee')+sfA(mtdG,'total_transfer_fee')),rpF(sfA(ytdA,'total_transfer_fee')+sfA(ytdG,'total_transfer_fee')),false],
+    ['Settle Amount',rpF(Math.abs(akt?.total_amount_transfer||0)+Math.abs(gcu?.total_amount_transfer||0)),rpF(sfA(mtdA,'total_amount_transfer')+sfA(mtdG,'total_amount_transfer')),rpF(sfA(ytdA,'total_amount_transfer')+sfA(ytdG,'total_amount_transfer')),true],
   ];
-  document.getElementById('summaryBody').innerHTML=rows.map((r,i)=>
-    `<tr ${i===rows.length-1?'class="total-row"':''}><td><strong>${r[0]}</strong></td><td>${r[1]}</td><td>${r[2]}</td><td><strong>${r[3]}</strong></td></tr>`
-).join('');
+  el.innerHTML=rows.map(r=>
+    `<tr ${r[4]?'class="hl2"':''}><td>${r[4]?'<strong>':''}${r[0]}${r[4]?'</strong>':''}</td><td class="r">${r[1]}</td><td class="r">${r[2]}</td><td class="r">${r[3]}</td></tr>`
+  ).join('');
 }
 
 function dlExcel(){
