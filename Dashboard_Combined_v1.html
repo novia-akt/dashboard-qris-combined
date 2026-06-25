@@ -211,6 +211,7 @@ const p2=s=>String(s).padStart(2,'0');
 const rpF=n=>{if(n==null||isNaN(n))return '—';const v=Math.round(n);return(v<0?'-':'')+'Rp '+Math.abs(v).toLocaleString('id-ID');};
 const rpFull=n=>{if(n==null||isNaN(n))return '-';const v=Math.round(n);return(v<0?'-':'')+'Rp '+Math.abs(v).toLocaleString('id-ID');};
 const nFmt=n=>(n==null||isNaN(n))?'0':Math.round(n).toLocaleString('id-ID');
+const sumF=(arr,f)=>(arr||[]).reduce((a,r)=>a+(Math.abs(parseFloat(r[f])||0)),0);
 const rpS=n=>{if(n==null||isNaN(n))return '—';const v=Math.round(n),a=Math.abs(v),s=v<0?'-':'';if(a>=1e9)return s+'Rp '+(a/1e9).toFixed(2)+'M';if(a>=1e6)return s+'Rp '+(a/1e6).toFixed(1)+'jt';return s+'Rp '+a.toLocaleString('id-ID');};
 const nF=n=>(n==null||isNaN(n))?'—':Math.round(n).toLocaleString('id-ID');
 const pct=(a,b)=>b>0?(a/b*100).toFixed(2)+'%':'0.00%';
@@ -384,11 +385,9 @@ function dlExcel(){
 function dlPDF(){
   if(!cAKT&&!cGCU){alert('Data belum dimuat. Pilih tanggal terlebih dahulu.');return;}
   try{
-  const sumF=(arr,f)=>(arr||[]).reduce((a,r)=>a+(Math.abs(parseFloat(r[f])||0)),0);
   const{jsPDF}=window.jspdf,doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'}),W=210,M=12;
   const[y,mo,d]=selectedDate?selectedDate.split('-'):['','',''];
   const dateStr=selectedDate?`${parseInt(d)} ${MO[parseInt(mo)-1]} ${y}`:'-';
-  const sumF=(arr,f)=>(arr||[]).reduce((a,r)=>a+(Math.abs(parseFloat(r[f])||0)),0);
 
   // ═══ HALAMAN 1 ═══
   let y1=0;
@@ -523,7 +522,6 @@ function dlPDF(){
 
 
 function renderMTDWeb(){
-  const sumF=(arr,f)=>(arr||[]).reduce((a,r)=>a+(Math.abs(parseFloat(r[f])||0)),0);
   function buildRows(s,mtd,ytd){
     if(!s) return '<tr><td colspan="4" style="text-align:center;color:var(--text3)">Tidak ada data</td></tr>';
     const mdr=Math.abs(s.total_mdr||0),cb=Math.abs(s.total_chargeback||0),trf=Math.abs(s.total_transfer_fee||0),amt=Math.abs(s.total_amount_transfer||0);
