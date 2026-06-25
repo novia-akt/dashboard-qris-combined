@@ -534,6 +534,7 @@ function dlPDF(){
   }catch(err){alert('PDF Error: '+err.message);console.error(err);}
 
   function drawAvbPage(bf,ds,ptName){
+    const W=210,M=12;
     if(!bf||!bf.length){
       doc.setFillColor(254,249,195);doc.rect(M,yAvb-3,W-M*2,7,'F');
       doc.setTextColor(146,64,14);doc.setFontSize(7);doc.setFont('helvetica','normal');
