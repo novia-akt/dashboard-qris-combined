@@ -516,7 +516,7 @@ function dlPDF(){
   doc.setFillColor(27,43,75);doc.rect(0,284,W,13,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','normal');
   doc.text(`Auto-generated - Paycloud x AKT & GCU - ${dateStr}`,W/2,291,{align:'center'});
 
-    doc.save(`Dashboard QRIS (${_dateLabel}).pdf`);
+    doc.save(`Dashboard QRIS (${dateStr}).pdf`);
   }catch(err){alert('PDF Error: '+err.message);console.error(err);}
 }
 
