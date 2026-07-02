@@ -354,14 +354,16 @@ async function loadDate(dateISO){
   try{
     const[y,mo]=dateISO.split('-');
     const ms=`${y}-${mo}-01`,ys=`${y}-01-01`;
-    const selFields='select=total_trx_success,gmv,total_mdr,total_chargeback,total_representment,total_dispute,total_transfer_fee,total_amount_transfer,settled_amount';
+    const selFieldsBase='select=total_trx_success,gmv,total_mdr,total_chargeback,total_representment,total_dispute,total_transfer_fee,total_amount_transfer,settled_amount';
+    const selFieldsAKT=selFieldsBase;                       // AKT belum punya kolom mdr_discount
+    const selFieldsGCU=selFieldsBase+',mdr_discount';        // GCU sudah punya kolom mdr_discount (efektif 1 Jul 2026)
     const[sAKT,sGCU,mtdAKT,mtdGCU,ytdAKT,ytdGCU,bfAKT,bfGCU,dsAKT,dsGCU,mcAKT,mcGCU]=await Promise.all([
       sbFetch('daily_summary',`report_date=eq.${dateISO}&limit=1`,'AKT'),
       sbFetch('daily_summary',`report_date=eq.${dateISO}&limit=1`,'GCU'),
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${dateISO}&${selFields}`,'AKT'),
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${dateISO}&${selFields}`,'GCU'),
-      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${dateISO}&${selFields}`,'AKT'),
-      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${dateISO}&${selFields}`,'GCU'),
+      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${dateISO}&${selFieldsAKT}`,'AKT'),
+      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${dateISO}&${selFieldsGCU}`,'GCU'),
+      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${dateISO}&${selFieldsAKT}`,'AKT'),
+      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${dateISO}&${selFieldsGCU}`,'GCU'),
       sbFetch('budget_forecast','select=month,budget,forecast,budget_per_day,forecast_per_day,start_day&order=month.asc','AKT'),
       sbFetch('budget_forecast','select=month,budget,forecast,budget_per_day,forecast_per_day,start_day&order=month.asc','GCU'),
       sbFetch('daily_summary',`select=report_date,total_revenue&report_date=gte.${ys}&report_date=lte.${dateISO}`,'AKT'),
@@ -436,11 +438,24 @@ function renderSummary(akt,gcu){
   const ytdA=window._ytdAKT||[],ytdG=window._ytdGCU||[];
   const yCB=Math.abs(akt?.total_chargeback||0)+Math.abs(gcu?.total_chargeback||0);
   const mCB=sfA(mtdA,'total_chargeback')+sfA(mtdG,'total_chargeback');
+  const yYCB=sfA(ytdA,'total_chargeback')+sfA(ytdG,'total_chargeback');
+  const yRep=Math.abs(akt?.total_representment||0)+Math.abs(gcu?.total_representment||0);
+  const mRep=sfA(mtdA,'total_representment')+sfA(mtdG,'total_representment');
+  const yYRep=sfA(ytdA,'total_representment')+sfA(ytdG,'total_representment');
+  const yDsp=Math.abs(akt?.total_dispute||0)+Math.abs(gcu?.total_dispute||0);
+  const mDsp=sfA(mtdA,'total_dispute')+sfA(mtdG,'total_dispute');
+  const yYDsp=sfA(ytdA,'total_dispute')+sfA(ytdG,'total_dispute');
+  const yMDD=(akt?.mdr_discount||0)+(gcu?.mdr_discount||0);
+  const mMDD=sfA(mtdA,'mdr_discount')+sfA(mtdG,'mdr_discount');
+  const yYMDD=sfA(ytdA,'mdr_discount')+sfA(ytdG,'mdr_discount');
   const rows=[
     ['Total Trx',nF((akt?.total_trx_success||0)+(gcu?.total_trx_success||0)),nF(sfN(mtdA,'total_trx_success')+sfN(mtdG,'total_trx_success')),nF(sfN(ytdA,'total_trx_success')+sfN(ytdG,'total_trx_success')),false],
     ['Amount (GMV)',rpF((akt?.gmv||0)+(gcu?.gmv||0)),rpF(sfA(mtdA,'gmv')+sfA(mtdG,'gmv')),rpF(sfA(ytdA,'gmv')+sfA(ytdG,'gmv')),false],
     ['MDR',rpF(Math.abs(akt?.total_mdr||0)+Math.abs(gcu?.total_mdr||0)),rpF(sfA(mtdA,'total_mdr')+sfA(mtdG,'total_mdr')),rpF(sfA(ytdA,'total_mdr')+sfA(ytdG,'total_mdr')),false],
-    ['Chargeback',yCB?rpF(yCB):'—',mCB?rpF(mCB):'—','—',false],
+    ['Chargeback',yCB?rpF(yCB):'—',mCB?rpF(mCB):'—',yYCB?rpF(yYCB):'—',false],
+    ['Representment',yRep?rpF(yRep):'—',mRep?rpF(mRep):'—',yYRep?rpF(yYRep):'—',false],
+    ['Settle Dispute',yDsp?rpF(yDsp):'—',mDsp?rpF(mDsp):'—',yYDsp?rpF(yYDsp):'—',false],
+    ['MDR Discount',yMDD?rpF(yMDD):'—',mMDD?rpF(mMDD):'—',yYMDD?rpF(yYMDD):'—',false],
     ['Biaya Transfer',rpF(Math.abs(akt?.total_transfer_fee||0)+Math.abs(gcu?.total_transfer_fee||0)),rpF(sfA(mtdA,'total_transfer_fee')+sfA(mtdG,'total_transfer_fee')),rpF(sfA(ytdA,'total_transfer_fee')+sfA(ytdG,'total_transfer_fee')),false],
     ['Settle Amount',rpF(Math.abs(akt?.total_amount_transfer||0)+Math.abs(gcu?.total_amount_transfer||0)),rpF(sfA(mtdA,'total_amount_transfer')+sfA(mtdG,'total_amount_transfer')),rpF(sfA(ytdA,'total_amount_transfer')+sfA(ytdG,'total_amount_transfer')),true],
   ];
@@ -456,11 +471,11 @@ function dlExcel(){
   const ptTitle=showAKT&&showGCU?'AKT-GCU':(showAKT?'AKT':'GCU');
   const wb=XLSX.utils.book_new(),dt=selectedDate||'—';
   if(showAKT){
-    const ak=[['KPI Summary — AKT'],[`Tanggal: ${dt}`],[],['KPI','Nilai']];if(cAKT)ak.push(['Active Merchant',cAKT.total_merchant],['Total Trx',cAKT.total_trx],['Successful Trx',cAKT.total_trx_success],['GMV (Rp)',cAKT.gmv],['Settled (Rp)',Math.round(cAKT.settled_amount)],['Revenue (Rp)',cAKT.total_revenue]);else ak.push(['(Tidak ada data)','—']);
+    const ak=[['KPI Summary — AKT'],[`Tanggal: ${dt}`],[],['KPI','Nilai']];if(cAKT)ak.push(['Active Merchant',cAKT.total_merchant],['Total Trx',cAKT.total_trx],['Successful Trx',cAKT.total_trx_success],['GMV (Rp)',cAKT.gmv],['MDR (Rp)',Math.abs(cAKT.total_mdr||0)],['Chargeback (Rp)',Math.abs(cAKT.total_chargeback||0)],['Representment (Rp)',Math.abs(cAKT.total_representment||0)],['Settle Dispute (Rp)',Math.abs(cAKT.total_dispute||0)],['MDR Discount (Rp)',cAKT.mdr_discount||0],['Biaya Transfer (Rp)',Math.abs(cAKT.total_transfer_fee||0)],['Settled (Rp)',Math.round(cAKT.settled_amount)],['Revenue (Rp)',cAKT.total_revenue]);else ak.push(['(Tidak ada data)','—']);
     const ws1=XLSX.utils.aoa_to_sheet(ak);ws1['!cols']=[{wch:30},{wch:20}];XLSX.utils.book_append_sheet(wb,ws1,'KPI Summary AKT');
   }
   if(showGCU){
-    const gc=[['KPI Summary — GCU'],[`Tanggal: ${dt}`],[],['KPI','Nilai']];if(cGCU)gc.push(['Active Merchant',cGCU.total_merchant],['Total Trx',cGCU.total_trx],['Successful Trx',cGCU.total_trx_success],['GMV (Rp)',cGCU.gmv],['Settled (Rp)',Math.round(cGCU.settled_amount)],['Revenue (Rp)',cGCU.total_revenue]);else gc.push(['(Tidak ada data)','—']);
+    const gc=[['KPI Summary — GCU'],[`Tanggal: ${dt}`],[],['KPI','Nilai']];if(cGCU)gc.push(['Active Merchant',cGCU.total_merchant],['Total Trx',cGCU.total_trx],['Successful Trx',cGCU.total_trx_success],['GMV (Rp)',cGCU.gmv],['MDR (Rp)',Math.abs(cGCU.total_mdr||0)],['Chargeback (Rp)',Math.abs(cGCU.total_chargeback||0)],['Representment (Rp)',Math.abs(cGCU.total_representment||0)],['Settle Dispute (Rp)',Math.abs(cGCU.total_dispute||0)],['MDR Discount (Rp)',cGCU.mdr_discount||0],['Biaya Transfer (Rp)',Math.abs(cGCU.total_transfer_fee||0)],['Settled (Rp)',Math.round(cGCU.settled_amount)],['Revenue (Rp)',cGCU.total_revenue]);else gc.push(['(Tidak ada data)','—']);
     const ws2=XLSX.utils.aoa_to_sheet(gc);ws2['!cols']=[{wch:30},{wch:20}];XLSX.utils.book_append_sheet(wb,ws2,'KPI Summary GCU');
   }
   if(showAKT&&showGCU){
@@ -545,7 +560,7 @@ function dlPDF(){
   // Daily Report
   const sfF=(arr,f)=>(arr||[]).reduce((a,r)=>a+(Math.abs(parseFloat(r[f])||0)),0);
   function drawMTD(s,mtd,ytd,label){
-    const mdr=Math.abs(s?.total_mdr||0),cb=Math.abs(s?.total_chargeback||0),trf=Math.abs(s?.total_transfer_fee||0),amt=Math.abs(s?.total_amount_transfer||0);
+    const mdr=Math.abs(s?.total_mdr||0),cb=Math.abs(s?.total_chargeback||0),rep=Math.abs(s?.total_representment||0),dsp=Math.abs(s?.total_dispute||0),mdd=s?.mdr_discount||0,trf=Math.abs(s?.total_transfer_fee||0),amt=Math.abs(s?.total_amount_transfer||0);
     doc.setFillColor(27,43,75);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','bold');doc.text(label,M+2,y);y+=5;
     doc.setFillColor(241,245,249);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(100,116,139);doc.setFontSize(6);doc.setFont('helvetica','bold');
     const c1=M+65,c2=M+118,c3=M+W-M*2-1;
@@ -553,7 +568,10 @@ function dlPDF(){
     [['Total Trx',nFmt(s?.total_trx_success||0),nFmt(sfF(mtd,'total_trx_success')),nFmt(sfF(ytd,'total_trx_success')),false],
      ['Amount (GMV)',rpFull(s?.gmv||0),rpFull(sfF(mtd,'gmv')),rpFull(sfF(ytd,'gmv')),false],
      ['MDR',rpFull(mdr),rpFull(sfF(mtd,'total_mdr')),rpFull(sfF(ytd,'total_mdr')),false],
-     ['Chargeback',cb?rpFull(cb):'-',sfF(mtd,'total_chargeback')?rpFull(sfF(mtd,'total_chargeback')):'-','-',false],
+     ['Chargeback',cb?rpFull(cb):'-',sfF(mtd,'total_chargeback')?rpFull(sfF(mtd,'total_chargeback')):'-',sfF(ytd,'total_chargeback')?rpFull(sfF(ytd,'total_chargeback')):'-',false],
+     ['Representment',rep?rpFull(rep):'-',sfF(mtd,'total_representment')?rpFull(sfF(mtd,'total_representment')):'-',sfF(ytd,'total_representment')?rpFull(sfF(ytd,'total_representment')):'-',false],
+     ['Settle Dispute',dsp?rpFull(dsp):'-',sfF(mtd,'total_dispute')?rpFull(sfF(mtd,'total_dispute')):'-',sfF(ytd,'total_dispute')?rpFull(sfF(ytd,'total_dispute')):'-',false],
+     ['MDR Discount',mdd?rpFull(mdd):'-',sfF(mtd,'mdr_discount')?rpFull(sfF(mtd,'mdr_discount')):'-',sfF(ytd,'mdr_discount')?rpFull(sfF(ytd,'mdr_discount')):'-',false],
      ['Biaya Transfer',rpFull(trf),rpFull(sfF(mtd,'total_transfer_fee')),rpFull(sfF(ytd,'total_transfer_fee')),false],
      ['Settle Amount',rpFull(amt),rpFull(sfF(mtd,'total_amount_transfer')),rpFull(sfF(ytd,'total_amount_transfer')),true],
     ].forEach((r,i)=>{
@@ -789,15 +807,18 @@ function dlAvbPDF(){
 function renderMTDWeb(){
   function buildRows(s,mtd,ytd){
     if(!s)return '<tr><td colspan="4" style="text-align:center;color:var(--text3)">Tidak ada data</td></tr>';
-    const mdr=Math.abs(s.total_mdr||0),cb=Math.abs(s.total_chargeback||0),trf=Math.abs(s.total_transfer_fee||0),amt=Math.abs(s.total_amount_transfer||0);
+    const mdr=Math.abs(s.total_mdr||0),cb=Math.abs(s.total_chargeback||0),rep=Math.abs(s.total_representment||0),dsp=Math.abs(s.total_dispute||0),mdd=s.mdr_discount||0,trf=Math.abs(s.total_transfer_fee||0),amt=Math.abs(s.total_amount_transfer||0);
     return [
       ['Total Trx',nF(s.total_trx_success||0),nF(sumF(mtd,'total_trx_success')),nF(sumF(ytd,'total_trx_success'))],
       ['Amount (GMV)',rpF(s.gmv||0),rpF(sumF(mtd,'gmv')),rpF(sumF(ytd,'gmv'))],
       ['MDR',rpF(mdr),rpF(sumF(mtd,'total_mdr')),rpF(sumF(ytd,'total_mdr'))],
-      ['Chargeback',cb?rpF(cb):'—',sumF(mtd,'total_chargeback')?rpF(sumF(mtd,'total_chargeback')):'—','—'],
+      ['Chargeback',cb?rpF(cb):'—',sumF(mtd,'total_chargeback')?rpF(sumF(mtd,'total_chargeback')):'—',sumF(ytd,'total_chargeback')?rpF(sumF(ytd,'total_chargeback')):'—'],
+      ['Representment',rep?rpF(rep):'—',sumF(mtd,'total_representment')?rpF(sumF(mtd,'total_representment')):'—',sumF(ytd,'total_representment')?rpF(sumF(ytd,'total_representment')):'—'],
+      ['Settle Dispute',dsp?rpF(dsp):'—',sumF(mtd,'total_dispute')?rpF(sumF(mtd,'total_dispute')):'—',sumF(ytd,'total_dispute')?rpF(sumF(ytd,'total_dispute')):'—'],
+      ['MDR Discount',mdd?rpF(mdd):'—',sumF(mtd,'mdr_discount')?rpF(sumF(mtd,'mdr_discount')):'—',sumF(ytd,'mdr_discount')?rpF(sumF(ytd,'mdr_discount')):'—'],
       ['Biaya Transfer',rpF(trf),rpF(sumF(mtd,'total_transfer_fee')),rpF(sumF(ytd,'total_transfer_fee'))],
       ['Settle Amount',rpF(amt),rpF(sumF(mtd,'total_amount_transfer')),rpF(sumF(ytd,'total_amount_transfer'))],
-    ].map((r,i)=>`<tr ${i===5?'class="hl2"':''}><td>${r[0]}</td><td class="r">${r[1]}</td><td class="r">${r[2]}</td><td class="r">${r[3]}</td></tr>`).join('');
+    ].map((r,i)=>`<tr ${i===8?'class="hl2"':''}><td>${r[0]}</td><td class="r">${r[1]}</td><td class="r">${r[2]}</td><td class="r">${r[3]}</td></tr>`).join('');
   }
   document.getElementById('mtdAKT').innerHTML=buildRows(cAKT,window._mtdAKT,window._ytdAKT);
   document.getElementById('mtdGCU').innerHTML=buildRows(cGCU,window._mtdGCU,window._ytdGCU);
@@ -935,10 +956,13 @@ function renderMonthly(ym){
       ['Total Trx',nF(sfN(mtd,'total_trx_success')),nF(sfN(ytd,'total_trx_success'))],
       ['Amount (GMV)',rpF(sfA(mtd,'gmv')),rpF(sfA(ytd,'gmv'))],
       ['MDR',rpF(sfA(mtd,'total_mdr')),rpF(sfA(ytd,'total_mdr'))],
-      ['Chargeback',sfA(mtd,'total_chargeback')?rpF(sfA(mtd,'total_chargeback')):'—','—'],
+      ['Chargeback',sfA(mtd,'total_chargeback')?rpF(sfA(mtd,'total_chargeback')):'—',sfA(ytd,'total_chargeback')?rpF(sfA(ytd,'total_chargeback')):'—'],
+      ['Representment',sfA(mtd,'total_representment')?rpF(sfA(mtd,'total_representment')):'—',sfA(ytd,'total_representment')?rpF(sfA(ytd,'total_representment')):'—'],
+      ['Settle Dispute',sfA(mtd,'total_dispute')?rpF(sfA(mtd,'total_dispute')):'—',sfA(ytd,'total_dispute')?rpF(sfA(ytd,'total_dispute')):'—'],
+      ['MDR Discount',sfA(mtd,'mdr_discount')?rpF(sfA(mtd,'mdr_discount')):'—',sfA(ytd,'mdr_discount')?rpF(sfA(ytd,'mdr_discount')):'—'],
       ['Biaya Transfer',rpF(sfA(mtd,'total_transfer_fee')),rpF(sfA(ytd,'total_transfer_fee'))],
       ['Settle Amount',rpF(sfA(mtd,'total_amount_transfer')),rpF(sfA(ytd,'total_amount_transfer'))],
-    ].map((r,i)=>`<tr ${i===5?'class="hl2"':''}><td>${r[0]}</td><td class="r">${r[1]}</td><td class="r">${r[2]}</td></tr>`).join('');
+    ].map((r,i)=>`<tr ${i===8?'class="hl2"':''}><td>${r[0]}</td><td class="r">${r[1]}</td><td class="r">${r[2]}</td></tr>`).join('');
   }
   document.getElementById('mtdMonthlyAKT').innerHTML=buildMTDRows(mtdA,ytdA);
   document.getElementById('mtdMonthlyGCU').innerHTML=buildMTDRows(mtdG,ytdG);
@@ -968,11 +992,21 @@ function renderMonthly(ym){
 
   // Transaction Summary Monthly
   const yCB=sfA(mtdA,'total_chargeback')+sfA(mtdG,'total_chargeback');
+  const yYCB=sfA(ytdA,'total_chargeback')+sfA(ytdG,'total_chargeback');
+  const yRep=sfA(mtdA,'total_representment')+sfA(mtdG,'total_representment');
+  const yYRep=sfA(ytdA,'total_representment')+sfA(ytdG,'total_representment');
+  const yDsp=sfA(mtdA,'total_dispute')+sfA(mtdG,'total_dispute');
+  const yYDsp=sfA(ytdA,'total_dispute')+sfA(ytdG,'total_dispute');
+  const yMDD=sfA(mtdA,'mdr_discount')+sfA(mtdG,'mdr_discount');
+  const yYMDD=sfA(ytdA,'mdr_discount')+sfA(ytdG,'mdr_discount');
   document.getElementById('txSummaryMonthlyBody').innerHTML=[
     ['Total Trx',nF(sfN(mtdA,'total_trx_success')+sfN(mtdG,'total_trx_success')),nF(sfN(ytdA,'total_trx_success')+sfN(ytdG,'total_trx_success')),false],
     ['Amount (GMV)',rpF(sfA(mtdA,'gmv')+sfA(mtdG,'gmv')),rpF(sfA(ytdA,'gmv')+sfA(ytdG,'gmv')),false],
     ['MDR',rpF(sfA(mtdA,'total_mdr')+sfA(mtdG,'total_mdr')),rpF(sfA(ytdA,'total_mdr')+sfA(ytdG,'total_mdr')),false],
-    ['Chargeback',yCB?rpF(yCB):'—','—',false],
+    ['Chargeback',yCB?rpF(yCB):'—',yYCB?rpF(yYCB):'—',false],
+    ['Representment',yRep?rpF(yRep):'—',yYRep?rpF(yYRep):'—',false],
+    ['Settle Dispute',yDsp?rpF(yDsp):'—',yYDsp?rpF(yYDsp):'—',false],
+    ['MDR Discount',yMDD?rpF(yMDD):'—',yYMDD?rpF(yYMDD):'—',false],
     ['Biaya Transfer',rpF(sfA(mtdA,'total_transfer_fee')+sfA(mtdG,'total_transfer_fee')),rpF(sfA(ytdA,'total_transfer_fee')+sfA(ytdG,'total_transfer_fee')),false],
     ['Settle Amount',rpF(sfA(mtdA,'total_amount_transfer')+sfA(mtdG,'total_amount_transfer')),rpF(sfA(ytdA,'total_amount_transfer')+sfA(ytdG,'total_amount_transfer')),true],
   ].map(r=>`<tr ${r[3]?'class="hl2"':''}><td>${r[3]?'<strong>':''}${r[0]}${r[3]?'</strong>':''}</td><td class="r">${r[1]}</td><td class="r">${r[2]}</td></tr>`).join('');
@@ -1037,7 +1071,10 @@ function dlMonthlyPDF(){
     [['Total Trx',nFmt(sfN(mtd,'total_trx_success')),nFmt(sfN(ytd,'total_trx_success')),false],
      ['Amount (GMV)',rpFull(sfA(mtd,'gmv')),rpFull(sfA(ytd,'gmv')),false],
      ['MDR',rpFull(sfA(mtd,'total_mdr')),rpFull(sfA(ytd,'total_mdr')),false],
-     ['Chargeback',sfA(mtd,'total_chargeback')?rpFull(sfA(mtd,'total_chargeback')):'-','-',false],
+     ['Chargeback',sfA(mtd,'total_chargeback')?rpFull(sfA(mtd,'total_chargeback')):'-',sfA(ytd,'total_chargeback')?rpFull(sfA(ytd,'total_chargeback')):'-',false],
+     ['Representment',sfA(mtd,'total_representment')?rpFull(sfA(mtd,'total_representment')):'-',sfA(ytd,'total_representment')?rpFull(sfA(ytd,'total_representment')):'-',false],
+     ['Settle Dispute',sfA(mtd,'total_dispute')?rpFull(sfA(mtd,'total_dispute')):'-',sfA(ytd,'total_dispute')?rpFull(sfA(ytd,'total_dispute')):'-',false],
+     ['MDR Discount',sfA(mtd,'mdr_discount')?rpFull(sfA(mtd,'mdr_discount')):'-',sfA(ytd,'mdr_discount')?rpFull(sfA(ytd,'mdr_discount')):'-',false],
      ['Biaya Transfer',rpFull(sfA(mtd,'total_transfer_fee')),rpFull(sfA(ytd,'total_transfer_fee')),false],
      ['Settle Amount',rpFull(sfA(mtd,'total_amount_transfer')),rpFull(sfA(ytd,'total_amount_transfer')),true],
     ].forEach((r,i)=>{
