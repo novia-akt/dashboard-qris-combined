@@ -585,8 +585,10 @@ function dlPDF(){
   const cAll=parts.reduce((a,p)=>a+(p.s?.total_trx||0),0);
   if(parts.length>1){
     const nCol=parts.length;
-    const positions=[];const usable=W-M*2-53;const step=usable/(nCol+2);
-    for(let i=0;i<=nCol+1;i++)positions.push(M+53+step*(i+1));
+    const startX=M+53, endX=W-M-1;
+    const span=endX-startX; const step=span/(nCol+2);
+    const positions=[];
+    for(let i=0;i<=nCol+1;i++)positions.push(startX+step*(i+1));
     doc.text('Status',M+2,y);
     parts.forEach((p,i)=>doc.text(p.key,positions[i],y,{align:'right'}));
     doc.text('Total',positions[nCol],y,{align:'right'});
