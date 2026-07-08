@@ -451,12 +451,22 @@ function renderRev(bodyId,footId,s){
   const body=document.getElementById(bodyId),foot=document.getElementById(footId);
   if(!s){body.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--text3)">—</td></tr>';foot.innerHTML='';return;}
   const rev=s.revenue_detail||{};let rows='',tG=0,tS=0,tR=0;
-  const ent=Object.entries(rev).length?Object.entries(rev):[['Qoin',{gmv:s.gmv,settled:s.settled_amount,revenue:s.total_revenue}]];
+  let ent=Object.entries(rev).length?Object.entries(rev):[['Qoin',{gmv:s.gmv,settled:s.total_amount_transfer,revenue:s.total_revenue}]];
+  // Kalau cuma 1 acquirer (kasus GCU/NKS), pakai total_amount_transfer PT (sudah dikurangi Biaya Transfer)
+  // biar konsisten sama Daily Report & Total Gabungan — bukan settled_amount internal acquirer (sebelum Biaya Transfer)
+  if(ent.length===1){
+    ent=[[ent[0][0], {...ent[0][1], settled: s.total_amount_transfer}]];
+  }
   ent.forEach(([a,d])=>{tG+=d.gmv||0;tS+=d.settled||0;tR+=d.revenue||0;rows+=`<tr><td>${a}</td><td class="r">${rpF(d.gmv)}</td><td class="r">${rpF(d.settled)}</td><td class="r" style="color:var(--green)">${rpF(d.revenue)}</td></tr>`;});
   body.innerHTML=rows;foot.innerHTML=`<tr class="hl2"><td><strong>TOTAL</strong></td><td class="r">${rpF(tG)}</td><td class="r">${rpF(tS)}</td><td class="r" style="color:var(--green)">${rpF(tR)}</td></tr>`;
 }
 
 function renderTotal(akt,gcu,nks){
+  // Nolkan kontribusi PT yang lagi di-uncheck di filter, biar Total Gabungan gak
+  // diam-diam ikut nyertain PT yang gak dipilih (terutama AKT yang punya riwayat besar)
+  akt=activePts.includes('AKT')?akt:null;
+  gcu=activePts.includes('GCU')?gcu:null;
+  nks=activePts.includes('NKS')?nks:null;
   const tM=(akt?.total_merchant||0)+(gcu?.total_merchant||0)+(nks?.total_merchant||0),tTrx=(akt?.total_trx||0)+(gcu?.total_trx||0)+(nks?.total_trx||0),tSuc=(akt?.total_trx_success||0)+(gcu?.total_trx_success||0)+(nks?.total_trx_success||0),tGMV=(akt?.gmv||0)+(gcu?.gmv||0)+(nks?.gmv||0),tAmt=Math.abs(akt?.total_amount_transfer||0)+Math.abs(gcu?.total_amount_transfer||0)+Math.abs(nks?.total_amount_transfer||0),tRev=(akt?.total_revenue||0)+(gcu?.total_revenue||0)+(nks?.total_revenue||0),tSR=tTrx>0?(tSuc/tTrx*100).toFixed(2):0;
   document.getElementById('kpiTotal').innerHTML=[
     {lbl:'Total Merchant',val:nF(tM),cls:'navy'},
@@ -471,10 +481,18 @@ function renderTotal(akt,gcu,nks){
 function renderSummary(akt,gcu,nks){
   const el=document.getElementById('txSummaryBody');
   if(!el)return;
+  // Sama kayak renderTotal: nolkan PT yang gak dicentang biar gak ikut kejumlah diam-diam
+  akt=activePts.includes('AKT')?akt:null;
+  gcu=activePts.includes('GCU')?gcu:null;
+  nks=activePts.includes('NKS')?nks:null;
   const sfA=(arr,f)=>(arr||[]).reduce((a,r)=>a+(Math.abs(parseFloat(r[f])||0)),0);
   const sfN=(arr,f)=>(arr||[]).reduce((a,r)=>a+(parseFloat(r[f])||0),0);
-  const mtdA=window._mtdAKT||[],mtdG=window._mtdGCU||[],mtdN=window._mtdNKS||[];
-  const ytdA=window._ytdAKT||[],ytdG=window._ytdGCU||[],ytdN=window._ytdNKS||[];
+  const mtdA=activePts.includes('AKT')?(window._mtdAKT||[]):[];
+  const mtdG=activePts.includes('GCU')?(window._mtdGCU||[]):[];
+  const mtdN=activePts.includes('NKS')?(window._mtdNKS||[]):[];
+  const ytdA=activePts.includes('AKT')?(window._ytdAKT||[]):[];
+  const ytdG=activePts.includes('GCU')?(window._ytdGCU||[]):[];
+  const ytdN=activePts.includes('NKS')?(window._ytdNKS||[]):[];
   const yCB=Math.abs(akt?.total_chargeback||0)+Math.abs(gcu?.total_chargeback||0)+Math.abs(nks?.total_chargeback||0);
   const mCB=sfA(mtdA,'total_chargeback')+sfA(mtdG,'total_chargeback')+sfA(mtdN,'total_chargeback');
   const yYCB=sfA(ytdA,'total_chargeback')+sfA(ytdG,'total_chargeback')+sfA(ytdN,'total_chargeback');
@@ -1033,8 +1051,13 @@ function renderMonthly(ym){
   // Fungsi sum
   const sfA=(arr,f)=>(arr||[]).reduce((a,r)=>a+(Math.abs(parseFloat(r[f])||0)),0);
   const sfN=(arr,f)=>(arr||[]).reduce((a,r)=>a+(parseFloat(r[f])||0),0);
-  const mtdA=window._mtdMonthlyAKT||[], mtdG=window._mtdMonthlyGCU||[], mtdN=window._mtdMonthlyNKS||[];
-  const ytdA=window._ytdMonthlyAKT||[], ytdG=window._ytdMonthlyGCU||[], ytdN=window._ytdMonthlyNKS||[];
+  // Nolkan PT yang gak dicentang di filter, biar gak ikut kejumlah diam-diam (sama kayak renderTotal/renderSummary)
+  const mtdA=activePts.includes('AKT')?(window._mtdMonthlyAKT||[]):[];
+  const mtdG=activePts.includes('GCU')?(window._mtdMonthlyGCU||[]):[];
+  const mtdN=activePts.includes('NKS')?(window._mtdMonthlyNKS||[]):[];
+  const ytdA=activePts.includes('AKT')?(window._ytdMonthlyAKT||[]):[];
+  const ytdG=activePts.includes('GCU')?(window._ytdMonthlyGCU||[]):[];
+  const ytdN=activePts.includes('NKS')?(window._ytdMonthlyNKS||[]):[];
 
   // Monthly Report AKT & GCU & NKS (MTD & YTD)
   function buildMTDRows(mtd,ytd){
@@ -1302,6 +1325,13 @@ function onPtChkChange(){
   document.getElementById('ptChkALL').checked = activePts.length===checks.length;
   updatePtFilterLabel();
   applyPtFilter();
+  // Hitung ulang Total Gabungan & Transaction Summary sesuai PT yang baru dicentang
+  if(currentMode==='daily'){
+    renderTotal(cAKT,cGCU,cNKS);
+    renderSummary(cAKT,cGCU,cNKS);
+  } else if(currentMode==='monthly' && selectedMonth){
+    renderMonthly(selectedMonth);
+  }
 }
 function updatePtFilterLabel(){
   const ptNames={AKT:'AKT',GCU:'GCU',NKS:'NKS'};
