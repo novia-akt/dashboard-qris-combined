@@ -294,7 +294,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 </div>
 
 <script>
-const SB={AKT:{url:'https://cjwxonoeszokjepkttnd.supabase.co',key:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqd3hvbm9lc3pva2plcGt0dG5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NTUyOTEsImV4cCI6MjA5NjAzMTI5MX0.jqkIoCl9g2nPWiNWyBrwMAcASEosb-lIKXc1hVVdgdg'},GCU:{url:'https://addeholdyefqzxpzrmwa.supabase.co',key:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkZGVob2xkeWVmcXp4cHpybXdhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMjA5MTMsImV4cCI6MjA5NzY5NjkxM30.ErARC0ABjv7KnRhT93EpN4ko-ot5Fj5z4H01n87SOfs'},NKS:{url:'https://oybanwvygjagtjijltqx.supabase.co',key:'sb_publishable_YHrgPRFe6BrW_7GWEAFNMQ_98Sug1Kk'}};
+const SB={url:'https://cjwxonoeszokjepkttnd.supabase.co',key:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqd3hvbm9lc3pva2plcGt0dG5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NTUyOTEsImV4cCI6MjA5NjAzMTI5MX0.jqkIoCl9g2nPWiNWyBrwMAcASEosb-lIKXc1hVVdgdg'};
+// Daftar PT — tambah 1 baris di sini kalau ada PT baru (misal ANK), gak perlu ubah kode lain
+const PT_LIST=['AKT','GCU','NKS'];
 let currentMode='daily',availDates=[],availMonths=[],calYear=new Date().getFullYear(),calMonth=new Date().getMonth(),selectedDate='',selectedMonth='',cAKT=null,cGCU=null,cNKS=null;
 const MO=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const MOS=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
@@ -310,8 +312,12 @@ const fmtD=iso=>{if(!iso)return'📅 Pilih Tanggal';const[y,m,d]=iso.split('-');
 const fmtM=ym=>{if(!ym)return'📅 Pilih Bulan';const[y,m]=ym.split('-');return`📅 ${MO[parseInt(m)-1]} ${y}`;};
 
 async function sbFetch(table,params,pt){
-  const c=SB[pt];
-  try{const r=await fetch(`${c.url}/rest/v1/${table}?${params}`,{headers:{'apikey':c.key,'Authorization':'Bearer '+c.key,'Content-Type':'application/json'}});if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}
+  try{
+    const url=`${SB.url}/rest/v1/${table}?${params}&parent_merchant=eq.${pt}`;
+    const r=await fetch(url,{headers:{'apikey':SB.key,'Authorization':'Bearer '+SB.key,'Content-Type':'application/json'}});
+    if(!r.ok)throw new Error(`HTTP ${r.status}`);
+    return r.json();
+  }
   catch(e){console.warn(`sbFetch ${pt}/${table}:`,e.message);return[];}
 }
 
@@ -382,20 +388,18 @@ async function loadDate(dateISO){
   try{
     const[y,mo]=dateISO.split('-');
     const ms=`${y}-${mo}-01`,ys=`${y}-01-01`;
-    const selFieldsBase='select=total_trx_success,gmv,total_mdr,total_chargeback,total_representment,total_dispute,total_transfer_fee,total_amount_transfer,settled_amount';
-    const selFieldsAKT=selFieldsBase;                       // AKT belum punya kolom mdr_discount
-    const selFieldsGCU=selFieldsBase+',mdr_discount';        // GCU sudah punya kolom mdr_discount (efektif 1 Jul 2026)
-    const selFieldsNKS=selFieldsBase+',mdr_discount';        // NKS sudah punya kolom mdr_discount sejak awal
+    // Semua PT sekarang di 1 tabel yang sama, semua kolom (termasuk mdr_discount) udah seragam
+    const selFields='select=total_trx_success,gmv,total_mdr,total_chargeback,total_representment,total_dispute,total_transfer_fee,total_amount_transfer,settled_amount,mdr_discount';
     const[sAKT,sGCU,sNKS,mtdAKT,mtdGCU,mtdNKS,ytdAKT,ytdGCU,ytdNKS,bfAKT,bfGCU,bfNKS,dsAKT,dsGCU,dsNKS,mcAKT,mcGCU,mcNKS]=await Promise.all([
       sbFetch('daily_summary',`report_date=eq.${dateISO}&limit=1`,'AKT'),
       sbFetch('daily_summary',`report_date=eq.${dateISO}&limit=1`,'GCU'),
       sbFetch('daily_summary',`report_date=eq.${dateISO}&limit=1`,'NKS'),
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${dateISO}&${selFieldsAKT}`,'AKT'),
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${dateISO}&${selFieldsGCU}`,'GCU'),
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${dateISO}&${selFieldsNKS}`,'NKS'),
-      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${dateISO}&${selFieldsAKT}`,'AKT'),
-      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${dateISO}&${selFieldsGCU}`,'GCU'),
-      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${dateISO}&${selFieldsNKS}`,'NKS'),
+      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${dateISO}&${selFields}`,'AKT'),
+      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${dateISO}&${selFields}`,'GCU'),
+      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${dateISO}&${selFields}`,'NKS'),
+      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${dateISO}&${selFields}`,'AKT'),
+      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${dateISO}&${selFields}`,'GCU'),
+      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${dateISO}&${selFields}`,'NKS'),
       sbFetch('budget_forecast','select=month,budget,forecast,budget_per_day,forecast_per_day,start_day&order=month.asc','AKT'),
       sbFetch('budget_forecast','select=month,budget,forecast,budget_per_day,forecast_per_day,start_day&order=month.asc','GCU'),
       sbFetch('budget_forecast','select=month,budget,forecast,budget_per_day,forecast_per_day,start_day&order=month.asc','NKS'),
@@ -966,23 +970,20 @@ async function loadMonth(ym){
   const lastDay=new Date(parseInt(yr),parseInt(mo),0).getDate();
   const me=`${ym}-${String(lastDay).padStart(2,'0')}`;
   const ye=`${yr}-12-31`;
-  const selFieldsBase='select=total_trx_success,gmv,total_mdr,total_chargeback,total_representment,total_dispute,total_transfer_fee,total_amount_transfer,total_revenue';
-  const selFieldsAKT=selFieldsBase;                       // AKT belum punya kolom mdr_discount
-  const selFieldsGCU=selFieldsBase+',mdr_discount';
-  const selFieldsNKS=selFieldsBase+',mdr_discount';
+  const selFields='select=total_trx_success,gmv,total_mdr,total_chargeback,total_representment,total_dispute,total_transfer_fee,total_amount_transfer,total_revenue,mdr_discount';
 
   showSec('loadingPg');
   try{
     const[sAKT,sGCU,sNKS,mtdA,mtdG,mtdN,ytdA,ytdG,ytdN,mcA,mcG,mcN]=await Promise.all([
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${me}&${selFieldsAKT}`,'AKT'),
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${me}&${selFieldsGCU}`,'GCU'),
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${me}&${selFieldsNKS}`,'NKS'),
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${me}&${selFieldsAKT}`,'AKT'),
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${me}&${selFieldsGCU}`,'GCU'),
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${me}&${selFieldsNKS}`,'NKS'),
-      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${me}&${selFieldsAKT}`,'AKT'),
-      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${me}&${selFieldsGCU}`,'GCU'),
-      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${me}&${selFieldsNKS}`,'NKS'),
+      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${me}&${selFields}`,'AKT'),
+      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${me}&${selFields}`,'GCU'),
+      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${me}&${selFields}`,'NKS'),
+      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${me}&${selFields}`,'AKT'),
+      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${me}&${selFields}`,'GCU'),
+      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${me}&${selFields}`,'NKS'),
+      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${me}&${selFields}`,'AKT'),
+      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${me}&${selFields}`,'GCU'),
+      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${me}&${selFields}`,'NKS'),
       sbFetch('top_merchants',`report_date=gte.${ms}&report_date=lte.${me}&order=rank.asc&limit=5`,'AKT'),
       sbFetch('top_merchants',`report_date=gte.${ms}&report_date=lte.${me}&order=rank.asc&limit=5`,'GCU'),
       sbFetch('top_merchants',`report_date=gte.${ms}&report_date=lte.${me}&order=rank.asc&limit=5`,'NKS'),
