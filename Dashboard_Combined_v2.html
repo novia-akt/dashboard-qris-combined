@@ -4,18 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard QRIS</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231B2B4B'/%3E%3Cpolyline points='3,22 8,14 13,18 18,9 23,15 29,10' fill='none' stroke='%232563EB' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="data:image/png;base64,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">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Poppins:wght@800&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--navy:#1B2B4B;--blue:#2563EB;--green:#10B981;--red:#EF4444;--amber:#F59E0B;--bg:#F1F5F9;--surface:#fff;--surface2:#F8FAFC;--border:#E2E8F0;--text:#0F172A;--text2:#475569;--text3:#94A3B8;--r:10px;--r2:6px}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);font-size:13px;min-height:100vh}
 .hdr{background:linear-gradient(135deg,#EFF6FF 0%,#DBEAFE 100%);border-bottom:1px solid #BFDBFE;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(59,130,246,0.1)}
 .hdr-row1{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:8px 20px;border-bottom:1px solid #DBEAFE;min-height:52px}
 .hdr-logo{height:52px;object-fit:contain;flex-shrink:0;justify-self:start}
-.hdr-title{font-size:22px;font-weight:900;color:#1B2B4B;letter-spacing:0.02em;text-align:center;font-family:'Arial Black',Arial,sans-serif}
+.hdr-title{font-size:22px;font-weight:800;color:#1B2B4B;letter-spacing:0.02em;text-align:center;font-family:'Poppins',sans-serif}
 .hdr-date-sub{display:none}
 .hdr-row2{display:flex;align-items:center;justify-content:center;padding:5px 20px;gap:6px;min-height:38px}
 .hdr-row3{display:flex;align-items:center;justify-content:flex-end;padding:5px 20px;gap:6px;min-height:38px}
@@ -62,10 +62,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .sec-div{margin:16px 0 12px}
 .sec-div-line{display:none}
 .sec-div-title{display:block;width:100%;font-size:11px;font-weight:700;padding:7px 14px;border-radius:var(--r2)}
-.sec-div-title.akt{background:var(--navy);color:#fff}
-.sec-div-title.gcu{background:var(--navy);color:#fff}
-.sec-div-title.nks{background:var(--navy);color:#fff}
-.sec-div-title.ank{background:var(--navy);color:#fff}
+.sec-div-title.pt{background:var(--navy);color:#fff}
 .sec-div-title.total{background:var(--navy);color:#fff}
 .kpi.amber-card{background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border:1px solid #FDE68A}
 .sum-tbl{width:100%;border-collapse:collapse;font-size:11px}
@@ -75,6 +72,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .footer{text-align:center;padding:14px;font-size:10px;color:var(--text3);border-top:1px solid var(--border);margin-top:8px}
 @media(max-width:900px){.g4{grid-template-columns:1fr 1fr}.g2e{grid-template-columns:1fr}}
 @media(max-width:600px){.hdr-row1{padding:6px 12px}.hdr-title{font-size:12px}.hdr-date-sub{display:none}.hdr-row2{padding:5px 12px;gap:5px}.btn{padding:4px 8px;font-size:10px}.main{padding:10px 12px}.g4{grid-template-columns:1fr 1fr}.g2e{grid-template-columns:1fr}.kpi .val{font-size:17px}}
+.pt-filter-label{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;cursor:pointer;font-size:13px;color:#1B2B4B;transition:background .15s,color .15s}
+.pt-filter-label:hover{background:#F1F5F9}
+.pt-filter-label:has(input:checked){background:var(--navy);color:#fff}
 </style>
 </head>
 <body>
@@ -134,92 +134,30 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <div class="main" id="mainDash">
   <div class="dash-header">
     <div style="position:relative;display:inline-block" id="ptFilterWrap">
-      <h1 onclick="togglePtFilter(event)" style="font-family:'Arial Black',Arial,sans-serif;font-weight:900;color:#1B2B4B;cursor:pointer;display:flex;align-items:center;gap:6px;user-select:none">
-        <span id="ptFilterLabel">Dashboard QRIS — AKT & GCU & NKS</span>
+      <h1 onclick="togglePtFilter(event)" style="font-family:'Poppins',sans-serif;font-weight:800;color:#1B2B4B;cursor:pointer;display:flex;align-items:center;gap:6px;user-select:none">
+        <span id="ptFilterLabel">PARENT MERCHANT</span>
         <span style="font-size:14px;color:#64748B">▾</span>
       </h1>
       <div id="ptFilterPopup" style="display:none;position:absolute;top:100%;left:0;margin-top:4px;background:#fff;border:1px solid #E2E8F0;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.12);padding:6px;z-index:50;min-width:220px" onclick="event.stopPropagation()">
-        <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;color:#1B2B4B" onmouseover="this.style.background='#F1F5F9'" onmouseout="this.style.background='transparent'">
+        <label class="pt-filter-label" style="font-weight:600">
           <input type="checkbox" id="ptChkALL" onchange="togglePtAll(this.checked)" style="width:14px;height:14px;cursor:pointer">
           ALL
         </label>
         <div style="height:1px;background:#E2E8F0;margin:4px 6px"></div>
-        <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;cursor:pointer;font-size:13px;color:#1B2B4B" onmouseover="this.style.background='#F1F5F9'" onmouseout="this.style.background='transparent'">
-          <input type="checkbox" class="ptChk" value="AKT" checked onchange="onPtChkChange()" style="width:14px;height:14px;cursor:pointer">
-          Agro Karsa Terpadu
-        </label>
-        <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;cursor:pointer;font-size:13px;color:#1B2B4B" onmouseover="this.style.background='#F1F5F9'" onmouseout="this.style.background='transparent'">
-          <input type="checkbox" class="ptChk" value="GCU" checked onchange="onPtChkChange()" style="width:14px;height:14px;cursor:pointer">
-          Gemilang Cipta Utama
-        </label>
-        <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;cursor:pointer;font-size:13px;color:#1B2B4B" onmouseover="this.style.background='#F1F5F9'" onmouseout="this.style.background='transparent'">
-          <input type="checkbox" class="ptChk" value="NKS" checked onchange="onPtChkChange()" style="width:14px;height:14px;cursor:pointer">
-          Nusantria Karya Sejahtera
-        </label>
-        <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;cursor:pointer;font-size:13px;color:#1B2B4B" onmouseover="this.style.background='#F1F5F9'" onmouseout="this.style.background='transparent'">
-          <input type="checkbox" class="ptChk" value="ANK" onchange="onPtChkChange()" style="width:14px;height:14px;cursor:pointer">
-          Aksanta Nusadaya Karya
-        </label>
+        <div id="ptFilterCheckboxes"><!-- di-generate otomatis dari PT_CONFIG saat halaman dimuat --></div>
       </div>
     </div>
     <p id="subtitle">—</p>
   </div>
 
   <div data-section="rekon">
-  <div id="ptBlockAKT"><div class="sec-div"><div class="sec-div-title akt">AKT — Agro Karsa Terpadu</div></div>
-  <div class="g4" id="kpiAKT"></div>
-  <div class="g2e">
-    <div class="card"><div class="card-hd">🟢 Transaction Status — AKT</div><table class="tbl" id="statusAKT"></table></div>
-    <div class="card"><div class="card-hd">💰 Revenue Detail — AKT</div><table class="tbl"><thead class="navy"><tr><th>Acquirer</th><th class="r">GMV</th><th class="r">Settled</th><th class="r">Revenue</th></tr></thead><tbody id="revAKT"></tbody><tfoot id="revFootAKT"></tfoot></table></div>
-  </div>
-  </div>
-
-  <div id="ptBlockGCU"><div class="sec-div"><div class="sec-div-title gcu">GCU — Gemilang Cipta Utama</div></div>
-  <div class="g4" id="kpiGCU"></div>
-  <div class="g2e">
-    <div class="card"><div class="card-hd">🟢 Transaction Status — GCU</div><table class="tbl" id="statusGCU"></table></div>
-    <div class="card"><div class="card-hd">💰 Revenue Detail — GCU</div><table class="tbl"><thead class="navy"><tr><th>Acquirer</th><th class="r">GMV</th><th class="r">Settled</th><th class="r">Revenue</th></tr></thead><tbody id="revGCU"></tbody><tfoot id="revFootGCU"></tfoot></table></div>
-  </div>
-  </div>
-
-  <div id="ptBlockNKS"><div class="sec-div"><div class="sec-div-title nks">NKS — Nusantria Karya Sejahtera</div></div>
-  <div class="g4" id="kpiNKS"></div>
-  <div class="g2e">
-    <div class="card"><div class="card-hd">🟢 Transaction Status — NKS</div><table class="tbl" id="statusNKS"></table></div>
-    <div class="card"><div class="card-hd">💰 Revenue Detail — NKS</div><table class="tbl"><thead class="navy"><tr><th>Acquirer</th><th class="r">GMV</th><th class="r">Settled</th><th class="r">Revenue</th></tr></thead><tbody id="revNKS"></tbody><tfoot id="revFootNKS"></tfoot></table></div>
-  </div>
-  </div>
-
-  <div id="ptBlockANK"><div class="sec-div"><div class="sec-div-title ank">ANK — Aksanta Nusadaya Karya</div></div>
-  <div class="g4" id="kpiANK"></div>
-  <div class="g2e">
-    <div class="card"><div class="card-hd">🟢 Transaction Status — ANK</div><table class="tbl" id="statusANK"></table></div>
-    <div class="card"><div class="card-hd">💰 Revenue Detail — ANK</div><table class="tbl"><thead class="navy"><tr><th>Acquirer</th><th class="r">GMV</th><th class="r">Settled</th><th class="r">Revenue</th></tr></thead><tbody id="revANK"></tbody><tfoot id="revFootANK"></tfoot></table></div>
-  </div>
-  </div>
+  <div id="ptBlocksContainer"><!-- di-generate otomatis dari PT_CONFIG saat halaman dimuat --></div>
 
   <!-- Monthly Report (hidden by default) -->
   <div id="monthlySection" style="display:none">
-    <div class="sec-div"><div class="sec-div-title akt">📅 Monthly Report — MTD & YTD</div></div>
-    <div class="g2e" style="margin-bottom:10px">
-      <div class="card">
-        <div class="card-hd">AKT — Agro Karsa Terpadu</div>
-        <table class="tbl"><thead class="navy"><tr><th>Description</th><th class="r">MTD</th><th class="r">YTD</th></tr></thead><tbody id="mtdMonthlyAKT"></tbody></table>
-      </div>
-      <div class="card">
-        <div class="card-hd">GCU — Gemilang Cipta Utama</div>
-        <table class="tbl"><thead class="navy"><tr><th>Description</th><th class="r">MTD</th><th class="r">YTD</th></tr></thead><tbody id="mtdMonthlyGCU"></tbody></table>
-      </div>
-      <div class="card">
-        <div class="card-hd">NKS — Nusantria Karya Sejahtera</div>
-        <table class="tbl"><thead class="navy"><tr><th>Description</th><th class="r">MTD</th><th class="r">YTD</th></tr></thead><tbody id="mtdMonthlyNKS"></tbody></table>
-      </div>
-      <div class="card">
-        <div class="card-hd">ANK — Aksanta Nusadaya Karya</div>
-        <table class="tbl"><thead class="navy"><tr><th>Description</th><th class="r">MTD</th><th class="r">YTD</th></tr></thead><tbody id="mtdMonthlyANK"></tbody></table>
-      </div>
-    </div>
-    <div class="sec-div"><div class="sec-div-title akt">📊 Revenue Detail</div></div>
+    <div class="sec-div"><div class="sec-div-title pt">📅 Monthly Report — MTD & YTD</div></div>
+    <div class="g2e" style="margin-bottom:10px" id="monthlyCardsContainer"><!-- di-generate otomatis dari PT_CONFIG --></div>
+    <div class="sec-div"><div class="sec-div-title pt">📊 Revenue Detail</div></div>
     <div class="card" style="margin-bottom:10px">
       <table class="tbl"><thead class="navy"><tr><th>PT - Acquirer</th><th class="r">GMV</th><th class="r">Settle Amount</th><th class="r">Revenue</th></tr></thead>
       <tbody id="revMonthlyBody"></tbody>
@@ -243,25 +181,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
   <!-- Daily Report -->
   <div id="dailyReportSection">
-  <div class="sec-div"><div class="sec-div-title akt">📅 Daily Report — Yesterday / MTD / YTD</div></div>
-  <div class="g2e" style="margin-bottom:10px">
-    <div class="card" id="dailyCardAKT">
-      <div class="card-hd">AKT — Agro Karsa Terpadu</div>
-      <table class="tbl"><thead class="navy"><tr><th>Description</th><th class="r">Yesterday</th><th class="r">MTD</th><th class="r">YTD</th></tr></thead><tbody id="mtdAKT"></tbody></table>
-    </div>
-    <div class="card" id="dailyCardGCU">
-      <div class="card-hd">GCU — Gemilang Cipta Utama</div>
-      <table class="tbl"><thead class="navy"><tr><th>Description</th><th class="r">Yesterday</th><th class="r">MTD</th><th class="r">YTD</th></tr></thead><tbody id="mtdGCU"></tbody></table>
-    </div>
-    <div class="card" id="dailyCardNKS">
-      <div class="card-hd">NKS — Nusantria Karya Sejahtera</div>
-      <table class="tbl"><thead class="navy"><tr><th>Description</th><th class="r">Yesterday</th><th class="r">MTD</th><th class="r">YTD</th></tr></thead><tbody id="mtdNKS"></tbody></table>
-    </div>
-    <div class="card" id="dailyCardANK">
-      <div class="card-hd">ANK — Aksanta Nusadaya Karya</div>
-      <table class="tbl"><thead class="navy"><tr><th>Description</th><th class="r">Yesterday</th><th class="r">MTD</th><th class="r">YTD</th></tr></thead><tbody id="mtdANK"></tbody></table>
-    </div>
-  </div>
+  <div class="sec-div"><div class="sec-div-title pt">📅 Daily Report — Yesterday / MTD / YTD</div></div>
+  <div class="g2e" style="margin-bottom:10px" id="dailyCardsContainer"><!-- di-generate otomatis dari PT_CONFIG --></div>
   </div>
 
   <!-- Total AKT + GCU + NKS -->
@@ -286,37 +207,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   </div>
   </div><!-- end rekon -->
   <div data-section="avb" style="display:none"><!-- Actual vs Budget -->
-  <div class="sec-div"><div class="sec-div-title akt">📊 Actual vs Budget</div></div>
-  <div class="g2e" style="margin-bottom:10px">
-    <div class="card" id="avbCardAKT">
-      <div class="card-hd" id="avbHdAKT">Actual vs Budget — AKT</div>
-      <div class="avb-kpi-row" id="avbKpiAKT" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px"></div>
-      <table class="tbl"><thead class="navy"><tr><th>Keterangan</th><th class="r">Budget</th><th class="r">Forecast</th><th class="r">Actual</th><th class="r">Below/Above</th></tr></thead><tbody id="avbTblAKT"></tbody></table>
-      <div class="card-hd" style="margin-top:14px">Monthly Summary — Actual vs Budget 2026 (AKT)</div>
-      <table class="tbl"><thead class="navy"><tr><th>Bulan</th><th class="r">Budget</th><th class="r">Forecast</th><th class="r">Actual/Proj</th><th class="r">Below/Above</th><th class="r">Status</th></tr></thead><tbody id="avbMonthlyAKT"></tbody></table>
-    </div>
-    <div class="card" id="avbCardGCU">
-      <div class="card-hd" id="avbHdGCU">Actual vs Budget — GCU</div>
-      <div class="avb-kpi-row" id="avbKpiGCU" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px"></div>
-      <table class="tbl"><thead class="navy"><tr><th>Keterangan</th><th class="r">Budget</th><th class="r">Forecast</th><th class="r">Actual</th><th class="r">Below/Above</th></tr></thead><tbody id="avbTblGCU"></tbody></table>
-      <div class="card-hd" style="margin-top:14px">Monthly Summary — Actual vs Budget 2026 (GCU)</div>
-      <table class="tbl"><thead class="navy"><tr><th>Bulan</th><th class="r">Budget</th><th class="r">Forecast</th><th class="r">Actual/Proj</th><th class="r">Below/Above</th><th class="r">Status</th></tr></thead><tbody id="avbMonthlyGCU"></tbody></table>
-    </div>
-    <div class="card" id="avbCardNKS">
-      <div class="card-hd" id="avbHdNKS">Actual vs Budget — NKS</div>
-      <div class="avb-kpi-row" id="avbKpiNKS" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px"></div>
-      <table class="tbl"><thead class="navy"><tr><th>Keterangan</th><th class="r">Budget</th><th class="r">Forecast</th><th class="r">Actual</th><th class="r">Below/Above</th></tr></thead><tbody id="avbTblNKS"></tbody></table>
-      <div class="card-hd" style="margin-top:14px">Monthly Summary — Actual vs Budget 2026 (NKS)</div>
-      <table class="tbl"><thead class="navy"><tr><th>Bulan</th><th class="r">Budget</th><th class="r">Forecast</th><th class="r">Actual/Proj</th><th class="r">Below/Above</th><th class="r">Status</th></tr></thead><tbody id="avbMonthlyNKS"></tbody></table>
-    </div>
-    <div class="card" id="avbCardANK">
-      <div class="card-hd" id="avbHdANK">Actual vs Budget — ANK</div>
-      <div class="avb-kpi-row" id="avbKpiANK" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px"></div>
-      <table class="tbl"><thead class="navy"><tr><th>Keterangan</th><th class="r">Budget</th><th class="r">Forecast</th><th class="r">Actual</th><th class="r">Below/Above</th></tr></thead><tbody id="avbTblANK"></tbody></table>
-      <div class="card-hd" style="margin-top:14px">Monthly Summary — Actual vs Budget 2026 (ANK)</div>
-      <table class="tbl"><thead class="navy"><tr><th>Bulan</th><th class="r">Budget</th><th class="r">Forecast</th><th class="r">Actual/Proj</th><th class="r">Below/Above</th><th class="r">Status</th></tr></thead><tbody id="avbMonthlyANK"></tbody></table>
-    </div>
-  </div>
+  <div class="sec-div"><div class="sec-div-title pt">📊 Actual vs Budget</div></div>
+  <div class="g2e" style="margin-bottom:10px" id="avbCardsContainer"><!-- di-generate otomatis dari PT_CONFIG --></div>
   </div><!-- end avb -->
   <div class="footer" id="footer"></div>
 </div>
@@ -324,9 +216,90 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <script>
 const SB={url:'https://cjwxonoeszokjepkttnd.supabase.co',key:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqd3hvbm9lc3pva2plcGt0dG5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NTUyOTEsImV4cCI6MjA5NjAzMTI5MX0.jqkIoCl9g2nPWiNWyBrwMAcASEosb-lIKXc1hVVdgdg'};
 // Daftar PT — tambah 1 baris di sini kalau ada PT baru (misal ANK), gak perlu ubah kode lain
-const PT_LIST=['AKT','GCU','NKS','ANK'];
+// ═══════════════════════════════════════════════════════════
+// PT_CONFIG — "Daftar Tamu" — SATU-SATUNYA tempat daftar PT
+// Nambah PT baru? Cukup tambah 1 baris di sini + isi URL/key di SB
+// kalau nanti pisah project lagi. Field parent_merchant tetap sama.
+// ═══════════════════════════════════════════════════════════
+const PT_CONFIG=[
+  // pdfRevRow/pdfMcBg/pdfMcText/pdfMcTint: warna KHUSUS dipakai di export PDF (dlPDF/dlMonthlyPDF),
+  // sengaja dipisah dari rowBg/hdBg/hdText (buat HTML dashboard) karena di kode asli
+  // palet PDF & palet HTML memang sedikit beda nuansa — dipertahankan persis biar gak ketuker.
+  // pdfRevRowM: KHUSUS dipakai dlMonthlyPDF Revenue Detail — beda dari pdfRevRow (dlPDF) hanya
+  // untuk NKS (255,251,235 vs 255,247,224). Ini ketauan lewat testing, dilaporkan ke Via — bukan
+  // di-"samain" sepihak, supaya perilaku PDF lama gak berubah diam-diam.
+  {key:'AKT', name:'Agro Karsa Terpadu',      checkedByDefault:true,  rowBg:'#EFF6FF', hdBg:'#DBEAFE', hdText:'#1B2B4B',
+    pdfRevRow:[239,246,255], pdfRevRowM:[239,246,255], pdfMcBg:[219,234,254], pdfMcText:[27,43,75],  pdfMcTint:[248,250,252]},
+  {key:'GCU', name:'Gemilang Cipta Utama',    checkedByDefault:true,  rowBg:'#F0FDF4', hdBg:'#D1FAE5', hdText:'#065F46',
+    pdfRevRow:[240,253,244], pdfRevRowM:[240,253,244], pdfMcBg:[209,250,229], pdfMcText:[6,95,70],   pdfMcTint:[240,253,244]},
+  {key:'NKS', name:'Nusantria Karya Sejahtera', checkedByDefault:true, rowBg:'#FEF9C3', hdBg:'#FDE68A', hdText:'#78350F',
+    pdfRevRow:[255,247,224], pdfRevRowM:[255,251,235], pdfMcBg:[253,230,138], pdfMcText:[120,53,15], pdfMcTint:[255,251,235]},
+  {key:'ANK', name:'Aksanta Nusadaya Karya',  checkedByDefault:false, rowBg:'#FDF2F8', hdBg:'#FBCFE8', hdText:'#831843',
+    pdfRevRow:[253,242,248], pdfRevRowM:[253,242,248], pdfMcBg:[251,207,232], pdfMcText:[131,24,67], pdfMcTint:[253,242,248]}, // belum go-live
+];
+const PT_LIST=PT_CONFIG.map(p=>p.key); // dipertahankan biar kode lama yang masih pakai PT_LIST tetap jalan
+
+function renderPtBlocks(){
+  const wrap=document.getElementById('ptBlocksContainer');
+  if(!wrap)return;
+  wrap.innerHTML=PT_CONFIG.map(p=>`
+  <div id="ptBlock${p.key}"><div class="sec-div"><div class="sec-div-title pt">${p.key} — ${p.name}</div></div>
+  <div class="g4" id="kpi${p.key}"></div>
+  <div class="g2e">
+    <div class="card"><div class="card-hd">🟢 Transaction Status — ${p.key}</div><table class="tbl" id="status${p.key}"></table></div>
+    <div class="card"><div class="card-hd">💰 Revenue Detail — ${p.key}</div><table class="tbl"><thead class="navy"><tr><th>Acquirer</th><th class="r">GMV</th><th class="r">Settled</th><th class="r">Revenue</th></tr></thead><tbody id="rev${p.key}"></tbody><tfoot id="revFoot${p.key}"></tfoot></table></div>
+  </div>
+  </div>`).join('');
+}
+
+function renderDailyCards(){
+  const wrap=document.getElementById('dailyCardsContainer');
+  if(!wrap)return;
+  wrap.innerHTML=PT_CONFIG.map(p=>`
+    <div class="card" id="dailyCard${p.key}">
+      <div class="card-hd">${p.key} — ${p.name}</div>
+      <table class="tbl"><thead class="navy"><tr><th>Description</th><th class="r">Yesterday</th><th class="r">MTD</th><th class="r">YTD</th></tr></thead><tbody id="mtd${p.key}"></tbody></table>
+    </div>`).join('');
+}
+
+function renderMonthlyCards(){
+  const wrap=document.getElementById('monthlyCardsContainer');
+  if(!wrap)return;
+  wrap.innerHTML=PT_CONFIG.map(p=>`
+      <div class="card" id="monthlyCard${p.key}">
+        <div class="card-hd">${p.key} — ${p.name}</div>
+        <table class="tbl"><thead class="navy"><tr><th>Description</th><th class="r">MTD</th><th class="r">YTD</th></tr></thead><tbody id="mtdMonthly${p.key}"></tbody></table>
+      </div>`).join('');
+}
+
+function renderAvbCards(){
+  const wrap=document.getElementById('avbCardsContainer');
+  if(!wrap)return;
+  wrap.innerHTML=PT_CONFIG.map(p=>`
+    <div class="card" id="avbCard${p.key}">
+      <div class="card-hd" id="avbHd${p.key}">Actual vs Budget — ${p.key}</div>
+      <div class="avb-kpi-row" id="avbKpi${p.key}" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px"></div>
+      <table class="tbl"><thead class="navy"><tr><th>Keterangan</th><th class="r">Budget</th><th class="r">Forecast</th><th class="r">Actual</th><th class="r">Below/Above</th></tr></thead><tbody id="avbTbl${p.key}"></tbody></table>
+      <div class="card-hd" style="margin-top:14px">Monthly Summary — Actual vs Budget 2026 (${p.key})</div>
+      <table class="tbl"><thead class="navy"><tr><th>Bulan</th><th class="r">Budget</th><th class="r">Forecast</th><th class="r">Actual/Proj</th><th class="r">Below/Above</th><th class="r">Status</th></tr></thead><tbody id="avbMonthly${p.key}"></tbody></table>
+    </div>`).join('');
+}
+
+function renderPtFilterCheckboxes(){
+  const wrap=document.getElementById('ptFilterCheckboxes');
+  if(!wrap)return;
+  wrap.innerHTML=PT_CONFIG.map(p=>`
+    <label class="pt-filter-label">
+      <input type="checkbox" class="ptChk" value="${p.key}" ${p.checkedByDefault?'checked':''} onchange="onPtChkChange()" style="width:14px;height:14px;cursor:pointer">
+      ${p.name}
+    </label>`).join('');
+  // Set activePts awal sesuai checkedByDefault di PT_CONFIG (dulu di-hardcode manual)
+  activePts=PT_CONFIG.filter(p=>p.checkedByDefault).map(p=>p.key);
+  const chkAll=document.getElementById('ptChkALL');
+  if(chkAll) chkAll.checked = activePts.length===PT_CONFIG.length;
+}
 let currentMode='daily',availDates=[],availMonths=[],calYear=new Date().getFullYear(),calMonth=new Date().getMonth(),selectedDate='',selectedMonth='',cAKT=null,cGCU=null,cNKS=null,cANK=null;
-const MO=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MO=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 const MOS=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
 const p2=s=>String(s).padStart(2,'0');
 const rpF=n=>{if(n==null||isNaN(n))return '—';const v=Math.round(n);return(v<0?'-':'')+'Rp '+Math.abs(v).toLocaleString('id-ID');};
@@ -401,10 +374,15 @@ function pickMonth(ym){selectedMonth=ym;document.getElementById('calLabel').text
 
 async function init(){
   try{
-    const[dAKT,dGCU,dNKS,dANK]=await Promise.all([sbFetch('daily_summary','select=report_date&order=report_date.desc&limit=365','AKT'),sbFetch('daily_summary','select=report_date&order=report_date.desc&limit=365','GCU'),sbFetch('daily_summary','select=report_date&order=report_date.desc&limit=365','NKS'),sbFetch('daily_summary','select=report_date&order=report_date.desc&limit=365','ANK')]);
-    availDates=[...new Set([...dAKT.map(r=>r.report_date),...dGCU.map(r=>r.report_date),...dNKS.map(r=>r.report_date),...dANK.map(r=>r.report_date)])].sort().reverse();
+    renderPtBlocks(); // generate section KPI/Status/Revenue Detail per PT dari PT_CONFIG
+    renderDailyCards();
+    renderMonthlyCards();
+    renderAvbCards();
+    renderPtFilterCheckboxes(); // generate checkbox filter dari PT_CONFIG duluan, sebelum apapun yang butuh activePts
+    const dateArrays=await Promise.all(PT_CONFIG.map(p=>sbFetch('daily_summary','select=report_date&order=report_date.desc&limit=365',p.key)));
+    availDates=[...new Set(dateArrays.flatMap(arr=>arr.map(r=>r.report_date)))].sort().reverse();
     availMonths=[...new Set(availDates.map(d=>d.slice(0,7)))];
-    if(!availDates.length){showSec('errorPg');document.getElementById('errorMsg').textContent='Tidak ada data di database manapun (AKT/GCU/NKS).';return;}
+    if(!availDates.length){showSec('errorPg');document.getElementById('errorMsg').textContent='Tidak ada data di database manapun ('+PT_LIST.join('/')+').';return;}
     const lat=availDates[0];const[ly,lm]=lat.split('-');calYear=parseInt(ly);calMonth=parseInt(lm)-1;selectedDate=lat;
     document.getElementById('calLabel').textContent=fmtD(lat);
     await loadDate(lat);
@@ -418,38 +396,41 @@ async function loadDate(dateISO){
     const ms=`${y}-${mo}-01`,ys=`${y}-01-01`;
     // Semua PT sekarang di 1 tabel yang sama, semua kolom (termasuk mdr_discount) udah seragam
     const selFields='select=total_trx_success,gmv,total_mdr,total_chargeback,total_representment,total_dispute,total_transfer_fee,total_amount_transfer,settled_amount,mdr_discount';
-    const[sAKT,sGCU,sNKS,sANK,mtdAKT,mtdGCU,mtdNKS,mtdANK,ytdAKT,ytdGCU,ytdNKS,ytdANK,bfAKT,bfGCU,bfNKS,bfANK,dsAKT,dsGCU,dsNKS,dsANK,mcAKT,mcGCU,mcNKS,mcANK]=await Promise.all([
-      sbFetch('daily_summary',`report_date=eq.${dateISO}&limit=1`,'AKT'),
-      sbFetch('daily_summary',`report_date=eq.${dateISO}&limit=1`,'GCU'),
-      sbFetch('daily_summary',`report_date=eq.${dateISO}&limit=1`,'NKS'),
-      sbFetch('daily_summary',`report_date=eq.${dateISO}&limit=1`,'ANK'),
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${dateISO}&${selFields}`,'AKT'),
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${dateISO}&${selFields}`,'GCU'),
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${dateISO}&${selFields}`,'NKS'),
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${dateISO}&${selFields}`,'ANK'),
-      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${dateISO}&${selFields}`,'AKT'),
-      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${dateISO}&${selFields}`,'GCU'),
-      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${dateISO}&${selFields}`,'NKS'),
-      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${dateISO}&${selFields}`,'ANK'),
-      sbFetch('budget_forecast','select=month,budget,forecast,budget_per_day,forecast_per_day,start_day&order=month.asc','AKT'),
-      sbFetch('budget_forecast','select=month,budget,forecast,budget_per_day,forecast_per_day,start_day&order=month.asc','GCU'),
-      sbFetch('budget_forecast','select=month,budget,forecast,budget_per_day,forecast_per_day,start_day&order=month.asc','NKS'),
-      sbFetch('budget_forecast','select=month,budget,forecast,budget_per_day,forecast_per_day,start_day&order=month.asc','ANK'),
-      sbFetch('daily_summary',`select=report_date,total_revenue&report_date=gte.${ys}&report_date=lte.${dateISO}`,'AKT'),
-      sbFetch('daily_summary',`select=report_date,total_revenue&report_date=gte.${ys}&report_date=lte.${dateISO}`,'GCU'),
-      sbFetch('daily_summary',`select=report_date,total_revenue&report_date=gte.${ys}&report_date=lte.${dateISO}`,'NKS'),
-      sbFetch('daily_summary',`select=report_date,total_revenue&report_date=gte.${ys}&report_date=lte.${dateISO}`,'ANK'),
-      sbFetch('top_merchants',`report_date=eq.${dateISO}&order=rank.asc&limit=5`,'AKT'),
-      sbFetch('top_merchants',`report_date=eq.${dateISO}&order=rank.asc&limit=5`,'GCU'),
-      sbFetch('top_merchants',`report_date=eq.${dateISO}&order=rank.asc&limit=5`,'NKS'),
-      sbFetch('top_merchants',`report_date=eq.${dateISO}&order=rank.asc&limit=5`,'ANK'),
-    ]);
-    cAKT=sAKT[0]||null;cGCU=sGCU[0]||null;cNKS=sNKS[0]||null;cANK=sANK[0]||null;
-    window._mtdAKT=mtdAKT;window._mtdGCU=mtdGCU;window._mtdNKS=mtdNKS;window._mtdANK=mtdANK;
-    window._ytdAKT=ytdAKT;window._ytdGCU=ytdGCU;window._ytdNKS=ytdNKS;window._ytdANK=ytdANK;
-    window._bfAKT=bfAKT;window._bfGCU=bfGCU;window._bfNKS=bfNKS;window._bfANK=bfANK;
-    window._dsAKT=dsAKT;window._dsGCU=dsGCU;window._dsNKS=dsNKS;window._dsANK=dsANK;
-    window._mcAKT=mcAKT;window._mcGCU=mcGCU;window._mcNKS=mcNKS;window._mcANK=mcANK;
+
+    // Bangun daftar fetch buat SEMUA PT sekaligus dari PT_CONFIG (dulu ditulis manual 1-per-1,
+    // sekarang otomatis nambah kalau PT_CONFIG nambah PT baru)
+    const jobs=[], jobTags=[];
+    const queue=(tag,builder)=>PT_CONFIG.forEach(p=>{jobs.push(builder(p.key));jobTags.push(tag+p.key);});
+    queue('cur_', k=>sbFetch('daily_summary',`report_date=eq.${dateISO}&limit=1`,k));
+    queue('mtd_', k=>sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${dateISO}&${selFields}`,k));
+    queue('ytd_', k=>sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${dateISO}&${selFields}`,k));
+    queue('bf_',  k=>sbFetch('budget_forecast','select=month,budget,forecast,budget_per_day,forecast_per_day,start_day&order=month.asc',k));
+    queue('ds_',  k=>sbFetch('daily_summary',`select=report_date,total_revenue&report_date=gte.${ys}&report_date=lte.${dateISO}`,k));
+    queue('mc_',  k=>sbFetch('top_merchants',`report_date=eq.${dateISO}&order=rank.asc&limit=5`,k));
+
+    const results=await Promise.all(jobs);
+    const byTag={};
+    jobTags.forEach((tag,i)=>{byTag[tag]=results[i];});
+
+    // "current" (data 1 hari) WAJIB eksplisit — cAKT/cGCU/cNKS/cANK dideklarasi pakai `let`,
+    // gak bisa di-set otomatis lewat window[...] (keterbatasan JavaScript, bukan pilihan desain).
+    // Kalau nambah PT baru nanti, baris ini + parameter render()/renderTotal()/dst masih perlu
+    // disentuh manual — itu proyek refactor terpisah yang lebih besar lagi.
+    cAKT = byTag['cur_AKT']?.[0] || null;
+    cGCU = byTag['cur_GCU']?.[0] || null;
+    cNKS = byTag['cur_NKS']?.[0] || null;
+    cANK = byTag['cur_ANK']?.[0] || null;
+
+    // Sisanya (mtd/ytd/budget/revenue-harian/top-merchant) AMAN di-loop otomatis,
+    // karena window._xxx itu properti biasa, bukan variabel `let`
+    PT_CONFIG.forEach(p=>{
+      window['_mtd'+p.key]=byTag['mtd_'+p.key];
+      window['_ytd'+p.key]=byTag['ytd_'+p.key];
+      window['_bf'+p.key]=byTag['bf_'+p.key];
+      window['_ds'+p.key]=byTag['ds_'+p.key];
+      window['_mc'+p.key]=byTag['mc_'+p.key];
+    });
+
     selectedDate=dateISO;render(cAKT,cGCU,cNKS,cANK,dateISO);
   }catch(e){document.getElementById('errorMsg').textContent=`Gagal: ${e.message}`;showSec('errorPg');}
 }
@@ -457,10 +438,10 @@ async function loadDate(dateISO){
 function render(akt,gcu,nks,ank,dateISO){
   const[y,mo,d]=dateISO.split('-');const dateStr=`${parseInt(d)} ${MO[parseInt(mo)-1]} ${y}`;
   const _hds=document.getElementById('hdrDateSub');if(_hds)_hds.textContent=dateStr;
-  document.getElementById('subtitle').textContent=`Data: ${dateStr} | AKT${akt?'':' (tidak ada data)'} & GCU${gcu?'':' (tidak ada data)'} & NKS${nks?'':' (tidak ada data)'} & ANK${ank?'':' (tidak ada data)'}`;
+  document.getElementById('subtitle').textContent=`Data: ${dateStr}`;
   document.getElementById('footer').textContent=`Auto-generated — Paycloud × AKT & GCU & NKS & ANK — ${dateStr}`;
   renderKPI('kpiAKT',akt);renderKPI('kpiGCU',gcu);renderKPI('kpiNKS',nks);renderKPI('kpiANK',ank);renderStatus('statusAKT',akt);renderStatus('statusGCU',gcu);renderStatus('statusNKS',nks);renderStatus('statusANK',ank);
-  renderRev('revAKT','revFootAKT',akt);renderRev('revGCU','revFootGCU',gcu);renderRev('revNKS','revFootNKS',nks);renderRev('revANK','revFootANK',ank);renderTotal(akt,gcu,nks,ank);renderSummary(akt,gcu,nks,ank);
+  renderRev('revAKT','revFootAKT',akt);renderRev('revGCU','revFootGCU',gcu);renderRev('revNKS','revFootNKS',nks);renderRev('revANK','revFootANK',ank);renderTotal({AKT:akt,GCU:gcu,NKS:nks,ANK:ank});renderSummary(akt,gcu,nks,ank);
   renderMTDWeb();renderAvbWeb();renderTopMerch();renderAvbMonthly();
   applyPtFilter();
   document.getElementById('btnPdf').style.display='inline-flex';document.getElementById('btnXls').style.display='inline-flex';
@@ -495,14 +476,22 @@ function renderRev(bodyId,footId,s){
   body.innerHTML=rows;foot.innerHTML=`<tr class="hl2"><td><strong>TOTAL</strong></td><td class="r">${rpF(tG)}</td><td class="r">${rpF(tS)}</td><td class="r" style="color:var(--green)">${rpF(tR)}</td></tr>`;
 }
 
-function renderTotal(akt,gcu,nks,ank){
-  // Nolkan kontribusi PT yang lagi di-uncheck di filter, biar Total Gabungan gak
-  // diam-diam ikut nyertain PT yang gak dipilih (terutama AKT yang punya riwayat besar)
-  akt=activePts.includes('AKT')?akt:null;
-  gcu=activePts.includes('GCU')?gcu:null;
-  nks=activePts.includes('NKS')?nks:null;
-  ank=activePts.includes('ANK')?ank:null;
-  const tM=(akt?.total_merchant||0)+(gcu?.total_merchant||0)+(nks?.total_merchant||0)+(ank?.total_merchant||0),tTrx=(akt?.total_trx||0)+(gcu?.total_trx||0)+(nks?.total_trx||0)+(ank?.total_trx||0),tSuc=(akt?.total_trx_success||0)+(gcu?.total_trx_success||0)+(nks?.total_trx_success||0)+(ank?.total_trx_success||0),tGMV=(akt?.gmv||0)+(gcu?.gmv||0)+(nks?.gmv||0)+(ank?.gmv||0),tAmt=Math.abs(akt?.total_amount_transfer||0)+Math.abs(gcu?.total_amount_transfer||0)+Math.abs(nks?.total_amount_transfer||0)+Math.abs(ank?.total_amount_transfer||0),tRev=(akt?.total_revenue||0)+(gcu?.total_revenue||0)+(nks?.total_revenue||0)+(ank?.total_revenue||0),tSR=tTrx>0?(tSuc/tTrx*100).toFixed(2):0;
+function renderTotal(dataByPt){
+  // dataByPt = {AKT: objAKT, GCU: objGCU, ...} — isi fungsi ini sekarang full otomatis
+  // ikutin PT_CONFIG. PT yang di-uncheck di filter otomatis di-skip (gak ikut kejumlah).
+  let tM=0,tTrx=0,tSuc=0,tGMV=0,tAmt=0,tRev=0;
+  PT_CONFIG.forEach(p=>{
+    if(!activePts.includes(p.key))return; // PT gak dicentang → skip, gak ikut kejumlah
+    const d=dataByPt[p.key];
+    if(!d)return;
+    tM  +=d.total_merchant||0;
+    tTrx+=d.total_trx||0;
+    tSuc+=d.total_trx_success||0;
+    tGMV+=d.gmv||0;
+    tAmt+=Math.abs(d.total_amount_transfer||0);
+    tRev+=d.total_revenue||0;
+  });
+  const tSR=tTrx>0?(tSuc/tTrx*100).toFixed(2):0;
   document.getElementById('kpiTotal').innerHTML=[
     {lbl:'Total Merchant',val:nF(tM),cls:'navy'},
     {lbl:'Total Trx Sukses',val:nF(tSuc),cls:'green'},
@@ -516,43 +505,49 @@ function renderTotal(akt,gcu,nks,ank){
 function renderSummary(akt,gcu,nks,ank){
   const el=document.getElementById('txSummaryBody');
   if(!el)return;
-  // Sama kayak renderTotal: nolkan PT yang gak dicentang biar gak ikut kejumlah diam-diam
-  akt=activePts.includes('AKT')?akt:null;
-  gcu=activePts.includes('GCU')?gcu:null;
-  nks=activePts.includes('NKS')?nks:null;
-  ank=activePts.includes('ANK')?ank:null;
+  const dataByPt={AKT:akt,GCU:gcu,NKS:nks,ANK:ank};
   const sfA=(arr,f)=>(arr||[]).reduce((a,r)=>a+(Math.abs(parseFloat(r[f])||0)),0);
   const sfN=(arr,f)=>(arr||[]).reduce((a,r)=>a+(parseFloat(r[f])||0),0);
-  const mtdA=activePts.includes('AKT')?(window._mtdAKT||[]):[];
-  const mtdG=activePts.includes('GCU')?(window._mtdGCU||[]):[];
-  const mtdN=activePts.includes('NKS')?(window._mtdNKS||[]):[];
-  const mtdK=activePts.includes('ANK')?(window._mtdANK||[]):[];
-  const ytdA=activePts.includes('AKT')?(window._ytdAKT||[]):[];
-  const ytdG=activePts.includes('GCU')?(window._ytdGCU||[]):[];
-  const ytdN=activePts.includes('NKS')?(window._ytdNKS||[]):[];
-  const ytdK=activePts.includes('ANK')?(window._ytdANK||[]):[];
-  const yCB=Math.abs(akt?.total_chargeback||0)+Math.abs(gcu?.total_chargeback||0)+Math.abs(nks?.total_chargeback||0)+Math.abs(ank?.total_chargeback||0);
-  const mCB=sfA(mtdA,'total_chargeback')+sfA(mtdG,'total_chargeback')+sfA(mtdN,'total_chargeback')+sfA(mtdK,'total_chargeback');
-  const yYCB=sfA(ytdA,'total_chargeback')+sfA(ytdG,'total_chargeback')+sfA(ytdN,'total_chargeback')+sfA(ytdK,'total_chargeback');
-  const yRep=Math.abs(akt?.total_representment||0)+Math.abs(gcu?.total_representment||0)+Math.abs(nks?.total_representment||0)+Math.abs(ank?.total_representment||0);
-  const mRep=sfA(mtdA,'total_representment')+sfA(mtdG,'total_representment')+sfA(mtdN,'total_representment')+sfA(mtdK,'total_representment');
-  const yYRep=sfA(ytdA,'total_representment')+sfA(ytdG,'total_representment')+sfA(ytdN,'total_representment')+sfA(ytdK,'total_representment');
-  const yDsp=Math.abs(akt?.total_dispute||0)+Math.abs(gcu?.total_dispute||0)+Math.abs(nks?.total_dispute||0)+Math.abs(ank?.total_dispute||0);
-  const mDsp=sfA(mtdA,'total_dispute')+sfA(mtdG,'total_dispute')+sfA(mtdN,'total_dispute')+sfA(mtdK,'total_dispute');
-  const yYDsp=sfA(ytdA,'total_dispute')+sfA(ytdG,'total_dispute')+sfA(ytdN,'total_dispute')+sfA(ytdK,'total_dispute');
-  const yMDD=(akt?.mdr_discount||0)+(gcu?.mdr_discount||0)+(nks?.mdr_discount||0)+(ank?.mdr_discount||0);
-  const mMDD=sfA(mtdA,'mdr_discount')+sfA(mtdG,'mdr_discount')+sfA(mtdN,'mdr_discount')+sfA(mtdK,'mdr_discount');
-  const yYMDD=sfA(ytdA,'mdr_discount')+sfA(ytdG,'mdr_discount')+sfA(ytdN,'mdr_discount')+sfA(ytdK,'mdr_discount');
+
+  // Helper generik: jumlahin 1 field buat 3 kolom (Yesterday/MTD/YTD) sekaligus,
+  // loop PT_CONFIG otomatis, skip PT yang gak dicentang di filter.
+  // yesterdayAbs: apakah nilai "Yesterday" perlu Math.abs() (mayoritas iya, kecuali
+  // GMV & MDR Discount yang emang selalu positif secara alami).
+  // periodFn: sfA (jumlah + abs, dipakai hampir semua field) atau sfN (jumlah apa adanya,
+  // khusus buat Total Trx yang emang gak butuh abs).
+  function sumField(field,yesterdayAbs,periodFn){
+    let y=0,m=0,ytd=0;
+    PT_CONFIG.forEach(p=>{
+      if(!activePts.includes(p.key))return;
+      const d=dataByPt[p.key];
+      const raw=d?.[field]||0;
+      y += yesterdayAbs?Math.abs(raw):raw;
+      m   += periodFn(window['_mtd'+p.key],field);
+      ytd += periodFn(window['_ytd'+p.key],field);
+    });
+    return [y,m,ytd];
+  }
+
+  const tTrx=sumField('total_trx_success',false,sfN);
+  const tGMV=sumField('gmv',false,sfA);
+  const tMDR=sumField('total_mdr',true,sfA);
+  const tCB =sumField('total_chargeback',true,sfA);
+  const tRep=sumField('total_representment',true,sfA);
+  const tDsp=sumField('total_dispute',true,sfA);
+  const tMDD=sumField('mdr_discount',false,sfA);
+  const tFee=sumField('total_transfer_fee',true,sfA);
+  const tAmt=sumField('total_amount_transfer',true,sfA);
+
   const rows=[
-    ['Total Trx',nF((akt?.total_trx_success||0)+(gcu?.total_trx_success||0)+(nks?.total_trx_success||0)+(ank?.total_trx_success||0)),nF(sfN(mtdA,'total_trx_success')+sfN(mtdG,'total_trx_success')+sfN(mtdN,'total_trx_success')+sfN(mtdK,'total_trx_success')),nF(sfN(ytdA,'total_trx_success')+sfN(ytdG,'total_trx_success')+sfN(ytdN,'total_trx_success')+sfN(ytdK,'total_trx_success')),false],
-    ['Amount (GMV)',rpF((akt?.gmv||0)+(gcu?.gmv||0)+(nks?.gmv||0)+(ank?.gmv||0)),rpF(sfA(mtdA,'gmv')+sfA(mtdG,'gmv')+sfA(mtdN,'gmv')+sfA(mtdK,'gmv')),rpF(sfA(ytdA,'gmv')+sfA(ytdG,'gmv')+sfA(ytdN,'gmv')+sfA(ytdK,'gmv')),false],
-    ['MDR',rpF(Math.abs(akt?.total_mdr||0)+Math.abs(gcu?.total_mdr||0)+Math.abs(nks?.total_mdr||0)+Math.abs(ank?.total_mdr||0)),rpF(sfA(mtdA,'total_mdr')+sfA(mtdG,'total_mdr')+sfA(mtdN,'total_mdr')+sfA(mtdK,'total_mdr')),rpF(sfA(ytdA,'total_mdr')+sfA(ytdG,'total_mdr')+sfA(ytdN,'total_mdr')+sfA(ytdK,'total_mdr')),false],
-    ['Chargeback',yCB?rpF(yCB):'—',mCB?rpF(mCB):'—',yYCB?rpF(yYCB):'—',false],
-    ['Representment',yRep?rpF(yRep):'—',mRep?rpF(mRep):'—',yYRep?rpF(yYRep):'—',false],
-    ['Settle Dispute',yDsp?rpF(yDsp):'—',mDsp?rpF(mDsp):'—',yYDsp?rpF(yYDsp):'—',false],
-    ['MDR Discount',yMDD?rpF(yMDD):'—',mMDD?rpF(mMDD):'—',yYMDD?rpF(yYMDD):'—',false],
-    ['Biaya Transfer',rpF(Math.abs(akt?.total_transfer_fee||0)+Math.abs(gcu?.total_transfer_fee||0)+Math.abs(nks?.total_transfer_fee||0)+Math.abs(ank?.total_transfer_fee||0)),rpF(sfA(mtdA,'total_transfer_fee')+sfA(mtdG,'total_transfer_fee')+sfA(mtdN,'total_transfer_fee')+sfA(mtdK,'total_transfer_fee')),rpF(sfA(ytdA,'total_transfer_fee')+sfA(ytdG,'total_transfer_fee')+sfA(ytdN,'total_transfer_fee')+sfA(ytdK,'total_transfer_fee')),false],
-    ['Settle Amount',rpF(Math.abs(akt?.total_amount_transfer||0)+Math.abs(gcu?.total_amount_transfer||0)+Math.abs(nks?.total_amount_transfer||0)+Math.abs(ank?.total_amount_transfer||0)),rpF(sfA(mtdA,'total_amount_transfer')+sfA(mtdG,'total_amount_transfer')+sfA(mtdN,'total_amount_transfer')+sfA(mtdK,'total_amount_transfer')),rpF(sfA(ytdA,'total_amount_transfer')+sfA(ytdG,'total_amount_transfer')+sfA(ytdN,'total_amount_transfer')+sfA(ytdK,'total_amount_transfer')),true],
+    ['Total Trx',nF(tTrx[0]),nF(tTrx[1]),nF(tTrx[2]),false],
+    ['Amount (GMV)',rpF(tGMV[0]),rpF(tGMV[1]),rpF(tGMV[2]),false],
+    ['MDR',rpF(tMDR[0]),rpF(tMDR[1]),rpF(tMDR[2]),false],
+    ['Chargeback',tCB[0]?rpF(tCB[0]):'—',tCB[1]?rpF(tCB[1]):'—',tCB[2]?rpF(tCB[2]):'—',false],
+    ['Representment',tRep[0]?rpF(tRep[0]):'—',tRep[1]?rpF(tRep[1]):'—',tRep[2]?rpF(tRep[2]):'—',false],
+    ['Settle Dispute',tDsp[0]?rpF(tDsp[0]):'—',tDsp[1]?rpF(tDsp[1]):'—',tDsp[2]?rpF(tDsp[2]):'—',false],
+    ['MDR Discount',tMDD[0]?rpF(tMDD[0]):'—',tMDD[1]?rpF(tMDD[1]):'—',tMDD[2]?rpF(tMDD[2]):'—',false],
+    ['Biaya Transfer',rpF(tFee[0]),rpF(tFee[1]),rpF(tFee[2]),false],
+    ['Settle Amount',rpF(tAmt[0]),rpF(tAmt[1]),rpF(tAmt[2]),true],
   ];
   el.innerHTML=rows.map(r=>
     `<tr ${r[4]?'class="hl2"':''}><td>${r[4]?'<strong>':''}${r[0]}${r[4]?'</strong>':''}</td><td class="r">${r[1]}</td><td class="r">${r[2]}</td><td class="r">${r[3]}</td></tr>`
@@ -560,10 +555,10 @@ function renderSummary(akt,gcu,nks,ank){
 }
 
 function dlExcel(){
-  if(!cAKT&&!cGCU&&!cNKS&&!cANK)return;
-  const showAKT=activePts.includes('AKT'), showGCU=activePts.includes('GCU'), showNKS=activePts.includes('NKS'), showANK=activePts.includes('ANK');
-  if(!showAKT&&!showGCU&&!showNKS&&!showANK){alert('Pilih minimal 1 PT terlebih dahulu.');return;}
-  const activeNames=[showAKT&&'AKT',showGCU&&'GCU',showNKS&&'NKS',showANK&&'ANK'].filter(Boolean);
+  const cByKey={AKT:cAKT,GCU:cGCU,NKS:cNKS,ANK:cANK}; // cAKT dst tetap harus eksplisit (variabel `let`)
+  if(PT_CONFIG.every(p=>!cByKey[p.key]))return;
+  const activeNames=PT_CONFIG.filter(p=>activePts.includes(p.key)).map(p=>p.key);
+  if(!activeNames.length){alert('Pilih minimal 1 PT terlebih dahulu.');return;}
   const ptTitle=activeNames.join('-');
   const wb=XLSX.utils.book_new(),dt=selectedDate||'—';
   const kpiSheet=(c,label,sheetName)=>{
@@ -572,12 +567,9 @@ function dlExcel(){
     else arr.push(['(Tidak ada data)','—']);
     const ws=XLSX.utils.aoa_to_sheet(arr);ws['!cols']=[{wch:30},{wch:20}];XLSX.utils.book_append_sheet(wb,ws,sheetName);
   };
-  if(showAKT) kpiSheet(cAKT,'AKT','KPI Summary AKT');
-  if(showGCU) kpiSheet(cGCU,'GCU','KPI Summary GCU');
-  if(showNKS) kpiSheet(cNKS,'NKS','KPI Summary NKS');
-  if(showANK) kpiSheet(cANK,'ANK','KPI Summary ANK');
+  PT_CONFIG.forEach(p=>{ if(activePts.includes(p.key)) kpiSheet(cByKey[p.key],p.key,'KPI Summary '+p.key); });
   if(activeNames.length>=2){
-    const active=[showAKT&&{key:'AKT',c:cAKT},showGCU&&{key:'GCU',c:cGCU},showNKS&&{key:'NKS',c:cNKS},showANK&&{key:'ANK',c:cANK}].filter(Boolean);
+    const active=PT_CONFIG.filter(p=>activePts.includes(p.key)).map(p=>({key:p.key,c:cByKey[p.key]}));
     const tM=active.reduce((a,p)=>a+(p.c?.total_merchant||0),0),tTrx=active.reduce((a,p)=>a+(p.c?.total_trx||0),0),tGMV=active.reduce((a,p)=>a+(p.c?.gmv||0),0),tSet=active.reduce((a,p)=>a+(p.c?.total_amount_transfer||0),0),tRev=active.reduce((a,p)=>a+(p.c?.total_revenue||0),0);
     const header=['Metrik',...active.map(p=>p.key),'Total'];
     const tg=[[`Total Gabungan — ${activeNames.join(' + ')}`],[`Tanggal: ${dt}`],[],header,
@@ -593,10 +585,7 @@ function dlExcel(){
     if(c){const rv=c.revenue_detail||{};let ent=Object.entries(rv).length?Object.entries(rv):[['Qoin',{gmv:c.gmv,settled:c.total_amount_transfer,revenue:c.total_revenue}]];if(ent.length===1)ent=[[ent[0][0],{...ent[0][1],settled:c.total_amount_transfer}]];ent.forEach(([a,d])=>arr.push([a,d.gmv||0,d.settled||0,d.revenue||0]));}
     const ws=XLSX.utils.aoa_to_sheet(arr);ws['!cols']=[{wch:15},{wch:20},{wch:20},{wch:20}];XLSX.utils.book_append_sheet(wb,ws,sheetName);
   };
-  if(showAKT) revSheet(cAKT,'AKT','Revenue Detail AKT');
-  if(showGCU) revSheet(cGCU,'GCU','Revenue Detail GCU');
-  if(showNKS) revSheet(cNKS,'NKS','Revenue Detail NKS');
-  if(showANK) revSheet(cANK,'ANK','Revenue Detail ANK');
+  PT_CONFIG.forEach(p=>{ if(activePts.includes(p.key)) revSheet(cByKey[p.key],p.key,'Revenue Detail '+p.key); });
   XLSX.writeFile(wb,`Dashboard_${ptTitle}_${(selectedDate||'').replace(/-/g,'')}.xlsx`);
 }
 
@@ -604,7 +593,8 @@ function dlPDF(){
   if(!cAKT&&!cGCU&&!cNKS&&!cANK){alert('Data belum dimuat.');return;}
   const showAKT=activePts.includes('AKT'), showGCU=activePts.includes('GCU'), showNKS=activePts.includes('NKS'), showANK=activePts.includes('ANK');
   if(!showAKT&&!showGCU&&!showNKS&&!showANK){alert('Pilih minimal 1 PT terlebih dahulu.');return;}
-  const pAKT=showAKT?cAKT:null, pGCU=showGCU?cGCU:null, pNKS=showNKS?cNKS:null, pANK=showANK?cANK:null;
+  const pByKey={AKT:showAKT?cAKT:null,GCU:showGCU?cGCU:null,NKS:showNKS?cNKS:null,ANK:showANK?cANK:null};
+  const pAKT=pByKey.AKT, pGCU=pByKey.GCU, pNKS=pByKey.NKS, pANK=pByKey.ANK; // dipertahankan, masih dipakai drawMTD/drawAvb dispatch di bawah
   const rpFull=n=>{if(n==null||isNaN(n))return '-';const v=Math.round(n);return(v<0?'-':'')+'Rp '+Math.abs(v).toLocaleString('id-ID');};
   const nFmt=n=>(n==null||isNaN(n))?'0':Math.round(n).toLocaleString('id-ID');
   try{
@@ -627,13 +617,8 @@ function dlPDF(){
   y=27;
 
   // KPI (sesuai PT aktif)
-  const tM=(pAKT?.total_merchant||0)+(pGCU?.total_merchant||0)+(pNKS?.total_merchant||0)+(pANK?.total_merchant||0);
-  const tTrx=(pAKT?.total_trx||0)+(pGCU?.total_trx||0)+(pNKS?.total_trx||0)+(pANK?.total_trx||0);
-  const tSuc=(pAKT?.total_trx_success||0)+(pGCU?.total_trx_success||0)+(pNKS?.total_trx_success||0)+(pANK?.total_trx_success||0);
-  const tFail=(pAKT?.total_trx_fail||0)+(pGCU?.total_trx_fail||0)+(pNKS?.total_trx_fail||0)+(pANK?.total_trx_fail||0);
-  const tGMV=(pAKT?.gmv||0)+(pGCU?.gmv||0)+(pNKS?.gmv||0)+(pANK?.gmv||0);
-  const tAmt=Math.abs(pAKT?.total_amount_transfer||0)+Math.abs(pGCU?.total_amount_transfer||0)+Math.abs(pNKS?.total_amount_transfer||0)+Math.abs(pANK?.total_amount_transfer||0);
-  const tRev=(pAKT?.total_revenue||0)+(pGCU?.total_revenue||0)+(pNKS?.total_revenue||0)+(pANK?.total_revenue||0);
+  let tM=0,tTrx=0,tSuc=0,tFail=0,tGMV=0,tAmt=0,tRev=0;
+  PT_CONFIG.forEach(p=>{const d=pByKey[p.key];if(!d)return;tM+=d.total_merchant||0;tTrx+=d.total_trx||0;tSuc+=d.total_trx_success||0;tFail+=d.total_trx_fail||0;tGMV+=d.gmv||0;tAmt+=Math.abs(d.total_amount_transfer||0);tRev+=d.total_revenue||0;});
   const tSR=tTrx>0?(tSuc/tTrx*100).toFixed(2):0;
   const kpis=[['Total Merchant',nFmt(tM)],['Total Trx Sukses',nFmt(tSuc)],['Total GMV',rpFull(tGMV)],['Settle Amount',rpFull(tAmt)],['Total Revenue',rpFull(tRev)],['Success Rate',tSR+'%']];
   const bw=(W-M*2-10)/6;
@@ -717,10 +702,9 @@ function dlPDF(){
   }
   if(y+10>280)newPage1();
   doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(15,23,42);doc.text('Daily Report - Yesterday / MTD / YTD',M,y);y+=4;
-  if(showAKT) drawMTD(cAKT,window._mtdAKT,window._ytdAKT,'AKT - Agro Karsa Terpadu');
-  if(showGCU) drawMTD(cGCU,window._mtdGCU,window._ytdGCU,'GCU - Gemilang Cipta Utama');
-  if(showNKS) drawMTD(cNKS,window._mtdNKS,window._ytdNKS,'NKS - Nusantria Karya Sejahtera');
-  if(showANK) drawMTD(cANK,window._mtdANK,window._ytdANK,'ANK - Aksanta Nusadaya Karya');
+  PT_CONFIG.forEach(p=>{
+    if(activePts.includes(p.key)) drawMTD(pByKey[p.key],window['_mtd'+p.key],window['_ytd'+p.key],p.key+' - '+p.name);
+  });
 
   // Revenue Detail
   {const nActiveRev=[showAKT,showGCU,showNKS,showANK].filter(Boolean).length;if(y+(13+nActiveRev*5)>280)newPage1();}
@@ -729,16 +713,16 @@ function dlPDF(){
   const rc1=M+85,rc2=M+133,rc3=M+W-M*2-4;
   doc.text('PT - Acquirer',M+2,y);doc.text('GMV',rc1,y,{align:'right'});doc.text('Settle Amount',rc2,y,{align:'right'});doc.text('Revenue',rc3,y,{align:'right'});y+=5;
   let rg=0,ra=0,rr=0;
-  [[pAKT,'AKT'],[pGCU,'GCU'],[pNKS,'NKS'],[pANK,'ANK']].forEach(([s,pt],pi)=>{
+  PT_CONFIG.forEach(p=>{
+    const s=pByKey[p.key];
     if(!s)return;
     const rev=s.revenue_detail||{};
     const pA=Math.abs(s.total_amount_transfer||0),pR=s.total_revenue||0,pG=s.gmv||0;
     rg+=pG;ra+=pA;rr+=pR;
     const acq=Object.entries(rev).length?Object.keys(rev)[0]:'Qoin';
-    const rgb=[[239,246,255],[240,253,244],[255,247,224],[253,242,248]][pi]||[255,255,255];
-    doc.setFillColor(rgb[0],rgb[1],rgb[2]);doc.rect(M,y-3,W-M*2,5,'F');
+    doc.setFillColor(p.pdfRevRow[0],p.pdfRevRow[1],p.pdfRevRow[2]);doc.rect(M,y-3,W-M*2,5,'F');
     doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);
-    doc.text(`${pt} - ${acq}`,M+2,y);doc.text(rpFull(pG),rc1,y,{align:'right'});doc.text(rpFull(pA),rc2,y,{align:'right'});doc.text(rpFull(pR),rc3,y,{align:'right'});y+=5;
+    doc.text(`${p.key} - ${acq}`,M+2,y);doc.text(rpFull(pG),rc1,y,{align:'right'});doc.text(rpFull(pA),rc2,y,{align:'right'});doc.text(rpFull(pR),rc3,y,{align:'right'});y+=5;
   });
   doc.setFillColor(209,250,229);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(6,95,70);doc.setFont('helvetica','bold');doc.setFontSize(6);
   doc.text('TOTAL',M+2,y);doc.text(rpFull(rg),rc1,y,{align:'right'});doc.text(rpFull(ra),rc2,y,{align:'right'});doc.text(rpFull(rr),rc3,y,{align:'right'});y+=8;
@@ -748,11 +732,21 @@ function dlPDF(){
     doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(15,23,42);doc.text('Top Merchants by Transaction Volume',M,y);y+=4;
     doc.setFillColor(27,43,75);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(6);doc.setFont('helvetica','bold');
     doc.text('#',M+2,y);doc.text('Merchant',M+12,y);doc.text('Trx',M+145,y,{align:'right'});doc.text('Volume',M+W-M*2-4,y,{align:'right'});y+=5;
-    const mcA=showAKT?(window._mcAKT||[]):[],mcG=showGCU?(window._mcGCU||[]):[],mcN=showNKS?(window._mcNKS||[]):[],mcK=showANK?(window._mcANK||[]):[];
-    if(mcA.length){doc.setFillColor(219,234,254);doc.rect(M,y-3,W-M*2,4,'F');doc.setTextColor(27,43,75);doc.setFontSize(5.5);doc.setFont('helvetica','bold');doc.text('AKT - Agro Karsa Terpadu',M+2,y);y+=4;mcA.forEach((m,i)=>{if(y>272)return;doc.setFillColor(i%2===0?248:255,i%2===0?250:255,i%2===0?252:255);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.text(String(i+1),M+2,y);doc.text((m.merchant_name||'-').slice(0,50),M+12,y);doc.text(nFmt(m.total_trx),M+145,y,{align:'right'});doc.text(rpFull(m.total_amount),M+W-M*2-4,y,{align:'right'});y+=5;});}
-    if(mcG.length&&y<265){doc.setFillColor(209,250,229);doc.rect(M,y-3,W-M*2,4,'F');doc.setTextColor(6,95,70);doc.setFontSize(5.5);doc.setFont('helvetica','bold');doc.text('GCU - Gemilang Cipta Utama',M+2,y);y+=4;mcG.forEach((m,i)=>{if(y>278)return;doc.setFillColor(i%2===0?240:255,i%2===0?253:255,i%2===0?244:255);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.text(String(i+1),M+2,y);doc.text((m.merchant_name||'-').slice(0,50),M+12,y);doc.text(nFmt(m.total_trx),M+145,y,{align:'right'});doc.text(rpFull(m.total_amount),M+W-M*2-4,y,{align:'right'});y+=5;});}
-    if(mcN.length&&y<278){doc.setFillColor(253,230,138);doc.rect(M,y-3,W-M*2,4,'F');doc.setTextColor(120,53,15);doc.setFontSize(5.5);doc.setFont('helvetica','bold');doc.text('NKS - Nusantria Karya Sejahtera',M+2,y);y+=4;mcN.forEach((m,i)=>{if(y>282)return;doc.setFillColor(i%2===0?255:255,i%2===0?251:255,i%2===0?235:255);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.text(String(i+1),M+2,y);doc.text((m.merchant_name||'-').slice(0,50),M+12,y);doc.text(nFmt(m.total_trx),M+145,y,{align:'right'});doc.text(rpFull(m.total_amount),M+W-M*2-4,y,{align:'right'});y+=5;});}
-    if(mcK.length&&y<282){doc.setFillColor(251,207,232);doc.rect(M,y-3,W-M*2,4,'F');doc.setTextColor(131,24,67);doc.setFontSize(5.5);doc.setFont('helvetica','bold');doc.text('ANK - Aksanta Nusadaya Karya',M+2,y);y+=4;mcK.forEach((m,i)=>{if(y>286)return;doc.setFillColor(i%2===0?253:255,i%2===0?242:255,i%2===0?248:255);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.text(String(i+1),M+2,y);doc.text((m.merchant_name||'-').slice(0,50),M+12,y);doc.text(nFmt(m.total_trx),M+145,y,{align:'right'});doc.text(rpFull(m.total_amount),M+W-M*2-4,y,{align:'right'});y+=5;});}
+    // Batas y makin ketat per urutan PT (248,250,252 dst) — dipertahankan persis pola aslinya:
+    // PT ke-1 batas 272, ke-2 batas 278/265, ke-3 batas 282/278, ke-4 batas 286/282
+    const yLimits=[{hdMax:9999,rowMax:272},{hdMax:265,rowMax:278},{hdMax:278,rowMax:282},{hdMax:282,rowMax:286}];
+    PT_CONFIG.forEach((p,idx)=>{
+      if(!activePts.includes(p.key))return;
+      const mc=window['_mc'+p.key]||[];
+      const lim=yLimits[idx]||{hdMax:9999,rowMax:9999+idx};
+      if(mc.length&&y<lim.hdMax){
+        doc.setFillColor(p.pdfMcBg[0],p.pdfMcBg[1],p.pdfMcBg[2]);doc.rect(M,y-3,W-M*2,4,'F');doc.setTextColor(p.pdfMcText[0],p.pdfMcText[1],p.pdfMcText[2]);doc.setFontSize(5.5);doc.setFont('helvetica','bold');doc.text(p.key+' - '+p.name,M+2,y);y+=4;
+        mc.forEach((m,i)=>{
+          if(y>lim.rowMax)return;
+          doc.setFillColor(i%2===0?p.pdfMcTint[0]:255,i%2===0?p.pdfMcTint[1]:255,i%2===0?p.pdfMcTint[2]:255);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.text(String(i+1),M+2,y);doc.text((m.merchant_name||'-').slice(0,50),M+12,y);doc.text(nFmt(m.total_trx),M+145,y,{align:'right'});doc.text(rpFull(m.total_amount),M+W-M*2-4,y,{align:'right'});y+=5;
+        });
+      }
+    });
   }
 
   // Footer hal 1
@@ -837,10 +831,9 @@ function dlPDF(){
     y2+=5;
   }
 
-  if(showAKT) drawAvb(window._bfAKT,window._dsAKT,'AKT');
-  if(showGCU) drawAvb(window._bfGCU,window._dsGCU,'GCU');
-  if(showNKS) drawAvb(window._bfNKS,window._dsNKS,'NKS');
-  if(showANK) drawAvb(window._bfANK,window._dsANK,'ANK');
+  PT_CONFIG.forEach(p=>{
+    if(activePts.includes(p.key)) drawAvb(window['_bf'+p.key],window['_ds'+p.key],p.key);
+  });
 
   doc.setFillColor(27,43,75);doc.rect(0,284,W,13,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','normal');
   doc.text(`Auto-generated - Paycloud x ${ptTitle} - ${dateStr} | Hal. 2/2`,W/2,291,{align:'center'});
@@ -860,10 +853,9 @@ function smartDlPDF(){
 }
 
 function dlAvbPDF(){
-  if(!window._bfAKT&&!window._bfGCU&&!window._bfNKS&&!window._bfANK) return;
-  const showAKT=activePts.includes('AKT'), showGCU=activePts.includes('GCU'), showNKS=activePts.includes('NKS'), showANK=activePts.includes('ANK');
-  if(!showAKT&&!showGCU&&!showNKS&&!showANK){alert('Pilih minimal 1 PT terlebih dahulu.');return;}
-  const ptTitle=[showAKT&&'AKT',showGCU&&'GCU',showNKS&&'NKS',showANK&&'ANK'].filter(Boolean).join(' & ');
+  if(PT_CONFIG.every(p=>!window['_bf'+p.key])) return;
+  const ptTitle=PT_CONFIG.filter(p=>activePts.includes(p.key)).map(p=>p.key).join(' & ');
+  if(!ptTitle){alert('Pilih minimal 1 PT terlebih dahulu.');return;}
   const{jsPDF}=window.jspdf,doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'}),W=210,M=12;
   const[y,mo,d]=selectedDate?selectedDate.split('-'):['','',''];
   const MOI2=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
@@ -968,10 +960,9 @@ function dlAvbPDF(){
     y2+=5;
   }
 
-  if(showAKT) drawAvbPg(window._bfAKT,window._dsAKT,'AKT');
-  if(showGCU) drawAvbPg(window._bfGCU,window._dsGCU,'GCU');
-  if(showNKS) drawAvbPg(window._bfNKS,window._dsNKS,'NKS');
-  if(showANK) drawAvbPg(window._bfANK,window._dsANK,'ANK');
+  PT_CONFIG.forEach(p=>{
+    if(activePts.includes(p.key)) drawAvbPg(window['_bf'+p.key],window['_ds'+p.key],p.key);
+  });
 
   doc.setFillColor(27,43,75);doc.rect(0,284,W,13,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','normal');
   doc.text(`Auto-generated - Paycloud x ${ptTitle} - ${dateStr} | Actual vs Budget`,W/2,291,{align:'center'});
@@ -1083,27 +1074,25 @@ async function loadMonth(ym){
 
   showSec('loadingPg');
   try{
-    const[sAKT,sGCU,sNKS,sANK,mtdA,mtdG,mtdN,mtdK,ytdA,ytdG,ytdN,ytdK,mcA,mcG,mcN,mcK]=await Promise.all([
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${me}&${selFields}`,'AKT'),
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${me}&${selFields}`,'GCU'),
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${me}&${selFields}`,'NKS'),
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${me}&${selFields}`,'ANK'),
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${me}&${selFields}`,'AKT'),
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${me}&${selFields}`,'GCU'),
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${me}&${selFields}`,'NKS'),
-      sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${me}&${selFields}`,'ANK'),
-      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${me}&${selFields}`,'AKT'),
-      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${me}&${selFields}`,'GCU'),
-      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${me}&${selFields}`,'NKS'),
-      sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${me}&${selFields}`,'ANK'),
-      sbFetch('top_merchants',`report_date=gte.${ms}&report_date=lte.${me}&order=rank.asc&limit=5`,'AKT'),
-      sbFetch('top_merchants',`report_date=gte.${ms}&report_date=lte.${me}&order=rank.asc&limit=5`,'GCU'),
-      sbFetch('top_merchants',`report_date=gte.${ms}&report_date=lte.${me}&order=rank.asc&limit=5`,'NKS'),
-      sbFetch('top_merchants',`report_date=gte.${ms}&report_date=lte.${me}&order=rank.asc&limit=5`,'ANK'),
-    ]);
-    window._mtdMonthlyAKT=mtdA; window._mtdMonthlyGCU=mtdG; window._mtdMonthlyNKS=mtdN; window._mtdMonthlyANK=mtdK;
-    window._ytdMonthlyAKT=ytdA; window._ytdMonthlyGCU=ytdG; window._ytdMonthlyNKS=ytdN; window._ytdMonthlyANK=ytdK;
-    window._mcMonthlyAKT=mcA;   window._mcMonthlyGCU=mcG;   window._mcMonthlyNKS=mcN;   window._mcMonthlyANK=mcK;
+    // Bangun daftar fetch dari PT_CONFIG. Catatan: 4 fetch "sAKT/sGCU/sNKS/sANK" versi lama
+    // ternyata gak pernah dipakai sama sekali (duplikat query MTD yang mubazir) — udah dibuang.
+    const jobs=[], jobTags=[];
+    const queue=(tag,builder)=>PT_CONFIG.forEach(p=>{jobs.push(builder(p.key));jobTags.push(tag+p.key);});
+    queue('mtd_', k=>sbFetch('daily_summary',`report_date=gte.${ms}&report_date=lte.${me}&${selFields}`,k));
+    queue('ytd_', k=>sbFetch('daily_summary',`report_date=gte.${ys}&report_date=lte.${me}&${selFields}`,k));
+    queue('mc_',  k=>sbFetch('top_merchants',`report_date=gte.${ms}&report_date=lte.${me}&order=rank.asc&limit=5`,k));
+
+    const results=await Promise.all(jobs);
+    const byTag={};
+    jobTags.forEach((tag,i)=>{byTag[tag]=results[i];});
+
+    // Semua hasil loadMonth() disimpan di window._xxx (bukan variabel `let`), jadi AMAN full loop
+    PT_CONFIG.forEach(p=>{
+      window['_mtdMonthly'+p.key]=byTag['mtd_'+p.key];
+      window['_ytdMonthly'+p.key]=byTag['ytd_'+p.key];
+      window['_mcMonthly'+p.key]=byTag['mc_'+p.key];
+    });
+
     renderMonthly(ym);
     showSec('mainDash');
     document.getElementById('btnPdf').style.display='inline-flex';
@@ -1123,14 +1112,10 @@ function renderMonthly(ym){
   document.getElementById('monthlySection').style.display='';
   const dailySec=document.getElementById('dailyReportSection');
   if(dailySec)dailySec.style.display='none';
-  const ptBlockAKT=document.getElementById('ptBlockAKT');
-  const ptBlockGCU=document.getElementById('ptBlockGCU');
-  const ptBlockNKS=document.getElementById('ptBlockNKS');
-  const ptBlockANK=document.getElementById('ptBlockANK');
-  if(ptBlockAKT)ptBlockAKT.style.display='none';
-  if(ptBlockGCU)ptBlockGCU.style.display='none';
-  if(ptBlockNKS)ptBlockNKS.style.display='none';
-  if(ptBlockANK)ptBlockANK.style.display='none';
+  PT_CONFIG.forEach(p=>{
+    const blk=document.getElementById('ptBlock'+p.key);
+    if(blk)blk.style.display='none';
+  });
   const totalSec=document.getElementById('totalGabunganSection');
   if(totalSec)totalSec.style.display='none';
   const topMerchSec=document.getElementById('topMerchSection');
@@ -1138,27 +1123,25 @@ function renderMonthly(ym){
 
   // Update subtitle
   const sub=document.getElementById('subtitle');
-  if(sub)sub.textContent=`Data: ${label} | AKT & GCU & NKS & ANK`;
-  const ptLabelActive=activePts.length?activePts.join(' & '):'AKT & GCU & NKS & ANK';
+  if(sub)sub.textContent=`Data: ${label}`;
+  const ptLabelActive=activePts.length?activePts.join(' & '):PT_LIST.join(' & ');
   const totalTitleM=document.getElementById('totalTitleMonthly');
   const txTitleM=document.getElementById('txSummaryTitleMonthly');
-  if(totalTitleM) totalTitleM.textContent='Total '+(activePts.length?activePts.join(' + '):'AKT + GCU + NKS + ANK');
+  if(totalTitleM) totalTitleM.textContent='Total '+(activePts.length?activePts.join(' + '):PT_LIST.join(' + '));
   if(txTitleM) txTitleM.textContent='📋 Transaction Summary — '+ptLabelActive;
 
   // Fungsi sum
   const sfA=(arr,f)=>(arr||[]).reduce((a,r)=>a+(Math.abs(parseFloat(r[f])||0)),0);
   const sfN=(arr,f)=>(arr||[]).reduce((a,r)=>a+(parseFloat(r[f])||0),0);
-  // Nolkan PT yang gak dicentang di filter, biar gak ikut kejumlah diam-diam (sama kayak renderTotal/renderSummary)
-  const mtdA=activePts.includes('AKT')?(window._mtdMonthlyAKT||[]):[];
-  const mtdG=activePts.includes('GCU')?(window._mtdMonthlyGCU||[]):[];
-  const mtdN=activePts.includes('NKS')?(window._mtdMonthlyNKS||[]):[];
-  const mtdK=activePts.includes('ANK')?(window._mtdMonthlyANK||[]):[];
-  const ytdA=activePts.includes('AKT')?(window._ytdMonthlyAKT||[]):[];
-  const ytdG=activePts.includes('GCU')?(window._ytdMonthlyGCU||[]):[];
-  const ytdN=activePts.includes('NKS')?(window._ytdMonthlyNKS||[]):[];
-  const ytdK=activePts.includes('ANK')?(window._ytdMonthlyANK||[]):[];
 
-  // Monthly Report AKT & GCU & NKS & ANK (MTD & YTD)
+  // Data mtd/ytd per PT, nolkan yang gak dicentang di filter (loop, bukan 4 baris manual)
+  const mtdByKey={}, ytdByKey={};
+  PT_CONFIG.forEach(p=>{
+    mtdByKey[p.key]=activePts.includes(p.key)?(window['_mtdMonthly'+p.key]||[]):[];
+    ytdByKey[p.key]=activePts.includes(p.key)?(window['_ytdMonthly'+p.key]||[]):[];
+  });
+
+  // Monthly Report per PT (MTD & YTD) — isi tiap card lewat loop
   function buildMTDRows(mtd,ytd){
     return [
       ['Total Trx',nF(sfN(mtd,'total_trx_success')),nF(sfN(ytd,'total_trx_success'))],
@@ -1172,74 +1155,94 @@ function renderMonthly(ym){
       ['Settle Amount',rpF(sfA(mtd,'total_amount_transfer')),rpF(sfA(ytd,'total_amount_transfer'))],
     ].map((r,i)=>`<tr ${i===8?'class="hl2"':''}><td>${r[0]}</td><td class="r">${r[1]}</td><td class="r">${r[2]}</td></tr>`).join('');
   }
-  document.getElementById('mtdMonthlyAKT').innerHTML=buildMTDRows(mtdA,ytdA);
-  document.getElementById('mtdMonthlyGCU').innerHTML=buildMTDRows(mtdG,ytdG);
-  document.getElementById('mtdMonthlyNKS').innerHTML=buildMTDRows(mtdN,ytdN);
-  document.getElementById('mtdMonthlyANK').innerHTML=buildMTDRows(mtdK,ytdK);
+  PT_CONFIG.forEach(p=>{
+    const el=document.getElementById('mtdMonthly'+p.key);
+    if(el) el.innerHTML=buildMTDRows(mtdByKey[p.key],ytdByKey[p.key]);
+  });
 
-  // Revenue Detail
-  const aktGMV=sfA(mtdA,'gmv'),aktAmt=sfA(mtdA,'total_amount_transfer'),aktRev=sfA(mtdA,'total_revenue');
-  const gcuGMV=sfA(mtdG,'gmv'),gcuAmt=sfA(mtdG,'total_amount_transfer'),gcuRev=sfA(mtdG,'total_revenue');
-  const nksGMV=sfA(mtdN,'gmv'),nksAmt=sfA(mtdN,'total_amount_transfer'),nksRev=sfA(mtdN,'total_revenue');
-  const ankGMV=sfA(mtdK,'gmv'),ankAmt=sfA(mtdK,'total_amount_transfer'),ankRev=sfA(mtdK,'total_revenue');
-  document.getElementById('revMonthlyBody').innerHTML=`
-    <tr style="background:#EFF6FF"><td>AKT - Qoin</td><td class="r">${rpF(aktGMV)}</td><td class="r">${rpF(aktAmt)}</td><td class="r" style="color:var(--green)">${rpF(aktRev)}</td></tr>
-    <tr style="background:#F0FDF4"><td>GCU - Qoin</td><td class="r">${rpF(gcuGMV)}</td><td class="r">${rpF(gcuAmt)}</td><td class="r" style="color:var(--green)">${rpF(gcuRev)}</td></tr>
-    <tr style="background:#FEF9C3"><td>NKS - Qoin</td><td class="r">${rpF(nksGMV)}</td><td class="r">${rpF(nksAmt)}</td><td class="r" style="color:var(--green)">${rpF(nksRev)}</td></tr>
-    <tr style="background:#FDF2F8"><td>ANK - Qoin</td><td class="r">${rpF(ankGMV)}</td><td class="r">${rpF(ankAmt)}</td><td class="r" style="color:var(--green)">${rpF(ankRev)}</td></tr>`;
-  document.getElementById('revMonthlyFoot').innerHTML=`<td>TOTAL</td><td class="r">${rpF(aktGMV+gcuGMV+nksGMV+ankGMV)}</td><td class="r">${rpF(aktAmt+gcuAmt+nksAmt+ankAmt)}</td><td class="r" style="color:var(--green)">${rpF(aktRev+gcuRev+nksRev+ankRev)}</td>`;
+  // Revenue Detail — GMV/Settled/Revenue per PT (dari data MTD), loop + warna dari PT_CONFIG
+  const revPerPt={};
+  PT_CONFIG.forEach(p=>{
+    revPerPt[p.key]={
+      gmv: sfA(mtdByKey[p.key],'gmv'),
+      amt: sfA(mtdByKey[p.key],'total_amount_transfer'),
+      rev: sfA(mtdByKey[p.key],'total_revenue'),
+    };
+  });
+  document.getElementById('revMonthlyBody').innerHTML = '\n    '+PT_CONFIG.map(p=>
+    `<tr style="background:${p.rowBg}"><td>${p.key} - Qoin</td><td class="r">${rpF(revPerPt[p.key].gmv)}</td><td class="r">${rpF(revPerPt[p.key].amt)}</td><td class="r" style="color:var(--green)">${rpF(revPerPt[p.key].rev)}</td></tr>`
+  ).join('\n    ');
+  const totGMV=PT_CONFIG.reduce((a,p)=>a+revPerPt[p.key].gmv,0);
+  const totAmt=PT_CONFIG.reduce((a,p)=>a+revPerPt[p.key].amt,0);
+  const totRev=PT_CONFIG.reduce((a,p)=>a+revPerPt[p.key].rev,0);
+  document.getElementById('revMonthlyFoot').innerHTML=`<td>TOTAL</td><td class="r">${rpF(totGMV)}</td><td class="r">${rpF(totAmt)}</td><td class="r" style="color:var(--green)">${rpF(totRev)}</td>`;
 
   // KPI Total Monthly
-  const tTrx=sfN(mtdA,'total_trx_success')+sfN(mtdG,'total_trx_success')+sfN(mtdN,'total_trx_success')+sfN(mtdK,'total_trx_success');
-  const tGMV=sfA(mtdA,'gmv')+sfA(mtdG,'gmv')+sfA(mtdN,'gmv')+sfA(mtdK,'gmv');
-  const tAmt=sfA(mtdA,'total_amount_transfer')+sfA(mtdG,'total_amount_transfer')+sfA(mtdN,'total_amount_transfer')+sfA(mtdK,'total_amount_transfer');
-  const tRev=sfA(mtdA,'total_revenue')+sfA(mtdG,'total_revenue')+sfA(mtdN,'total_revenue')+sfA(mtdK,'total_revenue');
+  const tTrx=PT_CONFIG.reduce((a,p)=>a+sfN(mtdByKey[p.key],'total_trx_success'),0);
+  const totMerchant=PT_CONFIG.reduce((a,p)=>a+(window['_mcMonthly'+p.key]||[]).length,0);
   document.getElementById('kpiTotalMonthly').innerHTML=[
-    {lbl:'Total Merchant',val:nF((window._mcMonthlyAKT||[]).length+(window._mcMonthlyGCU||[]).length+(window._mcMonthlyNKS||[]).length+(window._mcMonthlyANK||[]).length),cls:'navy'},
+    {lbl:'Total Merchant',val:nF(totMerchant),cls:'navy'},
     {lbl:'Total Trx Sukses',val:nF(tTrx),cls:'green'},
-    {lbl:'Total GMV',val:rpF(tGMV),cls:'blue'},
-    {lbl:'Settle Amount',val:rpF(tAmt),cls:'navy'},
-    {lbl:'Total Revenue',val:rpF(tRev),cls:'green'},
-    {lbl:'MTD Revenue',val:rpF(aktRev+gcuRev+nksRev+ankRev),cls:'amber'},
+    {lbl:'Total GMV',val:rpF(totGMV),cls:'blue'},
+    {lbl:'Settle Amount',val:rpF(totAmt),cls:'navy'},
+    {lbl:'Total Revenue',val:rpF(totRev),cls:'green'},
+    {lbl:'MTD Revenue',val:rpF(totRev),cls:'amber'},
   ].map(k=>`<div class="kpi sm amber-card"><div class="lbl">${k.lbl}</div><div class="val ${k.cls}">${k.val}</div></div>`).join('');
 
-  // Transaction Summary Monthly
-  const yCB=sfA(mtdA,'total_chargeback')+sfA(mtdG,'total_chargeback')+sfA(mtdN,'total_chargeback')+sfA(mtdK,'total_chargeback');
-  const yYCB=sfA(ytdA,'total_chargeback')+sfA(ytdG,'total_chargeback')+sfA(ytdN,'total_chargeback')+sfA(ytdK,'total_chargeback');
-  const yRep=sfA(mtdA,'total_representment')+sfA(mtdG,'total_representment')+sfA(mtdN,'total_representment')+sfA(mtdK,'total_representment');
-  const yYRep=sfA(ytdA,'total_representment')+sfA(ytdG,'total_representment')+sfA(ytdN,'total_representment')+sfA(ytdK,'total_representment');
-  const yDsp=sfA(mtdA,'total_dispute')+sfA(mtdG,'total_dispute')+sfA(mtdN,'total_dispute')+sfA(mtdK,'total_dispute');
-  const yYDsp=sfA(ytdA,'total_dispute')+sfA(ytdG,'total_dispute')+sfA(ytdN,'total_dispute')+sfA(ytdK,'total_dispute');
-  const yMDD=sfA(mtdA,'mdr_discount')+sfA(mtdG,'mdr_discount')+sfA(mtdN,'mdr_discount')+sfA(mtdK,'mdr_discount');
-  const yYMDD=sfA(ytdA,'mdr_discount')+sfA(ytdG,'mdr_discount')+sfA(ytdN,'mdr_discount')+sfA(ytdK,'mdr_discount');
+  // Transaction Summary Monthly (pola sama kayak renderSummary, tapi PT sudah pre-gated di mtdByKey/ytdByKey)
+  function sumFieldMonthly(field,periodFn){
+    let m=0,ytd=0;
+    PT_CONFIG.forEach(p=>{
+      m+=periodFn(mtdByKey[p.key],field);
+      ytd+=periodFn(ytdByKey[p.key],field);
+    });
+    return [m,ytd];
+  }
+  const sTrx=sumFieldMonthly('total_trx_success',sfN);
+  const sGMV=sumFieldMonthly('gmv',sfA);
+  const sMDR=sumFieldMonthly('total_mdr',sfA);
+  const sCB =sumFieldMonthly('total_chargeback',sfA);
+  const sRep=sumFieldMonthly('total_representment',sfA);
+  const sDsp=sumFieldMonthly('total_dispute',sfA);
+  const sMDD=sumFieldMonthly('mdr_discount',sfA);
+  const sFee=sumFieldMonthly('total_transfer_fee',sfA);
+  const sAmt=sumFieldMonthly('total_amount_transfer',sfA);
   document.getElementById('txSummaryMonthlyBody').innerHTML=[
-    ['Total Trx',nF(sfN(mtdA,'total_trx_success')+sfN(mtdG,'total_trx_success')+sfN(mtdN,'total_trx_success')+sfN(mtdK,'total_trx_success')),nF(sfN(ytdA,'total_trx_success')+sfN(ytdG,'total_trx_success')+sfN(ytdN,'total_trx_success')+sfN(ytdK,'total_trx_success')),false],
-    ['Amount (GMV)',rpF(sfA(mtdA,'gmv')+sfA(mtdG,'gmv')+sfA(mtdN,'gmv')+sfA(mtdK,'gmv')),rpF(sfA(ytdA,'gmv')+sfA(ytdG,'gmv')+sfA(ytdN,'gmv')+sfA(ytdK,'gmv')),false],
-    ['MDR',rpF(sfA(mtdA,'total_mdr')+sfA(mtdG,'total_mdr')+sfA(mtdN,'total_mdr')+sfA(mtdK,'total_mdr')),rpF(sfA(ytdA,'total_mdr')+sfA(ytdG,'total_mdr')+sfA(ytdN,'total_mdr')+sfA(ytdK,'total_mdr')),false],
-    ['Chargeback',yCB?rpF(yCB):'—',yYCB?rpF(yYCB):'—',false],
-    ['Representment',yRep?rpF(yRep):'—',yYRep?rpF(yYRep):'—',false],
-    ['Settle Dispute',yDsp?rpF(yDsp):'—',yYDsp?rpF(yYDsp):'—',false],
-    ['MDR Discount',yMDD?rpF(yMDD):'—',yYMDD?rpF(yYMDD):'—',false],
-    ['Biaya Transfer',rpF(sfA(mtdA,'total_transfer_fee')+sfA(mtdG,'total_transfer_fee')+sfA(mtdN,'total_transfer_fee')+sfA(mtdK,'total_transfer_fee')),rpF(sfA(ytdA,'total_transfer_fee')+sfA(ytdG,'total_transfer_fee')+sfA(ytdN,'total_transfer_fee')+sfA(ytdK,'total_transfer_fee')),false],
-    ['Settle Amount',rpF(sfA(mtdA,'total_amount_transfer')+sfA(mtdG,'total_amount_transfer')+sfA(mtdN,'total_amount_transfer')+sfA(mtdK,'total_amount_transfer')),rpF(sfA(ytdA,'total_amount_transfer')+sfA(ytdG,'total_amount_transfer')+sfA(ytdN,'total_amount_transfer')+sfA(ytdK,'total_amount_transfer')),true],
+    ['Total Trx',nF(sTrx[0]),nF(sTrx[1]),false],
+    ['Amount (GMV)',rpF(sGMV[0]),rpF(sGMV[1]),false],
+    ['MDR',rpF(sMDR[0]),rpF(sMDR[1]),false],
+    ['Chargeback',sCB[0]?rpF(sCB[0]):'—',sCB[1]?rpF(sCB[1]):'—',false],
+    ['Representment',sRep[0]?rpF(sRep[0]):'—',sRep[1]?rpF(sRep[1]):'—',false],
+    ['Settle Dispute',sDsp[0]?rpF(sDsp[0]):'—',sDsp[1]?rpF(sDsp[1]):'—',false],
+    ['MDR Discount',sMDD[0]?rpF(sMDD[0]):'—',sMDD[1]?rpF(sMDD[1]):'—',false],
+    ['Biaya Transfer',rpF(sFee[0]),rpF(sFee[1]),false],
+    ['Settle Amount',rpF(sAmt[0]),rpF(sAmt[1]),true],
   ].map(r=>`<tr ${r[3]?'class="hl2"':''}><td>${r[3]?'<strong>':''}${r[0]}${r[3]?'</strong>':''}</td><td class="r">${r[1]}</td><td class="r">${r[2]}</td></tr>`).join('');
 
-  // Top Merchants Monthly
-  const mcA=window._mcMonthlyAKT||[], mcG=window._mcMonthlyGCU||[], mcN=window._mcMonthlyNKS||[], mcK=window._mcMonthlyANK||[];
+  // Top Merchants Monthly — sekarang ikut disaring activePts, konsisten sama versi Daily
+  // (sebelumnya gak disaring — bug yang ditemukan & difix atas konfirmasi Via)
   let rows='';
-  if(mcA.length){rows+=`<tr><td colspan="4" style="background:#DBEAFE;font-weight:700;color:#1B2B4B;font-size:10px;padding:6px 8px">AKT — Agro Karsa Terpadu</td></tr>`;mcA.forEach((m,i)=>{rows+=`<tr><td style="color:var(--text3);font-size:11px;font-weight:600;text-align:center">${i+1}</td><td style="padding-left:8px">${m.merchant_name||'—'}</td><td class="r">${nF(m.total_trx)}</td><td class="r" style="color:var(--blue)">${rpF(m.total_amount)}</td></tr>`;});}
-  if(mcG.length){rows+=`<tr><td colspan="4" style="background:#D1FAE5;font-weight:700;color:#065F46;font-size:10px;padding:6px 8px">GCU — Gemilang Cipta Utama</td></tr>`;mcG.forEach((m,i)=>{rows+=`<tr><td style="color:var(--text3);font-size:11px;font-weight:600;text-align:center">${i+1}</td><td style="padding-left:8px">${m.merchant_name||'—'}</td><td class="r">${nF(m.total_trx)}</td><td class="r" style="color:var(--blue)">${rpF(m.total_amount)}</td></tr>`;});}
-  if(mcN.length){rows+=`<tr><td colspan="4" style="background:#FDE68A;font-weight:700;color:#78350F;font-size:10px;padding:6px 8px">NKS — Nusantria Karya Sejahtera</td></tr>`;mcN.forEach((m,i)=>{rows+=`<tr><td style="color:var(--text3);font-size:11px;font-weight:600;text-align:center">${i+1}</td><td style="padding-left:8px">${m.merchant_name||'—'}</td><td class="r">${nF(m.total_trx)}</td><td class="r" style="color:var(--blue)">${rpF(m.total_amount)}</td></tr>`;});}
-  if(mcK.length){rows+=`<tr><td colspan="4" style="background:#FBCFE8;font-weight:700;color:#831843;font-size:10px;padding:6px 8px">ANK — Aksanta Nusadaya Karya</td></tr>`;mcK.forEach((m,i)=>{rows+=`<tr><td style="color:var(--text3);font-size:11px;font-weight:600;text-align:center">${i+1}</td><td style="padding-left:8px">${m.merchant_name||'—'}</td><td class="r">${nF(m.total_trx)}</td><td class="r" style="color:var(--blue)">${rpF(m.total_amount)}</td></tr>`;});}
+  PT_CONFIG.forEach(p=>{
+    if(!activePts.includes(p.key))return;
+    const mc=window['_mcMonthly'+p.key]||[];
+    if(mc.length){
+      rows+=`<tr><td colspan="4" style="background:${p.hdBg};font-weight:700;color:${p.hdText};font-size:10px;padding:6px 8px">${p.key} — ${p.name}</td></tr>`;
+      mc.forEach((m,i)=>{
+        rows+=`<tr><td style="color:var(--text3);font-size:11px;font-weight:600;text-align:center">${i+1}</td><td style="padding-left:8px">${m.merchant_name||'—'}</td><td class="r">${nF(m.total_trx)}</td><td class="r" style="color:var(--blue)">${rpF(m.total_amount)}</td></tr>`;
+      });
+    }
+  });
   document.getElementById('topMerchMonthlyBody').innerHTML=rows||'<tr><td colspan="4" style="text-align:center;color:var(--text3)">Tidak ada data</td></tr>';
+
+  applyPtFilter(); // pastikan kartu Monthly Report PT yang di-uncheck ikut kesembunyiin,
+                    // termasuk pas Monthly baru pertama kali dibuka (bukan cuma pas toggle checkbox)
 }
 
 
 function dlMonthlyPDF(){
   if(!selectedMonth){alert('Pilih bulan terlebih dahulu.');return;}
-  const showAKT=activePts.includes('AKT'), showGCU=activePts.includes('GCU'), showNKS=activePts.includes('NKS'), showANK=activePts.includes('ANK');
-  if(!showAKT&&!showGCU&&!showNKS&&!showANK){alert('Pilih minimal 1 PT terlebih dahulu.');return;}
-  const ptTitle=[showAKT&&'AKT',showGCU&&'GCU',showNKS&&'NKS',showANK&&'ANK'].filter(Boolean).join(' & ');
+  const ptTitle=PT_CONFIG.filter(p=>activePts.includes(p.key)).map(p=>p.key).join(' & ');
+  if(!ptTitle){alert('Pilih minimal 1 PT terlebih dahulu.');return;}
   const rpFull=n=>{if(n==null||isNaN(n))return '-';const v=Math.round(n);return(v<0?'-':'')+'Rp '+Math.abs(v).toLocaleString('id-ID');};
   const nFmt=n=>(n==null||isNaN(n))?'0':Math.round(n).toLocaleString('id-ID');
   try{
@@ -1253,9 +1256,15 @@ function dlMonthlyPDF(){
 
   const sfA=(arr,f)=>(arr||[]).reduce((a,r)=>a+(Math.abs(parseFloat(r[f])||0)),0);
   const sfN=(arr,f)=>(arr||[]).reduce((a,r)=>a+(parseFloat(r[f])||0),0);
-  const mtdA=showAKT?(window._mtdMonthlyAKT||[]):[], mtdG=showGCU?(window._mtdMonthlyGCU||[]):[], mtdN=showNKS?(window._mtdMonthlyNKS||[]):[], mtdK=showANK?(window._mtdMonthlyANK||[]):[];
-  const ytdA=showAKT?(window._ytdMonthlyAKT||[]):[], ytdG=showGCU?(window._ytdMonthlyGCU||[]):[], ytdN=showNKS?(window._ytdMonthlyNKS||[]):[], ytdK=showANK?(window._ytdMonthlyANK||[]):[];
-  const mcA=showAKT?(window._mcMonthlyAKT||[]):[], mcG=showGCU?(window._mcMonthlyGCU||[]):[], mcN=showNKS?(window._mcMonthlyNKS||[]):[], mcK=showANK?(window._mcMonthlyANK||[]):[];
+  const mtdByKey={}, ytdByKey={}, mcByKey={};
+  PT_CONFIG.forEach(p=>{
+    mtdByKey[p.key]=activePts.includes(p.key)?(window['_mtdMonthly'+p.key]||[]):[];
+    ytdByKey[p.key]=activePts.includes(p.key)?(window['_ytdMonthly'+p.key]||[]):[];
+    mcByKey[p.key]=activePts.includes(p.key)?(window['_mcMonthly'+p.key]||[]):[];
+  });
+  const mtdA=mtdByKey.AKT, mtdG=mtdByKey.GCU, mtdN=mtdByKey.NKS, mtdK=mtdByKey.ANK; // alias dipertahankan, masih dipakai KPI di bawah
+  const ytdA=ytdByKey.AKT, ytdG=ytdByKey.GCU, ytdN=ytdByKey.NKS, ytdK=ytdByKey.ANK;
+  const mcA=mcByKey.AKT, mcG=mcByKey.GCU, mcN=mcByKey.NKS, mcK=mcByKey.ANK;
 
   // ═══ HAL 1: REKONSILIASI MONTHLY ═══
   let y=0;
@@ -1271,8 +1280,8 @@ function dlMonthlyPDF(){
   const tGMV=sfA(mtdA,'gmv')+sfA(mtdG,'gmv')+sfA(mtdN,'gmv')+sfA(mtdK,'gmv');
   const tAmt=sfA(mtdA,'total_amount_transfer')+sfA(mtdG,'total_amount_transfer')+sfA(mtdN,'total_amount_transfer')+sfA(mtdK,'total_amount_transfer');
   const tRev=sfA(mtdA,'total_revenue')+sfA(mtdG,'total_revenue')+sfA(mtdN,'total_revenue')+sfA(mtdK,'total_revenue');
-  const nActive=[showAKT,showGCU,showNKS,showANK].filter(Boolean).length;
-  const perPtKpis=[showAKT&&['AKT Revenue',rpFull(sfA(mtdA,'total_revenue'))],showGCU&&['GCU Revenue',rpFull(sfA(mtdG,'total_revenue'))],showNKS&&['NKS Revenue',rpFull(sfA(mtdN,'total_revenue'))],showANK&&['ANK Revenue',rpFull(sfA(mtdK,'total_revenue'))]].filter(Boolean);
+  const nActive=PT_CONFIG.filter(p=>activePts.includes(p.key)).length;
+  const perPtKpis=PT_CONFIG.filter(p=>activePts.includes(p.key)).map(p=>[p.key+' Revenue',rpFull(sfA(mtdByKey[p.key],'total_revenue'))]);
   const kpis=nActive>1?[['Total Trx Sukses',nFmt(tTrx)],['Total GMV',rpFull(tGMV)],['Settle Amount',rpFull(tAmt)],['Total Revenue',rpFull(tRev)],...perPtKpis]:[['Total Trx Sukses',nFmt(tTrx)],['Total GMV',rpFull(tGMV)],['Settle Amount',rpFull(tAmt)],['Total Revenue',rpFull(tRev)]];
   const bw=(W-M*2-(kpis.length-1)*2)/kpis.length;
   kpis.forEach((k,i)=>{const x=M+i*(bw+2);doc.setFillColor(255,251,235);doc.roundedRect(x,y,bw,13,1.5,1.5,'F');doc.setDrawColor(253,230,138);doc.roundedRect(x,y,bw,13,1.5,1.5,'S');doc.setTextColor(146,64,14);doc.setFontSize(5.5);doc.setFont('helvetica','normal');doc.text(k[0].toUpperCase(),x+2,y+4.5);doc.setTextColor(27,43,75);doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.text(k[1],x+2,y+11);});
@@ -1309,41 +1318,46 @@ function dlMonthlyPDF(){
       doc.text(r[0],M+2,y);doc.text(r[1],c1,y,{align:'right'});doc.text(r[2],c2,y,{align:'right'});y+=5;
     });y+=3;
   }
-  if(showAKT) drawMTDMonthly(mtdA,ytdA,'AKT - Agro Karsa Terpadu');
-  if(showGCU) drawMTDMonthly(mtdG,ytdG,'GCU - Gemilang Cipta Utama');
-  if(showNKS) drawMTDMonthly(mtdN,ytdN,'NKS - Nusantria Karya Sejahtera');
-  if(showANK) drawMTDMonthly(mtdK,ytdK,'ANK - Aksanta Nusadaya Karya');
+  PT_CONFIG.forEach(p=>{
+    if(activePts.includes(p.key)) drawMTDMonthly(mtdByKey[p.key],ytdByKey[p.key],p.key+' - '+p.name);
+  });
 
   // Revenue Detail
-  {const nActiveRevM=[showAKT,showGCU,showNKS,showANK].filter(Boolean).length;if(y+(13+nActiveRevM*5)>280)newPage1M();}
+  {const nActiveRevM=PT_CONFIG.filter(p=>activePts.includes(p.key)).length;if(y+(13+nActiveRevM*5)>280)newPage1M();}
   doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(15,23,42);doc.text('Revenue Detail',M,y);y+=4;
   doc.setFillColor(27,43,75);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(6);doc.setFont('helvetica','bold');
   const rc1=M+85,rc2=M+133,rc3=M+W-M*2-4;
   doc.text('PT - Acquirer',M+2,y);doc.text('GMV',rc1,y,{align:'right'});doc.text('Settle Amount',rc2,y,{align:'right'});doc.text('Revenue',rc3,y,{align:'right'});y+=5;
-  const aktGMV=sfA(mtdA,'gmv'),aktAmt=sfA(mtdA,'total_amount_transfer'),aktRev=sfA(mtdA,'total_revenue');
-  const gcuGMV=sfA(mtdG,'gmv'),gcuAmt=sfA(mtdG,'total_amount_transfer'),gcuRev=sfA(mtdG,'total_revenue');
-  const nksGMV=sfA(mtdN,'gmv'),nksAmt=sfA(mtdN,'total_amount_transfer'),nksRev=sfA(mtdN,'total_revenue');
-  const ankGMV=sfA(mtdK,'gmv'),ankAmt=sfA(mtdK,'total_amount_transfer'),ankRev=sfA(mtdK,'total_revenue');
-  if(showAKT){doc.setFillColor(239,246,255);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);
-  doc.text('AKT - Qoin',M+2,y);doc.text(rpFull(aktGMV),rc1,y,{align:'right'});doc.text(rpFull(aktAmt),rc2,y,{align:'right'});doc.text(rpFull(aktRev),rc3,y,{align:'right'});y+=5;}
-  if(showGCU){doc.setFillColor(240,253,244);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);
-  doc.text('GCU - Qoin',M+2,y);doc.text(rpFull(gcuGMV),rc1,y,{align:'right'});doc.text(rpFull(gcuAmt),rc2,y,{align:'right'});doc.text(rpFull(gcuRev),rc3,y,{align:'right'});y+=5;}
-  if(showNKS){doc.setFillColor(255,251,235);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);
-  doc.text('NKS - Qoin',M+2,y);doc.text(rpFull(nksGMV),rc1,y,{align:'right'});doc.text(rpFull(nksAmt),rc2,y,{align:'right'});doc.text(rpFull(nksRev),rc3,y,{align:'right'});y+=5;}
-  if(showANK){doc.setFillColor(253,242,248);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);
-  doc.text('ANK - Qoin',M+2,y);doc.text(rpFull(ankGMV),rc1,y,{align:'right'});doc.text(rpFull(ankAmt),rc2,y,{align:'right'});doc.text(rpFull(ankRev),rc3,y,{align:'right'});y+=5;}
+  const revByKey={};
+  PT_CONFIG.forEach(p=>{
+    revByKey[p.key]={gmv:sfA(mtdByKey[p.key],'gmv'),amt:sfA(mtdByKey[p.key],'total_amount_transfer'),rev:sfA(mtdByKey[p.key],'total_revenue')};
+  });
+  PT_CONFIG.forEach(p=>{
+    if(!activePts.includes(p.key))return;
+    doc.setFillColor(p.pdfRevRowM[0],p.pdfRevRowM[1],p.pdfRevRowM[2]);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);
+    doc.text(p.key+' - Qoin',M+2,y);doc.text(rpFull(revByKey[p.key].gmv),rc1,y,{align:'right'});doc.text(rpFull(revByKey[p.key].amt),rc2,y,{align:'right'});doc.text(rpFull(revByKey[p.key].rev),rc3,y,{align:'right'});y+=5;
+  });
+  const totGMV_=PT_CONFIG.reduce((a,p)=>a+revByKey[p.key].gmv,0), totAmt_=PT_CONFIG.reduce((a,p)=>a+revByKey[p.key].amt,0), totRev_=PT_CONFIG.reduce((a,p)=>a+revByKey[p.key].rev,0);
   doc.setFillColor(209,250,229);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(6,95,70);doc.setFont('helvetica','bold');doc.setFontSize(6);
-  doc.text('TOTAL',M+2,y);doc.text(rpFull(aktGMV+gcuGMV+nksGMV+ankGMV),rc1,y,{align:'right'});doc.text(rpFull(aktAmt+gcuAmt+nksAmt+ankAmt),rc2,y,{align:'right'});doc.text(rpFull(aktRev+gcuRev+nksRev+ankRev),rc3,y,{align:'right'});y+=8;
+  doc.text('TOTAL',M+2,y);doc.text(rpFull(totGMV_),rc1,y,{align:'right'});doc.text(rpFull(totAmt_),rc2,y,{align:'right'});doc.text(rpFull(totRev_),rc3,y,{align:'right'});y+=8;
 
   // Top Merchants
   if(y<230&&(mcA.length||mcG.length||mcN.length||mcK.length)){
     doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(15,23,42);doc.text('Top Merchants by Transaction Volume',M,y);y+=4;
     doc.setFillColor(27,43,75);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(6);doc.setFont('helvetica','bold');
     doc.text('#',M+2,y);doc.text('Merchant',M+12,y);doc.text('Trx',M+145,y,{align:'right'});doc.text('Volume',M+W-M*2-4,y,{align:'right'});y+=5;
-    if(mcA.length){doc.setFillColor(219,234,254);doc.rect(M,y-3,W-M*2,4,'F');doc.setTextColor(27,43,75);doc.setFontSize(5.5);doc.setFont('helvetica','bold');doc.text('AKT - Agro Karsa Terpadu',M+2,y);y+=4;mcA.forEach((m,i)=>{if(y>272)return;doc.setFillColor(i%2===0?248:255,i%2===0?250:255,i%2===0?252:255);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.text(String(i+1),M+2,y);doc.text((m.merchant_name||'-').slice(0,50),M+12,y);doc.text(nFmt(m.total_trx),M+145,y,{align:'right'});doc.text(rpFull(m.total_amount),M+W-M*2-4,y,{align:'right'});y+=5;});}
-    if(mcG.length&&y<265){doc.setFillColor(209,250,229);doc.rect(M,y-3,W-M*2,4,'F');doc.setTextColor(6,95,70);doc.setFontSize(5.5);doc.setFont('helvetica','bold');doc.text('GCU - Gemilang Cipta Utama',M+2,y);y+=4;mcG.forEach((m,i)=>{if(y>278)return;doc.setFillColor(i%2===0?240:255,i%2===0?253:255,i%2===0?244:255);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.text(String(i+1),M+2,y);doc.text((m.merchant_name||'-').slice(0,50),M+12,y);doc.text(nFmt(m.total_trx),M+145,y,{align:'right'});doc.text(rpFull(m.total_amount),M+W-M*2-4,y,{align:'right'});y+=5;});}
-    if(mcN.length&&y<278){doc.setFillColor(253,230,138);doc.rect(M,y-3,W-M*2,4,'F');doc.setTextColor(120,53,15);doc.setFontSize(5.5);doc.setFont('helvetica','bold');doc.text('NKS - Nusantria Karya Sejahtera',M+2,y);y+=4;mcN.forEach((m,i)=>{if(y>282)return;doc.setFillColor(i%2===0?255:255,i%2===0?251:255,i%2===0?235:255);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.text(String(i+1),M+2,y);doc.text((m.merchant_name||'-').slice(0,50),M+12,y);doc.text(nFmt(m.total_trx),M+145,y,{align:'right'});doc.text(rpFull(m.total_amount),M+W-M*2-4,y,{align:'right'});y+=5;});}
-    if(mcK.length&&y<282){doc.setFillColor(251,207,232);doc.rect(M,y-3,W-M*2,4,'F');doc.setTextColor(131,24,67);doc.setFontSize(5.5);doc.setFont('helvetica','bold');doc.text('ANK - Aksanta Nusadaya Karya',M+2,y);y+=4;mcK.forEach((m,i)=>{if(y>286)return;doc.setFillColor(i%2===0?253:255,i%2===0?242:255,i%2===0?248:255);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.text(String(i+1),M+2,y);doc.text((m.merchant_name||'-').slice(0,50),M+12,y);doc.text(nFmt(m.total_trx),M+145,y,{align:'right'});doc.text(rpFull(m.total_amount),M+W-M*2-4,y,{align:'right'});y+=5;});}
+    const yLimitsM=[{hdMax:9999,rowMax:272},{hdMax:265,rowMax:278},{hdMax:278,rowMax:282},{hdMax:282,rowMax:286}];
+    PT_CONFIG.forEach((p,idx)=>{
+      const mc=mcByKey[p.key];
+      const lim=yLimitsM[idx]||{hdMax:9999,rowMax:9999+idx};
+      if(mc.length&&y<lim.hdMax){
+        doc.setFillColor(p.pdfMcBg[0],p.pdfMcBg[1],p.pdfMcBg[2]);doc.rect(M,y-3,W-M*2,4,'F');doc.setTextColor(p.pdfMcText[0],p.pdfMcText[1],p.pdfMcText[2]);doc.setFontSize(5.5);doc.setFont('helvetica','bold');doc.text(p.key+' - '+p.name,M+2,y);y+=4;
+        mc.forEach((m,i)=>{
+          if(y>lim.rowMax)return;
+          doc.setFillColor(i%2===0?p.pdfMcTint[0]:255,i%2===0?p.pdfMcTint[1]:255,i%2===0?p.pdfMcTint[2]:255);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.text(String(i+1),M+2,y);doc.text((m.merchant_name||'-').slice(0,50),M+12,y);doc.text(nFmt(m.total_trx),M+145,y,{align:'right'});doc.text(rpFull(m.total_amount),M+W-M*2-4,y,{align:'right'});y+=5;
+        });
+      }
+    });
   }
 
   // Footer hal 1
@@ -1423,10 +1437,9 @@ function dlMonthlyPDF(){
     y2+=5;
   }
 
-  if(showAKT) drawAvbMonthly(window._bfAKT,window._dsAKT,'AKT');
-  if(showGCU) drawAvbMonthly(window._bfGCU,window._dsGCU,'GCU');
-  if(showNKS) drawAvbMonthly(window._bfNKS,window._dsNKS,'NKS');
-  if(showANK) drawAvbMonthly(window._bfANK,window._dsANK,'ANK');
+  PT_CONFIG.forEach(p=>{
+    if(activePts.includes(p.key)) drawAvbMonthly(window['_bf'+p.key],window['_ds'+p.key],p.key);
+  });
 
   doc.setFillColor(27,43,75);doc.rect(0,284,W,13,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','normal');
   doc.text(`Auto-generated - Paycloud x ${ptTitle} - ${dateStr} | Hal. 2/2`,W/2,291,{align:'center'});
@@ -1436,7 +1449,7 @@ function dlMonthlyPDF(){
 
 
 // ═══ PT FILTER DROPDOWN ═══
-let activePts=['AKT','GCU','NKS']; // default: semua PT aktif
+let activePts=[]; // diisi otomatis oleh renderPtFilterCheckboxes() dari PT_CONFIG saat halaman dimuat
 
 function togglePtFilter(e){
   e.stopPropagation();
@@ -1462,50 +1475,28 @@ function onPtChkChange(){
   applyPtFilter();
   // Hitung ulang Total Gabungan & Transaction Summary sesuai PT yang baru dicentang
   if(currentMode==='daily'){
-    renderTotal(cAKT,cGCU,cNKS,cANK);
+    renderTotal({AKT:cAKT,GCU:cGCU,NKS:cNKS,ANK:cANK});
     renderSummary(cAKT,cGCU,cNKS,cANK);
   } else if(currentMode==='monthly' && selectedMonth){
     renderMonthly(selectedMonth);
   }
 }
 function updatePtFilterLabel(){
-  const ptNames={AKT:'AKT',GCU:'GCU',NKS:'NKS',ANK:'ANK'};
-  let label;
-  if(activePts.length===0){
-    label='Dashboard QRIS — Pilih PT';
-  } else if(activePts.length===1){
-    label='Dashboard QRIS — '+ptNames[activePts[0]];
-  } else {
-    label='Dashboard QRIS — '+activePts.map(p=>ptNames[p]).join(' & ');
-  }
-  document.getElementById('ptFilterLabel').textContent=label;
+  document.getElementById('ptFilterLabel').textContent='PARENT MERCHANT';
 }
 function applyPtFilter(){
-  const showAKT = activePts.includes('AKT');
-  const showGCU = activePts.includes('GCU');
-  const showNKS = activePts.includes('NKS');
-  const showANK = activePts.includes('ANK');
   const showMulti = activePts.length >= 2;
 
-  // 1. Block AKT & GCU & NKS & ANK di tab Rekonsiliasi (KPI, Status, Revenue)
-  const blockAKT=document.getElementById('ptBlockAKT');
-  const blockGCU=document.getElementById('ptBlockGCU');
-  const blockNKS=document.getElementById('ptBlockNKS');
-  const blockANK=document.getElementById('ptBlockANK');
-  if(blockAKT) blockAKT.style.display = showAKT ? '' : 'none';
-  if(blockGCU) blockGCU.style.display = showGCU ? '' : 'none';
-  if(blockNKS) blockNKS.style.display = showNKS ? '' : 'none';
-  if(blockANK) blockANK.style.display = showANK ? '' : 'none';
-
-  // 2. Daily Report card AKT/GCU/NKS/ANK
-  const dailyAKT=document.getElementById('dailyCardAKT');
-  const dailyGCU=document.getElementById('dailyCardGCU');
-  const dailyNKS=document.getElementById('dailyCardNKS');
-  const dailyANK=document.getElementById('dailyCardANK');
-  if(dailyAKT) dailyAKT.style.display = showAKT ? '' : 'none';
-  if(dailyGCU) dailyGCU.style.display = showGCU ? '' : 'none';
-  if(dailyNKS) dailyNKS.style.display = showNKS ? '' : 'none';
-  if(dailyANK) dailyANK.style.display = showANK ? '' : 'none';
+  // 1, 2, 5, 7. Block Rekonsiliasi, Daily Report card, AvB card, Monthly Report card —
+  // tampil/sembunyi per PT (loop, bukan manual 1-1). "monthlyCard" ditambahin belakangan
+  // atas laporan Via: kartu Monthly Report dulu gak ikut kesembunyiin pas PT di-uncheck.
+  PT_CONFIG.forEach(p=>{
+    const show = activePts.includes(p.key);
+    ['ptBlock','dailyCard','avbCard','monthlyCard'].forEach(prefix=>{
+      const el=document.getElementById(prefix+p.key);
+      if(el) el.style.display = show ? '' : 'none';
+    });
+  });
 
   // 3. Total Gabungan & Transaction Summary — tampil kalau 2 PT atau lebih aktif
   const totalSection=document.getElementById('totalGabunganSection');
@@ -1523,22 +1514,9 @@ function applyPtFilter(){
   if(topMerchBody){
     Array.from(topMerchBody.children).forEach(tr=>{
       const pt=tr.getAttribute('data-pt');
-      if(pt==='AKT') tr.style.display = showAKT ? '' : 'none';
-      else if(pt==='GCU') tr.style.display = showGCU ? '' : 'none';
-      else if(pt==='NKS') tr.style.display = showNKS ? '' : 'none';
-      else if(pt==='ANK') tr.style.display = showANK ? '' : 'none';
+      tr.style.display = (pt && activePts.includes(pt)) ? '' : 'none';
     });
   }
-
-  // 5. Actual vs Budget card AKT/GCU/NKS/ANK
-  const avbAKT=document.getElementById('avbCardAKT');
-  const avbGCU=document.getElementById('avbCardGCU');
-  const avbNKS=document.getElementById('avbCardNKS');
-  const avbANK=document.getElementById('avbCardANK');
-  if(avbAKT) avbAKT.style.display = showAKT ? '' : 'none';
-  if(avbGCU) avbGCU.style.display = showGCU ? '' : 'none';
-  if(avbNKS) avbNKS.style.display = showNKS ? '' : 'none';
-  if(avbANK) avbANK.style.display = showANK ? '' : 'none';
 
   // 6. Reposisi Daily Report: kalau single-PT, pindahkan ke atas (sebelum Top Merchants)
   //    kalau 2+ PT (showMulti), kembalikan ke posisi normal (sebelum Total Gabungan)
