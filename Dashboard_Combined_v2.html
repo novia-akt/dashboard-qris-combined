@@ -72,7 +72,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .footer{text-align:center;padding:14px;font-size:10px;color:var(--text3);border-top:1px solid var(--border);margin-top:8px}
 @media(max-width:900px){.g4{grid-template-columns:1fr 1fr}.g2e{grid-template-columns:1fr}}
 @media(max-width:600px){.hdr-row1{padding:6px 12px}.hdr-title{font-size:12px}.hdr-date-sub{display:none}.hdr-row2{padding:5px 12px;gap:5px}.btn{padding:4px 8px;font-size:10px}.main{padding:10px 12px}.g4{grid-template-columns:1fr 1fr}.g2e{grid-template-columns:1fr}.kpi .val{font-size:17px}}
-.pt-filter-label{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;cursor:pointer;font-size:13px;color:#1B2B4B;transition:background .15s,color .15s}
+.pt-filter-row{padding:2px 4px}
+.pt-filter-label{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:13px;color:#1B2B4B;transition:background .15s,color .15s}
 .pt-filter-label:hover{background:#F1F5F9}
 .pt-filter-label:has(input:checked){background:var(--navy);color:#fff}
 </style>
@@ -87,7 +88,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   <div class="hdr-row2">
     <div style="display:flex;gap:3px;background:rgba(27,43,75,0.08);border-radius:20px;padding:2px;border:1px solid #BFDBFE">
       <button id="tabRekon" onclick="switchTab('rekon')" style="padding:4px 16px;font-size:11px;font-weight:600;border-radius:18px;border:none;cursor:pointer;background:#1B2B4B;color:#fff;display:flex;align-items:center;gap:5px">
-        <span>📋</span> Rekonsiliasi
+        <span>📋</span> Reconciliation
       </button>
       <button id="tabAvb" onclick="switchTab('avb')" style="padding:4px 16px;font-size:11px;font-weight:600;border-radius:18px;border:none;cursor:pointer;background:transparent;color:#1B2B4B;display:flex;align-items:center;gap:5px">
         <span>📊</span> Actual vs Budget
@@ -139,10 +140,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         <span style="font-size:14px;color:#64748B">▾</span>
       </h1>
       <div id="ptFilterPopup" style="display:none;position:absolute;top:100%;left:0;margin-top:4px;background:#fff;border:1px solid #E2E8F0;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.12);padding:6px;z-index:50;min-width:220px" onclick="event.stopPropagation()">
-        <label class="pt-filter-label" style="font-weight:600">
+        <div class="pt-filter-row"><label class="pt-filter-label" style="font-weight:600">
           <input type="checkbox" id="ptChkALL" onchange="togglePtAll(this.checked)" style="width:14px;height:14px;cursor:pointer">
           ALL
-        </label>
+        </label></div>
         <div style="height:1px;background:#E2E8F0;margin:4px 6px"></div>
         <div id="ptFilterCheckboxes"><!-- di-generate otomatis dari PT_CONFIG saat halaman dimuat --></div>
       </div>
@@ -292,10 +293,10 @@ function renderPtFilterCheckboxes(defaultKeys){
   // oleh init() setelah cek database. Kalau gak dikasih (fallback), pakai checkedByDefault statis.
   const checkSet=defaultKeys||PT_CONFIG.filter(p=>p.checkedByDefault).map(p=>p.key);
   wrap.innerHTML=PT_CONFIG.map(p=>`
-    <label class="pt-filter-label">
+    <div class="pt-filter-row"><label class="pt-filter-label">
       <input type="checkbox" class="ptChk" value="${p.key}" ${checkSet.includes(p.key)?'checked':''} onchange="onPtChkChange()" style="width:14px;height:14px;cursor:pointer">
       ${p.name}
-    </label>`).join('');
+    </label></div>`).join('');
   activePts=checkSet.slice();
   const chkAll=document.getElementById('ptChkALL');
   if(chkAll) chkAll.checked = activePts.length===PT_CONFIG.length;
