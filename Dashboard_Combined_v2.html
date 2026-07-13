@@ -285,16 +285,18 @@ function renderAvbCards(){
     </div>`).join('');
 }
 
-function renderPtFilterCheckboxes(){
+function renderPtFilterCheckboxes(defaultKeys){
   const wrap=document.getElementById('ptFilterCheckboxes');
   if(!wrap)return;
+  // defaultKeys (kalau dikasih) = PT yang beneran punya data di tanggal terbaru — ditentukan
+  // oleh init() setelah cek database. Kalau gak dikasih (fallback), pakai checkedByDefault statis.
+  const checkSet=defaultKeys||PT_CONFIG.filter(p=>p.checkedByDefault).map(p=>p.key);
   wrap.innerHTML=PT_CONFIG.map(p=>`
     <label class="pt-filter-label">
-      <input type="checkbox" class="ptChk" value="${p.key}" ${p.checkedByDefault?'checked':''} onchange="onPtChkChange()" style="width:14px;height:14px;cursor:pointer">
+      <input type="checkbox" class="ptChk" value="${p.key}" ${checkSet.includes(p.key)?'checked':''} onchange="onPtChkChange()" style="width:14px;height:14px;cursor:pointer">
       ${p.name}
     </label>`).join('');
-  // Set activePts awal sesuai checkedByDefault di PT_CONFIG (dulu di-hardcode manual)
-  activePts=PT_CONFIG.filter(p=>p.checkedByDefault).map(p=>p.key);
+  activePts=checkSet.slice();
   const chkAll=document.getElementById('ptChkALL');
   if(chkAll) chkAll.checked = activePts.length===PT_CONFIG.length;
 }
@@ -378,12 +380,16 @@ async function init(){
     renderDailyCards();
     renderMonthlyCards();
     renderAvbCards();
-    renderPtFilterCheckboxes(); // generate checkbox filter dari PT_CONFIG duluan, sebelum apapun yang butuh activePts
     const dateArrays=await Promise.all(PT_CONFIG.map(p=>sbFetch('daily_summary','select=report_date&order=report_date.desc&limit=365',p.key)));
     availDates=[...new Set(dateArrays.flatMap(arr=>arr.map(r=>r.report_date)))].sort().reverse();
     availMonths=[...new Set(availDates.map(d=>d.slice(0,7)))];
-    if(!availDates.length){showSec('errorPg');document.getElementById('errorMsg').textContent='Tidak ada data di database manapun ('+PT_LIST.join('/')+').';return;}
+    if(!availDates.length){renderPtFilterCheckboxes();showSec('errorPg');document.getElementById('errorMsg').textContent='Tidak ada data di database manapun ('+PT_LIST.join('/')+').';return;}
     const lat=availDates[0];const[ly,lm]=lat.split('-');calYear=parseInt(ly);calMonth=parseInt(lm)-1;selectedDate=lat;
+    // Urutan block tetap ikut PT_CONFIG (AKT selalu di atas), tapi yang DICENTANG default
+    // cuma PT yang beneran punya data di tanggal terbaru ini — jadi gak perlu buka dashboard
+    // terus lihat block kosong duluan kalau PT itu (misal AKT) lagi gak jalan.
+    const ptsWithLatestData=PT_CONFIG.filter((p,i)=>dateArrays[i].some(r=>r.report_date===lat)).map(p=>p.key);
+    renderPtFilterCheckboxes(ptsWithLatestData.length?ptsWithLatestData:undefined);
     document.getElementById('calLabel').textContent=fmtD(lat);
     await loadDate(lat);
   }catch(e){document.getElementById('errorMsg').textContent=`Gagal init: ${e.message}`;showSec('errorPg');}
@@ -435,10 +441,24 @@ async function loadDate(dateISO){
   }catch(e){document.getElementById('errorMsg').textContent=`Gagal: ${e.message}`;showSec('errorPg');}
 }
 
+function updateSubtitle(){
+  const sub=document.getElementById('subtitle');
+  if(!sub)return;
+  let dateLabel='';
+  if(currentMode==='monthly' && selectedMonth){
+    const[yr,mo]=selectedMonth.split('-');
+    dateLabel=`${MO[parseInt(mo)-1]} ${yr}`;
+  } else if(selectedDate){
+    const[y,mo,d]=selectedDate.split('-');
+    dateLabel=`${parseInt(d)} ${MO[parseInt(mo)-1]} ${y}`;
+  }
+  sub.textContent=`Data: ${dateLabel}${activePts.length?' | '+activePts.join(' | '):''}`;
+}
+
 function render(akt,gcu,nks,ank,dateISO){
   const[y,mo,d]=dateISO.split('-');const dateStr=`${parseInt(d)} ${MO[parseInt(mo)-1]} ${y}`;
   const _hds=document.getElementById('hdrDateSub');if(_hds)_hds.textContent=dateStr;
-  document.getElementById('subtitle').textContent=`Data: ${dateStr}`;
+  updateSubtitle();
   document.getElementById('footer').textContent=`Auto-generated — Paycloud × AKT & GCU & NKS & ANK — ${dateStr}`;
   renderKPI('kpiAKT',akt);renderKPI('kpiGCU',gcu);renderKPI('kpiNKS',nks);renderKPI('kpiANK',ank);renderStatus('statusAKT',akt);renderStatus('statusGCU',gcu);renderStatus('statusNKS',nks);renderStatus('statusANK',ank);
   renderRev('revAKT','revFootAKT',akt);renderRev('revGCU','revFootGCU',gcu);renderRev('revNKS','revFootNKS',nks);renderRev('revANK','revFootANK',ank);renderTotal({AKT:akt,GCU:gcu,NKS:nks,ANK:ank});renderSummary(akt,gcu,nks,ank);
@@ -1122,8 +1142,7 @@ function renderMonthly(ym){
   if(topMerchSec)topMerchSec.style.display='none';
 
   // Update subtitle
-  const sub=document.getElementById('subtitle');
-  if(sub)sub.textContent=`Data: ${label}`;
+  updateSubtitle();
   const ptLabelActive=activePts.length?activePts.join(' & '):PT_LIST.join(' & ');
   const totalTitleM=document.getElementById('totalTitleMonthly');
   const txTitleM=document.getElementById('txSummaryTitleMonthly');
@@ -1472,6 +1491,7 @@ function onPtChkChange(){
   // Sync ALL checkbox
   document.getElementById('ptChkALL').checked = activePts.length===checks.length;
   updatePtFilterLabel();
+  updateSubtitle();
   applyPtFilter();
   // Hitung ulang Total Gabungan & Transaction Summary sesuai PT yang baru dicentang
   if(currentMode==='daily'){
