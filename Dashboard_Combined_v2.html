@@ -165,7 +165,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <tfoot><tr id="revMonthlyFoot" class="ttl"></tr></tfoot>
       </table>
     </div>
-    <div class="sec-div"><div class="sec-div-title total" id="totalTitleMonthly">Total AKT + GCU</div></div>
+    <div class="sec-div"><div class="sec-div-title total" id="totalTitleMonthly">Total AKT | GCU</div></div>
     <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:10px" id="kpiTotalMonthly"></div>
     <div class="card" style="margin-bottom:10px">
       <div class="card-hd" id="txSummaryTitleMonthly">📋 Transaction Summary — AKT & GCU</div>
@@ -188,7 +188,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
   <!-- Total AKT + GCU + NKS -->
   <div id="totalGabunganSection">
-  <div class="sec-div"><div class="sec-div-title total" id="totalTitleDaily">Total AKT + GCU</div></div>
+  <div class="sec-div"><div class="sec-div-title total" id="totalTitleDaily">Total AKT | GCU</div></div>
   <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin-bottom:10px" id="kpiTotal"></div>
   <div class="card" style="margin-bottom:10px">
     <div class="card-hd" id="txSummaryTitleDaily">📋 Transaction Summary — AKT & GCU</div>
@@ -283,7 +283,6 @@ function renderAvbCards(){
   wrap.innerHTML=PT_CONFIG.map(p=>`
     <div class="card" id="avbCard${p.key}">
       <div class="card-hd" id="avbHd${p.key}">Actual vs Budget — ${p.key}</div>
-      <div class="avb-kpi-row" id="avbKpi${p.key}" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px"></div>
       <table class="tbl"><thead class="navy"><tr><th>Keterangan</th><th class="r">Budget</th><th class="r">Forecast</th><th class="r">Actual</th><th class="r">Below/Above</th></tr></thead><tbody id="avbTbl${p.key}"></tbody></table>
       <div class="card-hd" style="margin-top:14px">Monthly Summary — Actual vs Budget 2026 (${p.key})</div>
       <table class="tbl"><thead class="navy"><tr><th>Bulan</th><th class="r">Budget</th><th class="r">Forecast</th><th class="r">Actual/Proj</th><th class="r">Below/Above</th><th class="r">Status</th></tr></thead><tbody id="avbMonthly${p.key}"></tbody></table>
@@ -603,7 +602,7 @@ function dlExcel(){
     const active=PT_CONFIG.filter(p=>activePts.includes(p.key)).map(p=>({key:p.key,c:cByKey[p.key]}));
     const tM=active.reduce((a,p)=>a+(p.c?.total_merchant||0),0),tTrx=active.reduce((a,p)=>a+(p.c?.total_trx||0),0),tGMV=active.reduce((a,p)=>a+(p.c?.gmv||0),0),tSet=active.reduce((a,p)=>a+(p.c?.total_amount_transfer||0),0),tRev=active.reduce((a,p)=>a+(p.c?.total_revenue||0),0);
     const header=['Metrik',...active.map(p=>p.key),'Total'];
-    const tg=[[`Total Gabungan — ${activeNames.join(' + ')}`],[`Tanggal: ${dt}`],[],header,
+    const tg=[[`Total Gabungan — ${activeNames.join(' | ')}`],[`Tanggal: ${dt}`],[],header,
       ['Merchant',...active.map(p=>p.c?.total_merchant||0),tM],
       ['Total Trx',...active.map(p=>p.c?.total_trx||0),tTrx],
       ['GMV (Rp)',...active.map(p=>p.c?.gmv||0),tGMV],
@@ -809,25 +808,22 @@ function dlPDF(){
     const bfC=bf.find(b=>b.month===curYM);
     const actMtd=actByM[curYM]||0;
     const bud=bfC?parseFloat(bfC.budget):0,fore=bfC?parseFloat(bfC.forecast):0;
-    const ach=bud>0?(actMtd/bud*100).toFixed(2)+'%':'-';
+    // MTD (bukan 1 bulan penuh) — apple-to-apple sama Actual MTD
+    const bpd=bfC?parseFloat(bfC.budget_per_day)||0:0, fpd=bfC?parseFloat(bfC.forecast_per_day)||0:0;
+    const sd=bfC?parseInt(bfC.start_day)||1:1, ad=Math.max(0,curDay-sd+1);
+    const bSF=bpd*ad, fSF=fpd*ad;
 
     // Hitung estimasi tinggi konten PT ini, pindah halaman baru dulu kalau gak muat
     const bfShowCount2=bf.filter(b=>b.month<=curYM).length;
-    const estH2=16+5+(bfC?10:0)+3+5+5+(bfShowCount2*5)+5;
+    const estH2=5+(bfC?10:0)+3+5+5+(bfShowCount2*5)+5;
     if(y2+estH2>280) newAvbPage2();
 
-    // Header PT (dipindah ke atas KPI, samain sama urutan di web)
+    // Header PT — kartu KPI 4-kotak per-PT udah dihapus (redundant sama baris
+    // "As of" di tabel di bawah ini), header langsung disusul tabel Keterangan.
     doc.setFillColor(27,43,75);doc.rect(M,y2-3,W-M*2,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','bold');
     doc.text(`Actual vs Budget - ${MON[mo2]} ${yr2} (${ptName})`,M+2,y2);y2+=5;
-    // 4 KPI
-    const kp4=[['Budget',rpFull(bud)],['Forecast',rpFull(fore)],['Actual MTD',rpFull(actMtd)],['Achievement',ach]];
-    const kw4=(W-M*2-6)/4;
-    kp4.forEach((k,i)=>{const x=M+i*(kw4+2);doc.setFillColor(239,246,255);doc.roundedRect(x,y2,kw4,12,1.5,1.5,'F');doc.setTextColor(100,116,139);doc.setFontSize(6);doc.setFont('helvetica','normal');doc.text(k[0].toUpperCase(),x+2,y2+4.5);doc.setTextColor(i===3?245:27,i===3?158:43,i===3?11:75);doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.text(k[1],x+2,y2+10);});
-    y2+=16;
     if(bfC){
-      const bpd=parseFloat(bfC.budget_per_day),fpd=parseFloat(bfC.forecast_per_day);
-      const sd=parseInt(bfC.start_day)||1,ad=Math.max(0,curDay-sd+1);
-      const bSF=bpd*ad,fSF=fpd*ad,dIM=new Date(yr2,mo2+1,0).getDate();
+      const dIM=new Date(yr2,mo2+1,0).getDate();
       const proj=actMtd+(fpd*Math.max(0,dIM-curDay));
       const p1=bSF>0?((bSF-actMtd)/bSF*100).toFixed(2)+'%':'-';
       const p2=bud>0?((bud-proj)/bud*100).toFixed(2)+'%':'-';
@@ -867,6 +863,7 @@ function dlPDF(){
   // — sama persis kayak yang di dlAvbPDF(), tapi ini versi buat halaman 2 PDF Rekon gabungan
   {
     const curYMT=selectedDate?selectedDate.slice(0,7):'';
+    const curDayT=selectedDate?parseInt(selectedDate.split('-')[2]):new Date().getDate();
     let tBudP=0,tForP=0,tActP=0;
     PT_CONFIG.forEach(p=>{
       if(!activePts.includes(p.key))return;
@@ -874,14 +871,16 @@ function dlPDF(){
       if(!bf||!bf.length)return;
       const bfCur=bf.find(b=>b.month===curYMT);
       const actualByMonth={};(ds||[]).forEach(r=>{const ym=r.report_date.slice(0,7);if(!actualByMonth[ym])actualByMonth[ym]=0;actualByMonth[ym]+=parseFloat(r.total_revenue||0);});
-      tBudP+=bfCur?parseFloat(bfCur.budget):0;
-      tForP+=bfCur?parseFloat(bfCur.forecast):0;
+      const bpdT=bfCur?parseFloat(bfCur.budget_per_day)||0:0, fpdT=bfCur?parseFloat(bfCur.forecast_per_day)||0:0;
+      const sdT=bfCur?parseInt(bfCur.start_day)||1:1, adT=Math.max(0,curDayT-sdT+1);
+      tBudP+=bpdT*adT;
+      tForP+=fpdT*adT;
       tActP+=actualByMonth[curYMT]||0;
     });
     const tAchP=tBudP>0?(tActP/tBudP*100).toFixed(2)+'%':'-';
     const ptTitlePipe=PT_CONFIG.filter(p=>activePts.includes(p.key)).map(p=>p.key).join(' | ');
     doc.setFillColor(27,43,75);doc.rect(M,y2-3,W-M*2,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','bold');doc.text(`Total ${ptTitlePipe}`,M+2,y2);y2+=5;
-    const kpiT=[['Budget',rpFull(tBudP)],['Forecast',rpFull(tForP)],['Actual MTD',rpFull(tActP)],['Achievement',tAchP]];
+    const kpiT=[['Budget (MTD)',rpFull(tBudP)],['Forecast (MTD)',rpFull(tForP)],['Actual MTD',rpFull(tActP)],['Achievement',tAchP]];
     const kwT=(W-M*2-6)/4;
     kpiT.forEach((k,i)=>{const x=M+i*(kwT+2);doc.setFillColor(255,251,235);doc.roundedRect(x,y2,kwT,12,1.5,1.5,'F');doc.setDrawColor(253,230,138);doc.roundedRect(x,y2,kwT,12,1.5,1.5,'S');doc.setTextColor(146,64,14);doc.setFontSize(6);doc.setFont('helvetica','normal');doc.text(k[0].toUpperCase(),x+2,y2+4.5);doc.setTextColor(27,43,75);doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.text(k[1],x+2,y2+10);});
     y2+=17;
@@ -954,26 +953,22 @@ function dlAvbPDF(){
     const actualMtd=actualByMonth[curYM]||0;
     const budget2=bfCur?parseFloat(bfCur.budget):0;
     const forecast2=bfCur?parseFloat(bfCur.forecast):0;
-    const ach2=budget2>0?(actualMtd/budget2*100).toFixed(2)+'%':'-';
+    // MTD (bukan 1 bulan penuh) — apple-to-apple sama Actual MTD
+    const bpd=bfCur?parseFloat(bfCur.budget_per_day)||0:0, fpd=bfCur?parseFloat(bfCur.forecast_per_day)||0:0;
+    const startDay=bfCur?parseInt(bfCur.start_day)||1:1, activeDays=Math.max(0,curDay-startDay+1);
+    const bSoFar=bpd*activeDays, fSoFar=fpd*activeDays;
 
     // Hitung estimasi tinggi konten PT ini, pindah halaman baru dulu kalau gak muat
     const bfShowCount=bf.filter(b=>b.month<=curYM).length;
-    const estHeight=16+5+(bfCur?10:0)+3+5+5+(bfShowCount*5)+5;
+    const estHeight=5+(bfCur?10:0)+3+5+5+(bfShowCount*5)+5;
     if(y2+estHeight>280) newAvbPage();
 
-    // Header AvB bulan ini (dipindah ke atas KPI, samain sama urutan di web)
+    // Header AvB bulan ini — kartu KPI 4-kotak per-PT udah dihapus (redundant
+    // sama baris "As of" di tabel di bawah ini), header langsung disusul tabel.
     doc.setFillColor(27,43,75);doc.rect(M,y2-3,W-M*2,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','bold');
     doc.text(`Actual vs Budget - ${MOI[mo2]} ${yr2} (${ptName})`,M+2,y2);y2+=5;
-    // 4 KPI per PT
-    const kpi4=[['Budget',rpFull2(budget2)],['Forecast',rpFull2(forecast2)],['Actual MTD',rpFull2(actualMtd)],['Achievement',ach2]];
-    const kw4=(W-M*2-6)/4;
-    kpi4.forEach((k,i)=>{const x=M+i*(kw4+2);doc.setFillColor(239,246,255);doc.roundedRect(x,y2,kw4,12,1.5,1.5,'F');doc.setTextColor(100,116,139);doc.setFontSize(6);doc.setFont('helvetica','normal');doc.text(k[0].toUpperCase(),x+2,y2+4.5);doc.setTextColor(i===3?245:27,i===3?158:43,i===3?11:75);doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.text(k[1],x+2,y2+10);});
-    y2+=16;
 
     if(bfCur){
-      const bpd=parseFloat(bfCur.budget_per_day),fpd=parseFloat(bfCur.forecast_per_day);
-      const startDay=parseInt(bfCur.start_day)||1,activeDays=Math.max(0,curDay-startDay+1);
-      const bSoFar=bpd*activeDays,fSoFar=fpd*activeDays;
       const dIM=new Date(yr2,mo2+1,0).getDate(),proj=actualMtd+(fpd*Math.max(0,dIM-curDay));
       const pct1=bSoFar>0?((bSoFar-actualMtd)/bSoFar*100).toFixed(2)+'%':'-';
       const pct2=budget2>0?((budget2-proj)/budget2*100).toFixed(2)+'%':'-';
@@ -1019,6 +1014,7 @@ function dlAvbPDF(){
   // — ditaruh sebelum breakdown per PT, sama polanya kayak KPI 4-kotak per PT di atas
   {
     const curYMT=selectedDate?selectedDate.slice(0,7):'';
+    const curDayT=selectedDate?parseInt(selectedDate.split('-')[2]):new Date().getDate();
     let tBudP=0,tForP=0,tActP=0;
     PT_CONFIG.forEach(p=>{
       if(!activePts.includes(p.key))return;
@@ -1026,14 +1022,16 @@ function dlAvbPDF(){
       if(!bf||!bf.length)return;
       const bfCur=bf.find(b=>b.month===curYMT);
       const actualByMonth={};(ds||[]).forEach(r=>{const ym=r.report_date.slice(0,7);if(!actualByMonth[ym])actualByMonth[ym]=0;actualByMonth[ym]+=parseFloat(r.total_revenue||0);});
-      tBudP+=bfCur?parseFloat(bfCur.budget):0;
-      tForP+=bfCur?parseFloat(bfCur.forecast):0;
+      const bpdT=bfCur?parseFloat(bfCur.budget_per_day)||0:0, fpdT=bfCur?parseFloat(bfCur.forecast_per_day)||0:0;
+      const sdT=bfCur?parseInt(bfCur.start_day)||1:1, adT=Math.max(0,curDayT-sdT+1);
+      tBudP+=bpdT*adT;
+      tForP+=fpdT*adT;
       tActP+=actualByMonth[curYMT]||0;
     });
     const tAchP=tBudP>0?(tActP/tBudP*100).toFixed(2)+'%':'-';
     const ptTitlePipe=PT_CONFIG.filter(p=>activePts.includes(p.key)).map(p=>p.key).join(' | ');
     doc.setFillColor(27,43,75);doc.rect(M,y2-3,W-M*2,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','bold');doc.text(`Total ${ptTitlePipe}`,M+2,y2);y2+=5;
-    const kpiT=[['Budget',rpFull2(tBudP)],['Forecast',rpFull2(tForP)],['Actual MTD',rpFull2(tActP)],['Achievement',tAchP]];
+    const kpiT=[['Budget (MTD)',rpFull2(tBudP)],['Forecast (MTD)',rpFull2(tForP)],['Actual MTD',rpFull2(tActP)],['Achievement',tAchP]];
     const kwT=(W-M*2-6)/4;
     kpiT.forEach((k,i)=>{const x=M+i*(kwT+2);doc.setFillColor(255,251,235);doc.roundedRect(x,y2,kwT,12,1.5,1.5,'F');doc.setDrawColor(253,230,138);doc.roundedRect(x,y2,kwT,12,1.5,1.5,'S');doc.setTextColor(146,64,14);doc.setFontSize(6);doc.setFont('helvetica','normal');doc.text(k[0].toUpperCase(),x+2,y2+4.5);doc.setTextColor(27,43,75);doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.text(k[1],x+2,y2+10);});
     y2+=17;
@@ -1076,33 +1074,34 @@ function renderMTDWeb(){
 function renderAvbWeb(){
   const MOI=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
   const fmt=n=>{if(!n&&n!==0)return '—';const v=Math.round(n);return(v<0?'-':'')+'Rp '+Math.abs(v).toLocaleString('id-ID');};
-  function buildAvb(bf,ds,ptKey,hdId,kpiId,tblId){
+  function buildAvb(bf,ds,ptKey,hdId,tblId){
     const curYM=selectedDate?selectedDate.slice(0,7):'';
     const curDay=selectedDate?parseInt(selectedDate.split('-')[2]):new Date().getDate();
     const[cy,cm]=curYM.split('-');const mo=parseInt(cm)-1,yr=parseInt(cy);
     document.getElementById(hdId).textContent=`Actual vs Budget — ${MOI[mo]} ${yr} (${ptKey})`;
-    if(!bf||!bf.length){document.getElementById(kpiId).innerHTML='<div style="color:var(--text3);font-size:11px;padding:4px 0">Data budget belum tersedia</div>';document.getElementById(tblId).innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text3)">—</td></tr>';return;}
+    if(!bf||!bf.length){document.getElementById(tblId).innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text3)">Data budget belum tersedia</td></tr>';return;}
     const actualByMonth={};(ds||[]).forEach(r=>{const ym=r.report_date.slice(0,7);if(!actualByMonth[ym])actualByMonth[ym]=0;actualByMonth[ym]+=parseFloat(r.total_revenue||0);});
     const bfCur=bf.find(b=>b.month===curYM);
     const actualMtd=actualByMonth[curYM]||0;
     const budget=bfCur?parseFloat(bfCur.budget):0,forecast=bfCur?parseFloat(bfCur.forecast):0;
-    const achieve=budget>0?(actualMtd/budget*100).toFixed(2)+'%':'—';
-    document.getElementById(kpiId).innerHTML=[{lbl:'Budget',val:fmt(budget)},{lbl:'Forecast',val:fmt(forecast)},{lbl:'Actual MTD',val:fmt(actualMtd)},{lbl:'Achievement',val:achieve,amber:true}].map(k=>`<div class="kpi sm"><div class="lbl">${k.lbl}</div><div class="val ${k.amber?'amber':'navy'}">${k.val}</div></div>`).join('');
+    // Kartu KPI 4-kotak per-PT udah dihapus (redundant sama baris "As of" di tabel ini) —
+    // sekarang tabel ini satu-satunya tempat angka Budget/Forecast MTD per-PT ditampilin.
+    const bpd=bfCur?parseFloat(bfCur.budget_per_day)||0:0, fpd=bfCur?parseFloat(bfCur.forecast_per_day)||0:0;
+    const startDay=bfCur?parseInt(bfCur.start_day)||1:1, activeDays=Math.max(0,curDay-startDay+1);
+    const budgetMtd=bpd*activeDays, forecastMtd=fpd*activeDays;
     if(bfCur){
-      const bpd=parseFloat(bfCur.budget_per_day),fpd=parseFloat(bfCur.forecast_per_day);
-      const startDay=parseInt(bfCur.start_day)||1,activeDays=Math.max(0,curDay-startDay+1);
-      const bSoFar=bpd*activeDays,fSoFar=fpd*activeDays;
+      const bSoFar=budgetMtd,fSoFar=forecastMtd;
       const dIM=new Date(yr,mo+1,0).getDate(),proj=actualMtd+(fpd*Math.max(0,dIM-curDay));
       const pct1=bSoFar>0?((bSoFar-actualMtd)/bSoFar*100).toFixed(2)+'%':'—';
       const pct2=budget>0?((budget-proj)/budget*100).toFixed(2)+'%':'—';
       document.getElementById(tblId).innerHTML=`<tr><td>As of ${curDay} ${MOI[mo]} ${yr}</td><td class="r">${fmt(bSoFar)}</td><td class="r">${fmt(fSoFar)}</td><td class="r"><strong>${fmt(actualMtd)}</strong></td><td class="r">${pct1}</td></tr><tr class="ttl"><td>${dIM} ${MOI[mo]} ${yr}</td><td class="r">${fmt(budget)}</td><td class="r">${fmt(forecast)}</td><td class="r">${fmt(proj)}</td><td class="r">${pct2}</td></tr>`;
     } else {document.getElementById(tblId).innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text3)">Tidak ada data budget untuk bulan ini</td></tr>';}
   }
-  buildAvb(window._bfAKT,window._dsAKT,'AKT','avbHdAKT','avbKpiAKT','avbTblAKT');
-  buildAvb(window._bfGCU,window._dsGCU,'GCU','avbHdGCU','avbKpiGCU','avbTblGCU');
-  buildAvb(window._bfNKS,window._dsNKS,'NKS','avbHdNKS','avbKpiNKS','avbTblNKS');
-  buildAvb(window._bfANK,window._dsANK,'ANK','avbHdANK','avbKpiANK','avbTblANK');
-  buildAvb(window._bfAVS,window._dsAVS,'AVS','avbHdAVS','avbKpiAVS','avbTblAVS');
+  buildAvb(window._bfAKT,window._dsAKT,'AKT','avbHdAKT','avbTblAKT');
+  buildAvb(window._bfGCU,window._dsGCU,'GCU','avbHdGCU','avbTblGCU');
+  buildAvb(window._bfNKS,window._dsNKS,'NKS','avbHdNKS','avbTblNKS');
+  buildAvb(window._bfANK,window._dsANK,'ANK','avbHdANK','avbTblANK');
+  buildAvb(window._bfAVS,window._dsAVS,'AVS','avbHdAVS','avbTblAVS');
   renderAvbTotal();
 }
 
@@ -1122,14 +1121,18 @@ function renderAvbTotal(){
     if(!bf||!bf.length)return;
     const bfCur=bf.find(b=>b.month===curYM);
     const actualByMonth={};(ds||[]).forEach(r=>{const ym=r.report_date.slice(0,7);if(!actualByMonth[ym])actualByMonth[ym]=0;actualByMonth[ym]+=parseFloat(r.total_revenue||0);});
-    tBud+=bfCur?parseFloat(bfCur.budget):0;
-    tFor+=bfCur?parseFloat(bfCur.forecast):0;
+    // MTD, bukan 1 bulan penuh — sama kayak fix di buildAvb(), biar konsisten "As of [tanggal]"
+    const curDay=selectedDate?parseInt(selectedDate.split('-')[2]):new Date().getDate();
+    const bpd=bfCur?parseFloat(bfCur.budget_per_day)||0:0, fpd=bfCur?parseFloat(bfCur.forecast_per_day)||0:0;
+    const startDay=bfCur?parseInt(bfCur.start_day)||1:1, activeDays=Math.max(0,curDay-startDay+1);
+    tBud+=bpd*activeDays;
+    tFor+=fpd*activeDays;
     tAct+=actualByMonth[curYM]||0;
   });
   const tAch=tBud>0?(tAct/tBud*100).toFixed(2)+'%':'—';
   el.innerHTML=[
-    {lbl:'Budget',val:rpF(tBud)},
-    {lbl:'Forecast',val:rpF(tFor)},
+    {lbl:'Budget (MTD)',val:rpF(tBud)},
+    {lbl:'Forecast (MTD)',val:rpF(tFor)},
     {lbl:'Actual MTD',val:rpF(tAct)},
     {lbl:'Achievement',val:tAch,amber:true},
   ].map(k=>`<div class="kpi sm amber-card"><div class="lbl">${k.lbl}</div><div class="val ${k.amber?'amber':'navy'}">${k.val}</div></div>`).join('');
@@ -1239,7 +1242,7 @@ function renderMonthly(ym){
   const ptLabelActive=activePts.length?activePts.join(' & '):PT_LIST.join(' & ');
   const totalTitleM=document.getElementById('totalTitleMonthly');
   const txTitleM=document.getElementById('txSummaryTitleMonthly');
-  if(totalTitleM) totalTitleM.textContent='Total '+(activePts.length?activePts.join(' + '):PT_LIST.join(' + '));
+  if(totalTitleM) totalTitleM.textContent='Total '+(activePts.length?activePts.join(' | '):PT_LIST.join(' | '));
   if(txTitleM) txTitleM.textContent='📋 Transaction Summary — '+ptLabelActive;
 
   // Fungsi sum
@@ -1484,6 +1487,30 @@ function dlMonthlyPDF(){
   doc.text(`Actual vs Budget - ${ptTitle}`,W/2,10,{align:'center'});doc.setFontSize(8);doc.setFont('helvetica','normal');
   doc.text(`Data: ${monthLabel}`,W/2,18,{align:'center'});
 
+  // KPI gabungan (Budget/Forecast/Actual dijumlah dari semua PT aktif, 1 bulan penuh —
+  // bukan MTD, karena drawAvbMonthly() per-PT juga cuma nampilin 1 baris bulan penuh,
+  // beda dari dlPDF/dlAvbPDF yang punya baris "As of [tanggal]" terpisah)
+  {
+    let tBudM=0,tForM=0,tActM=0;
+    PT_CONFIG.forEach(p=>{
+      if(!activePts.includes(p.key))return;
+      const bf=window['_bf'+p.key], ds=window['_ds'+p.key];
+      if(!bf||!bf.length)return;
+      const bfCur=bf.find(b=>b.month===selectedMonth);
+      const actualByMonthM={};(ds||[]).forEach(r=>{const ym=r.report_date.slice(0,7);if(!actualByMonthM[ym])actualByMonthM[ym]=0;actualByMonthM[ym]+=parseFloat(r.total_revenue||0);});
+      tBudM+=bfCur?parseFloat(bfCur.budget):0;
+      tForM+=bfCur?parseFloat(bfCur.forecast):0;
+      tActM+=actualByMonthM[selectedMonth]||0;
+    });
+    const tAchM=tBudM>0?(tActM/tBudM*100).toFixed(2)+'%':'-';
+    const ptTitlePipeM=PT_CONFIG.filter(p=>activePts.includes(p.key)).map(p=>p.key).join(' | ');
+    doc.setFillColor(27,43,75);doc.rect(M,y2-3,W-M*2,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','bold');doc.text(`Total ${ptTitlePipeM}`,M+2,y2);y2+=5;
+    const kpiTM=[['Budget',rpFull(tBudM)],['Forecast',rpFull(tForM)],['Actual',rpFull(tActM)],['Achievement',tAchM]];
+    const kwTM=(W-M*2-6)/4;
+    kpiTM.forEach((k,i)=>{const x=M+i*(kwTM+2);doc.setFillColor(255,251,235);doc.roundedRect(x,y2,kwTM,12,1.5,1.5,'F');doc.setDrawColor(253,230,138);doc.roundedRect(x,y2,kwTM,12,1.5,1.5,'S');doc.setTextColor(146,64,14);doc.setFontSize(6);doc.setFont('helvetica','normal');doc.text(k[0].toUpperCase(),x+2,y2+4.5);doc.setTextColor(27,43,75);doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.text(k[1],x+2,y2+10);});
+    y2+=17;
+  }
+
   let avbSubPgM=1;
   function newAvbPage3(){
     doc.addPage();y2=27;avbSubPgM++;
@@ -1623,7 +1650,7 @@ function applyPtFilter(){
     const ptLabel=activePts.join(' & ');
     const totalTitleD=document.getElementById('totalTitleDaily');
     const txTitleD=document.getElementById('txSummaryTitleDaily');
-    if(totalTitleD) totalTitleD.textContent='Total '+activePts.join(' + ');
+    if(totalTitleD) totalTitleD.textContent='Total '+activePts.join(' | ');
     if(txTitleD) txTitleD.textContent='📋 Transaction Summary — '+ptLabel;
   }
 
