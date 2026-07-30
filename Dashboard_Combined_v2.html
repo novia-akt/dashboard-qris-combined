@@ -241,6 +241,8 @@ const PT_CONFIG=[
     pdfRevRow:[253,242,248], pdfRevRowM:[253,242,248], pdfMcBg:[251,207,232], pdfMcText:[131,24,67], pdfMcTint:[253,242,248]}, // belum go-live
   {key:'AVS', name:'Arta Visi Solusindo',     checkedByDefault:false, rowBg:'#F5F3FF', hdBg:'#DDD6FE', hdText:'#4C1D95',
     pdfRevRow:[245,243,255], pdfRevRowM:[245,243,255], pdfMcBg:[221,214,254], pdfMcText:[76,29,149], pdfMcTint:[245,243,255]}, // belum go-live
+  {key:'TCU', name:'Trananda Cipta Utama',    checkedByDefault:false, rowBg:'#ECFEFF', hdBg:'#CFFAFE', hdText:'#155E75',
+    pdfRevRow:[236,254,255], pdfRevRowM:[236,254,255], pdfMcBg:[207,250,254], pdfMcText:[21,94,117], pdfMcTint:[236,254,255]}, // belum go-live
 ];
 const PT_LIST=PT_CONFIG.map(p=>p.key); // dipertahankan biar kode lama yang masih pakai PT_LIST tetap jalan
 
@@ -304,7 +306,7 @@ function renderPtFilterCheckboxes(defaultKeys){
   const chkAll=document.getElementById('ptChkALL');
   if(chkAll) chkAll.checked = activePts.length===PT_CONFIG.length;
 }
-let currentMode='daily',availDates=[],availMonths=[],calYear=new Date().getFullYear(),calMonth=new Date().getMonth(),selectedDate='',selectedMonth='',cAKT=null,cGCU=null,cNKS=null,cANK=null,cAVS=null;
+let currentMode='daily',availDates=[],availMonths=[],calYear=new Date().getFullYear(),calMonth=new Date().getMonth(),selectedDate='',selectedMonth='',cAKT=null,cGCU=null,cNKS=null,cANK=null,cAVS=null,cTCU=null;
 const MO=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 const MOS=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
 const p2=s=>String(s).padStart(2,'0');
@@ -422,7 +424,7 @@ async function loadDate(dateISO){
     const byTag={};
     jobTags.forEach((tag,i)=>{byTag[tag]=results[i];});
 
-    // "current" (data 1 hari) WAJIB eksplisit — cAKT/cGCU/cNKS/cANK/cAVS dideklarasi pakai `let`,
+    // "current" (data 1 hari) WAJIB eksplisit — cAKT/cGCU/cNKS/cANK/cAVS/cTCU dideklarasi pakai `let`,
     // gak bisa di-set otomatis lewat window[...] (keterbatasan JavaScript, bukan pilihan desain).
     // Kalau nambah PT baru nanti, baris ini + parameter render()/renderTotal()/dst masih perlu
     // disentuh manual — itu proyek refactor terpisah yang lebih besar lagi.
@@ -431,6 +433,7 @@ async function loadDate(dateISO){
     cNKS = byTag['cur_NKS']?.[0] || null;
     cANK = byTag['cur_ANK']?.[0] || null;
     cAVS = byTag['cur_AVS']?.[0] || null;
+    cTCU = byTag['cur_TCU']?.[0] || null;
 
     // Sisanya (mtd/ytd/budget/revenue-harian/top-merchant) AMAN di-loop otomatis,
     // karena window._xxx itu properti biasa, bukan variabel `let`
@@ -442,7 +445,7 @@ async function loadDate(dateISO){
       window['_mc'+p.key]=byTag['mc_'+p.key];
     });
 
-    selectedDate=dateISO;render(cAKT,cGCU,cNKS,cANK,cAVS,dateISO);
+    selectedDate=dateISO;render(cAKT,cGCU,cNKS,cANK,cAVS,cTCU,dateISO);
   }catch(e){document.getElementById('errorMsg').textContent=`Gagal: ${e.message}`;showSec('errorPg');}
 }
 
@@ -460,13 +463,13 @@ function updateSubtitle(){
   sub.textContent=`Data: ${dateLabel}${activePts.length?' | '+activePts.join(' | '):''}`;
 }
 
-function render(akt,gcu,nks,ank,avs,dateISO){
+function render(akt,gcu,nks,ank,avs,tcu,dateISO){
   const[y,mo,d]=dateISO.split('-');const dateStr=`${parseInt(d)} ${MO[parseInt(mo)-1]} ${y}`;
   const _hds=document.getElementById('hdrDateSub');if(_hds)_hds.textContent=dateStr;
   updateSubtitle();
-  document.getElementById('footer').textContent=`Auto-generated — Paycloud × AKT & GCU & NKS & ANK & AVS — ${dateStr}`;
-  renderKPI('kpiAKT',akt);renderKPI('kpiGCU',gcu);renderKPI('kpiNKS',nks);renderKPI('kpiANK',ank);renderKPI('kpiAVS',avs);renderStatus('statusAKT',akt);renderStatus('statusGCU',gcu);renderStatus('statusNKS',nks);renderStatus('statusANK',ank);renderStatus('statusAVS',avs);
-  renderRev('revAKT','revFootAKT',akt);renderRev('revGCU','revFootGCU',gcu);renderRev('revNKS','revFootNKS',nks);renderRev('revANK','revFootANK',ank);renderRev('revAVS','revFootAVS',avs);renderTotal({AKT:akt,GCU:gcu,NKS:nks,ANK:ank,AVS:avs});renderSummary(akt,gcu,nks,ank,avs);
+  document.getElementById('footer').textContent=`Auto-generated — Paycloud × AKT & GCU & NKS & ANK & AVS & TCU — ${dateStr}`;
+  renderKPI('kpiAKT',akt);renderKPI('kpiGCU',gcu);renderKPI('kpiNKS',nks);renderKPI('kpiANK',ank);renderKPI('kpiAVS',avs);renderKPI('kpiTCU',tcu);renderStatus('statusAKT',akt);renderStatus('statusGCU',gcu);renderStatus('statusNKS',nks);renderStatus('statusANK',ank);renderStatus('statusAVS',avs);renderStatus('statusTCU',tcu);
+  renderRev('revAKT','revFootAKT',akt);renderRev('revGCU','revFootGCU',gcu);renderRev('revNKS','revFootNKS',nks);renderRev('revANK','revFootANK',ank);renderRev('revAVS','revFootAVS',avs);renderRev('revTCU','revFootTCU',tcu);renderTotal({AKT:akt,GCU:gcu,NKS:nks,ANK:ank,AVS:avs,TCU:tcu});renderSummary(akt,gcu,nks,ank,avs,tcu);
   renderMTDWeb();renderAvbWeb();renderTopMerch();renderAvbMonthly();
   applyPtFilter();
   document.getElementById('btnPdf').style.display='inline-flex';document.getElementById('btnXls').style.display='inline-flex';
@@ -532,10 +535,10 @@ function renderTotal(dataByPt){
   ].map(k=>`<div class="kpi sm amber-card"><div class="lbl">${k.lbl}</div><div class="val ${k.cls}">${k.val}</div></div>`).join('');
 }
 
-function renderSummary(akt,gcu,nks,ank,avs){
+function renderSummary(akt,gcu,nks,ank,avs,tcu){
   const el=document.getElementById('txSummaryBody');
   if(!el)return;
-  const dataByPt={AKT:akt,GCU:gcu,NKS:nks,ANK:ank,AVS:avs};
+  const dataByPt={AKT:akt,GCU:gcu,NKS:nks,ANK:ank,AVS:avs,TCU:tcu};
   const sfA=(arr,f)=>(arr||[]).reduce((a,r)=>a+(Math.abs(parseFloat(r[f])||0)),0);
   const sfN=(arr,f)=>(arr||[]).reduce((a,r)=>a+(parseFloat(r[f])||0),0);
 
@@ -585,7 +588,7 @@ function renderSummary(akt,gcu,nks,ank,avs){
 }
 
 function dlExcel(){
-  const cByKey={AKT:cAKT,GCU:cGCU,NKS:cNKS,ANK:cANK,AVS:cAVS}; // cAKT dst tetap harus eksplisit (variabel `let`)
+  const cByKey={AKT:cAKT,GCU:cGCU,NKS:cNKS,ANK:cANK,AVS:cAVS,TCU:cTCU}; // cAKT dst tetap harus eksplisit (variabel `let`)
   if(PT_CONFIG.every(p=>!cByKey[p.key]))return;
   const activeNames=PT_CONFIG.filter(p=>activePts.includes(p.key)).map(p=>p.key);
   if(!activeNames.length){alert('Pilih minimal 1 PT terlebih dahulu.');return;}
@@ -620,11 +623,11 @@ function dlExcel(){
 }
 
 function dlPDF(){
-  if(!cAKT&&!cGCU&&!cNKS&&!cANK&&!cAVS){alert('Data belum dimuat.');return;}
-  const showAKT=activePts.includes('AKT'), showGCU=activePts.includes('GCU'), showNKS=activePts.includes('NKS'), showANK=activePts.includes('ANK'), showAVS=activePts.includes('AVS');
-  if(!showAKT&&!showGCU&&!showNKS&&!showANK&&!showAVS){alert('Pilih minimal 1 PT terlebih dahulu.');return;}
-  const pByKey={AKT:showAKT?cAKT:null,GCU:showGCU?cGCU:null,NKS:showNKS?cNKS:null,ANK:showANK?cANK:null,AVS:showAVS?cAVS:null};
-  const pAKT=pByKey.AKT, pGCU=pByKey.GCU, pNKS=pByKey.NKS, pANK=pByKey.ANK, pAVS=pByKey.AVS; // dipertahankan, masih dipakai drawMTD/drawAvb dispatch di bawah
+  if(!cAKT&&!cGCU&&!cNKS&&!cANK&&!cAVS&&!cTCU){alert('Data belum dimuat.');return;}
+  const showAKT=activePts.includes('AKT'), showGCU=activePts.includes('GCU'), showNKS=activePts.includes('NKS'), showANK=activePts.includes('ANK'), showAVS=activePts.includes('AVS'), showTCU=activePts.includes('TCU');
+  if(!showAKT&&!showGCU&&!showNKS&&!showANK&&!showAVS&&!showTCU){alert('Pilih minimal 1 PT terlebih dahulu.');return;}
+  const pByKey={AKT:showAKT?cAKT:null,GCU:showGCU?cGCU:null,NKS:showNKS?cNKS:null,ANK:showANK?cANK:null,AVS:showAVS?cAVS:null,TCU:showTCU?cTCU:null};
+  const pAKT=pByKey.AKT, pGCU=pByKey.GCU, pNKS=pByKey.NKS, pANK=pByKey.ANK, pAVS=pByKey.AVS, pTCU=pByKey.TCU; // dipertahankan, masih dipakai drawMTD/drawAvb dispatch di bawah
   const rpFull=n=>{if(n==null||isNaN(n))return '-';const v=Math.round(n);return(v<0?'-':'')+'Rp '+Math.abs(v).toLocaleString('id-ID');};
   const nFmt=n=>(n==null||isNaN(n))?'0':Math.round(n).toLocaleString('id-ID');
   try{
@@ -634,7 +637,7 @@ function dlPDF(){
   const[yr,mo,d]=selectedDate?selectedDate.split('-'):['','',''];
   const MON=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
   const dateStr=selectedDate?`${parseInt(d)} ${MON[parseInt(mo)-1]} ${yr}`:'--';
-  const activeNames=[showAKT&&'AKT',showGCU&&'GCU',showNKS&&'NKS',showANK&&'ANK',showAVS&&'AVS'].filter(Boolean);
+  const activeNames=[showAKT&&'AKT',showGCU&&'GCU',showNKS&&'NKS',showANK&&'ANK',showAVS&&'AVS',showTCU&&'TCU'].filter(Boolean);
   const ptTitle=activeNames.join(' & ');
 
   // ═══ HAL 1: REKONSILIASI ═══
@@ -659,7 +662,7 @@ function dlPDF(){
   // Transaction Status (1-4 kolom tergantung PT aktif, sudah dinamis)
   doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(15,23,42);doc.text('Transaction Status',M,y);y+=4;
   doc.setFillColor(27,43,75);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(6);doc.setFont('helvetica','bold');
-  const parts=[showAKT&&{key:'AKT',s:pAKT},showGCU&&{key:'GCU',s:pGCU},showNKS&&{key:'NKS',s:pNKS},showANK&&{key:'ANK',s:pANK},showAVS&&{key:'AVS',s:pAVS}].filter(Boolean);
+  const parts=[showAKT&&{key:'AKT',s:pAKT},showGCU&&{key:'GCU',s:pGCU},showNKS&&{key:'NKS',s:pNKS},showANK&&{key:'ANK',s:pANK},showAVS&&{key:'AVS',s:pAVS},showTCU&&{key:'TCU',s:pTCU}].filter(Boolean);
   const cAll=parts.reduce((a,p)=>a+(p.s?.total_trx||0),0);
   if(parts.length>1){
     const nCol=parts.length;
@@ -738,7 +741,7 @@ function dlPDF(){
   });
 
   // Revenue Detail
-  {const nActiveRev=[showAKT,showGCU,showNKS,showANK,showAVS].filter(Boolean).length;if(y+(13+nActiveRev*5)>280)newPage1();}
+  {const nActiveRev=[showAKT,showGCU,showNKS,showANK,showAVS,showTCU].filter(Boolean).length;if(y+(13+nActiveRev*5)>280)newPage1();}
   doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(15,23,42);doc.text('Revenue Detail',M,y);y+=4;
   doc.setFillColor(27,43,75);doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(255,255,255);doc.setFontSize(6);doc.setFont('helvetica','bold');
   const rc1=M+85,rc2=M+133,rc3=M+W-M*2-4;
@@ -1069,6 +1072,7 @@ function renderMTDWeb(){
   document.getElementById('mtdNKS').innerHTML=buildRows(cNKS,window._mtdNKS,window._ytdNKS);
   document.getElementById('mtdANK').innerHTML=buildRows(cANK,window._mtdANK,window._ytdANK);
   document.getElementById('mtdAVS').innerHTML=buildRows(cAVS,window._mtdAVS,window._ytdAVS);
+  document.getElementById('mtdTCU').innerHTML=buildRows(cTCU,window._mtdTCU,window._ytdTCU);
 }
 
 function renderAvbWeb(){
@@ -1102,6 +1106,7 @@ function renderAvbWeb(){
   buildAvb(window._bfNKS,window._dsNKS,'NKS','avbHdNKS','avbTblNKS');
   buildAvb(window._bfANK,window._dsANK,'ANK','avbHdANK','avbTblANK');
   buildAvb(window._bfAVS,window._dsAVS,'AVS','avbHdAVS','avbTblAVS');
+  buildAvb(window._bfTCU,window._dsTCU,'TCU','avbHdTCU','avbTblTCU');
   renderAvbTotal();
 }
 
@@ -1176,6 +1181,7 @@ function renderAvbMonthly(){
   buildMonthly(window._bfNKS,window._dsNKS,'avbMonthlyNKS');
   buildMonthly(window._bfANK,window._dsANK,'avbMonthlyANK');
   buildMonthly(window._bfAVS,window._dsAVS,'avbMonthlyAVS');
+  buildMonthly(window._bfTCU,window._dsTCU,'avbMonthlyTCU');
 }
 
 
@@ -1617,8 +1623,8 @@ function onPtChkChange(){
   applyPtFilter();
   // Hitung ulang Total Gabungan & Transaction Summary sesuai PT yang baru dicentang
   if(currentMode==='daily'){
-    renderTotal({AKT:cAKT,GCU:cGCU,NKS:cNKS,ANK:cANK,AVS:cAVS});
-    renderSummary(cAKT,cGCU,cNKS,cANK,cAVS);
+    renderTotal({AKT:cAKT,GCU:cGCU,NKS:cNKS,ANK:cANK,AVS:cAVS,TCU:cTCU});
+    renderSummary(cAKT,cGCU,cNKS,cANK,cAVS,cTCU);
   } else if(currentMode==='monthly' && selectedMonth){
     renderMonthly(selectedMonth);
   }
