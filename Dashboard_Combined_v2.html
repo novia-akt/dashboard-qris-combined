@@ -314,6 +314,9 @@ const rpF=n=>{if(n==null||isNaN(n))return '—';const v=Math.round(n);return(v<0
 const rpFull=n=>{if(n==null||isNaN(n))return '-';const v=Math.round(n);return(v<0?'-':'')+'Rp '+Math.abs(v).toLocaleString('id-ID');};
 const nFmt=n=>(n==null||isNaN(n))?'0':Math.round(n).toLocaleString('id-ID');
 const sumF=(arr,f)=>(arr||[]).reduce((a,r)=>a+(Math.abs(parseFloat(r[f])||0)),0);
+// total_amount_transfer boleh negatif (mis. hari yang cuma ada Chargeback tanpa GMV/REP penyeimbang) —
+// abs() di sumF bikin hari negatif itu malah nambah total MTD/YTD, bukan ngurangin. Pakai ini khusus buat field itu.
+const sumFSigned=(arr,f)=>(arr||[]).reduce((a,r)=>a+(parseFloat(r[f])||0),0);
 const rpS=n=>{if(n==null||isNaN(n))return '—';const v=Math.round(n),a=Math.abs(v),s=v<0?'-':'';if(a>=1e9)return s+'Rp '+(a/1e9).toFixed(2)+'M';if(a>=1e6)return s+'Rp '+(a/1e6).toFixed(1)+'jt';return s+'Rp '+a.toLocaleString('id-ID');};
 const nF=n=>(n==null||isNaN(n))?'—':Math.round(n).toLocaleString('id-ID');
 const pct=(a,b)=>b>0?(a/b*100).toFixed(2)+'%':'0.00%';
@@ -541,6 +544,8 @@ function renderSummary(akt,gcu,nks,ank,avs,tcu){
   const dataByPt={AKT:akt,GCU:gcu,NKS:nks,ANK:ank,AVS:avs,TCU:tcu};
   const sfA=(arr,f)=>(arr||[]).reduce((a,r)=>a+(Math.abs(parseFloat(r[f])||0)),0);
   const sfN=(arr,f)=>(arr||[]).reduce((a,r)=>a+(parseFloat(r[f])||0),0);
+  // sfN dipakai lagi di sini buat total_amount_transfer (lihat komentar sumFSigned di atas) —
+  // sfN sendiri sudah gak pakai abs(), jadi aman dipakai langsung tanpa perlu helper baru.
 
   // Helper generik: jumlahin 1 field buat 3 kolom (Yesterday/MTD/YTD) sekaligus,
   // loop PT_CONFIG otomatis, skip PT yang gak dicentang di filter.
@@ -569,7 +574,7 @@ function renderSummary(akt,gcu,nks,ank,avs,tcu){
   const tDsp=sumField('total_dispute',true,sfA);
   const tMDD=sumField('mdr_discount',false,sfA);
   const tFee=sumField('total_transfer_fee',true,sfA);
-  const tAmt=sumField('total_amount_transfer',true,sfA);
+  const tAmt=sumField('total_amount_transfer',true,sfN);
 
   const rows=[
     ['Total Trx',nF(tTrx[0]),nF(tTrx[1]),nF(tTrx[2]),false],
@@ -703,6 +708,7 @@ function dlPDF(){
 
   // Daily Report
   const sfF=(arr,f)=>(arr||[]).reduce((a,r)=>a+(Math.abs(parseFloat(r[f])||0)),0);
+  const sfFSigned=(arr,f)=>(arr||[]).reduce((a,r)=>a+(parseFloat(r[f])||0),0); // khusus total_amount_transfer, lihat komentar sumFSigned
   const toRoman=n=>({1:'I',2:'II',3:'III',4:'IV',5:'V',6:'VI',7:'VII',8:'VIII'})[n]||String(n);
   let daySubPg=1;
   function newPage1(){
@@ -726,7 +732,7 @@ function dlPDF(){
      ['Settle Dispute',dsp?rpFull(dsp):'-',sfF(mtd,'total_dispute')?rpFull(sfF(mtd,'total_dispute')):'-',sfF(ytd,'total_dispute')?rpFull(sfF(ytd,'total_dispute')):'-',false],
      ['MDR Discount',mdd?rpFull(mdd):'-',sfF(mtd,'mdr_discount')?rpFull(sfF(mtd,'mdr_discount')):'-',sfF(ytd,'mdr_discount')?rpFull(sfF(ytd,'mdr_discount')):'-',false],
      ['Biaya Transfer',rpFull(trf),rpFull(sfF(mtd,'total_transfer_fee')),rpFull(sfF(ytd,'total_transfer_fee')),false],
-     ['Settle Amount',rpFull(amt),rpFull(sfF(mtd,'total_amount_transfer')),rpFull(sfF(ytd,'total_amount_transfer')),true],
+     ['Settle Amount',rpFull(amt),rpFull(sfFSigned(mtd,'total_amount_transfer')),rpFull(sfFSigned(ytd,'total_amount_transfer')),true],
     ].forEach((r,i)=>{
       if(r[4])doc.setFillColor(209,250,229);else doc.setFillColor(i%2===0?248:255,i%2===0?250:255,i%2===0?252:255);
       doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(r[4]?6:15,r[4]?95:23,r[4]?70:42);doc.setFont('helvetica',r[4]?'bold':'normal');doc.setFontSize(6);
@@ -1064,7 +1070,7 @@ function renderMTDWeb(){
       ['Settle Dispute',dsp?rpF(dsp):'—',sumF(mtd,'total_dispute')?rpF(sumF(mtd,'total_dispute')):'—',sumF(ytd,'total_dispute')?rpF(sumF(ytd,'total_dispute')):'—'],
       ['MDR Discount',mdd?rpF(mdd):'—',sumF(mtd,'mdr_discount')?rpF(sumF(mtd,'mdr_discount')):'—',sumF(ytd,'mdr_discount')?rpF(sumF(ytd,'mdr_discount')):'—'],
       ['Biaya Transfer',rpF(trf),rpF(sumF(mtd,'total_transfer_fee')),rpF(sumF(ytd,'total_transfer_fee'))],
-      ['Settle Amount',rpF(amt),rpF(sumF(mtd,'total_amount_transfer')),rpF(sumF(ytd,'total_amount_transfer'))],
+      ['Settle Amount',rpF(amt),rpF(sumFSigned(mtd,'total_amount_transfer')),rpF(sumFSigned(ytd,'total_amount_transfer'))],
     ].map((r,i)=>`<tr ${i===8?'class="hl2"':''}><td>${r[0]}</td><td class="r">${r[1]}</td><td class="r">${r[2]}</td><td class="r">${r[3]}</td></tr>`).join('');
   }
   document.getElementById('mtdAKT').innerHTML=buildRows(cAKT,window._mtdAKT,window._ytdAKT);
@@ -1273,7 +1279,7 @@ function renderMonthly(ym){
       ['Settle Dispute',sfA(mtd,'total_dispute')?rpF(sfA(mtd,'total_dispute')):'—',sfA(ytd,'total_dispute')?rpF(sfA(ytd,'total_dispute')):'—'],
       ['MDR Discount',sfA(mtd,'mdr_discount')?rpF(sfA(mtd,'mdr_discount')):'—',sfA(ytd,'mdr_discount')?rpF(sfA(ytd,'mdr_discount')):'—'],
       ['Biaya Transfer',rpF(sfA(mtd,'total_transfer_fee')),rpF(sfA(ytd,'total_transfer_fee'))],
-      ['Settle Amount',rpF(sfA(mtd,'total_amount_transfer')),rpF(sfA(ytd,'total_amount_transfer'))],
+      ['Settle Amount',rpF(sfN(mtd,'total_amount_transfer')),rpF(sfN(ytd,'total_amount_transfer'))],
     ].map((r,i)=>`<tr ${i===8?'class="hl2"':''}><td>${r[0]}</td><td class="r">${r[1]}</td><td class="r">${r[2]}</td></tr>`).join('');
   }
   PT_CONFIG.forEach(p=>{
@@ -1286,7 +1292,7 @@ function renderMonthly(ym){
   PT_CONFIG.forEach(p=>{
     revPerPt[p.key]={
       gmv: sfA(mtdByKey[p.key],'gmv'),
-      amt: sfA(mtdByKey[p.key],'total_amount_transfer'),
+      amt: sfN(mtdByKey[p.key],'total_amount_transfer'),
       rev: sfA(mtdByKey[p.key],'total_revenue'),
     };
   });
@@ -1329,7 +1335,7 @@ function renderMonthly(ym){
   const sDsp=sumFieldMonthly('total_dispute',sfA);
   const sMDD=sumFieldMonthly('mdr_discount',sfA);
   const sFee=sumFieldMonthly('total_transfer_fee',sfA);
-  const sAmt=sumFieldMonthly('total_amount_transfer',sfA);
+  const sAmt=sumFieldMonthly('total_amount_transfer',sfN);
   document.getElementById('txSummaryMonthlyBody').innerHTML=[
     ['Total Trx',nF(sTrx[0]),nF(sTrx[1]),false],
     ['Amount (GMV)',rpF(sGMV[0]),rpF(sGMV[1]),false],
@@ -1399,7 +1405,7 @@ function dlMonthlyPDF(){
   // KPI
   const tTrx=PT_CONFIG.reduce((a,p)=>a+sfN(mtdByKey[p.key],'total_trx_success'),0);
   const tGMV=PT_CONFIG.reduce((a,p)=>a+sfA(mtdByKey[p.key],'gmv'),0);
-  const tAmt=PT_CONFIG.reduce((a,p)=>a+sfA(mtdByKey[p.key],'total_amount_transfer'),0);
+  const tAmt=PT_CONFIG.reduce((a,p)=>a+sfN(mtdByKey[p.key],'total_amount_transfer'),0);
   const tRev=PT_CONFIG.reduce((a,p)=>a+sfA(mtdByKey[p.key],'total_revenue'),0);
   const nActive=PT_CONFIG.filter(p=>activePts.includes(p.key)).length;
   const tAvg=tTrx>0?tGMV/tTrx:0;
@@ -1434,7 +1440,7 @@ function dlMonthlyPDF(){
      ['Settle Dispute',sfA(mtd,'total_dispute')?rpFull(sfA(mtd,'total_dispute')):'-',sfA(ytd,'total_dispute')?rpFull(sfA(ytd,'total_dispute')):'-',false],
      ['MDR Discount',sfA(mtd,'mdr_discount')?rpFull(sfA(mtd,'mdr_discount')):'-',sfA(ytd,'mdr_discount')?rpFull(sfA(ytd,'mdr_discount')):'-',false],
      ['Biaya Transfer',rpFull(sfA(mtd,'total_transfer_fee')),rpFull(sfA(ytd,'total_transfer_fee')),false],
-     ['Settle Amount',rpFull(sfA(mtd,'total_amount_transfer')),rpFull(sfA(ytd,'total_amount_transfer')),true],
+     ['Settle Amount',rpFull(sfN(mtd,'total_amount_transfer')),rpFull(sfN(ytd,'total_amount_transfer')),true],
     ].forEach((r,i)=>{
       if(r[3])doc.setFillColor(209,250,229);else doc.setFillColor(i%2===0?248:255,i%2===0?250:255,i%2===0?252:255);
       doc.rect(M,y-3,W-M*2,5,'F');doc.setTextColor(r[3]?6:15,r[3]?95:23,r[3]?70:42);doc.setFont('helvetica',r[3]?'bold':'normal');doc.setFontSize(6);
@@ -1453,7 +1459,7 @@ function dlMonthlyPDF(){
   doc.text('PT - Acquirer',M+2,y);doc.text('GMV',rc1,y,{align:'right'});doc.text('Settle Amount',rc2,y,{align:'right'});doc.text('Revenue',rc3,y,{align:'right'});y+=5;
   const revByKey={};
   PT_CONFIG.forEach(p=>{
-    revByKey[p.key]={gmv:sfA(mtdByKey[p.key],'gmv'),amt:sfA(mtdByKey[p.key],'total_amount_transfer'),rev:sfA(mtdByKey[p.key],'total_revenue')};
+    revByKey[p.key]={gmv:sfA(mtdByKey[p.key],'gmv'),amt:sfN(mtdByKey[p.key],'total_amount_transfer'),rev:sfA(mtdByKey[p.key],'total_revenue')};
   });
   PT_CONFIG.forEach(p=>{
     if(!activePts.includes(p.key))return;
